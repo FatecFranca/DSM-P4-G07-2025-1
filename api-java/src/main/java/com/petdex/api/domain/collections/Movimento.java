@@ -12,7 +12,7 @@ public class Movimento {
     private String id;
 
     @NotBlank(message = "Data não pode ser nulo ou vazio")
-    private Date date;
+    private Date data;
 
     @NotBlank(message = "acelerometroX não pode ser nulo ou vazio")
     private Double acelerometroX;
@@ -42,8 +42,8 @@ public class Movimento {
     public Movimento() {
     }
 
-    public Movimento(Date date, Double acelerometroX, Double acelerometroY, Double acelerometroZ, Double giroscopioX, Double giroscopioY, Double giroscopioZ, String animal, String coleira) {
-        this.date = date;
+    public Movimento(Date data, Double acelerometroX, Double acelerometroY, Double acelerometroZ, Double giroscopioX, Double giroscopioY, Double giroscopioZ, String animal, String coleira) {
+        this.data = data;
         this.acelerometroX = acelerometroX;
         this.acelerometroY = acelerometroY;
         this.acelerometroZ = acelerometroZ;
@@ -54,9 +54,9 @@ public class Movimento {
         this.coleira = coleira;
     }
 
-    public Movimento(String id, Date date, Double acelerometroX, Double acelerometroY, Double acelerometroZ, Double giroscopioX, Double giroscopioY, Double giroscopioZ, String animal, String coleira) {
+    public Movimento(String id, Date data, Double acelerometroX, Double acelerometroY, Double acelerometroZ, Double giroscopioX, Double giroscopioY, Double giroscopioZ, String animal, String coleira) {
         this.id = id;
-        this.date = date;
+        this.data = data;
         this.acelerometroX = acelerometroX;
         this.acelerometroY = acelerometroY;
         this.acelerometroZ = acelerometroZ;
@@ -75,12 +75,12 @@ public class Movimento {
         this.id = id;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getData() {
+        return data;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setData(Date data) {
+        this.data = data;
     }
 
     public Double getAcelerometroX() {
