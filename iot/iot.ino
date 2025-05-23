@@ -8,8 +8,10 @@
 
 
 
-const char* ssid = "Mirian";
-const char* password = "43871342";
+const char* ssid1 = "raizquadrada";
+const char* password1 = "qwertyuiop";
+const char* ssid2 = "Familia Resende 2.4G";
+const char* password2 = "89616412";
 const char* serverName = "https://dsm-p4-g07-2025-7.onrender.com";
 const String coleiraId = "6819475baa479949daccea94";
 const String animalId = "68194120636f719fcd5ee5fd";
@@ -59,15 +61,18 @@ void setup() {
 
 
   // ------------- WIFI -------------
-
-  WiFi.begin(ssid, password);  // Conexão WIFI
-  Serial.print("Conectando-se à rede Wi-Fi");
-
   while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
+    conectarWiFi(ssid1, password1);
+
+    if (WiFi.status() != WL_CONNECTED) {
+      conectarWiFi(ssid2, password2);
+    }
+
+    if (WiFi.status() != WL_CONNECTED) {
+      Serial.println("Não foi possível conectar a nenhuma rede Wi-Fi.");
+      Serial.println("Tentando novamente!");
+    }
   }
-  Serial.println("\nConectado ao Wi-Fi!");
 
   // -------------- // --------------
 
@@ -92,19 +97,14 @@ void setup() {
 
 
   // ------------- BATIMENTO CARDÍACO  ------------
-  if (!particleSensor.begin(Wire, I2C_SPEED_FAST)) {
+  while (!particleSensor.begin(Wire, I2C_SPEED_FAST)) {
     Serial.println("MAX30105 (Batimento Cardíaco) Não foi encontrado. ");
-    while (1)
-      ;
   }
 
   // Ligando as luzes do Batimetno Cardíaco para ajudar a medir
   particleSensor.setup();                     //Configure sensor with default settings
   particleSensor.setPulseAmplitudeRed(0x0A);  //Turn Red LED to low to indicate sensor is running
   particleSensor.setPulseAmplitudeGreen(0);   //Turn off Green LED
-  particleSensor.setPulseAmplitudeRed(0x22);  // Vermelho mais forte (0x32 = 50)
-  particleSensor.setPulseAmplitudeIR(0x22);   // Ativa o IR também
-
   // -------------- // --------------
 
 
@@ -124,6 +124,19 @@ void setup() {
 
 void loop() {
 
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.println("Conexão wifi perdida, tentando reestabelecer conexão");
+    conectarWiFi(ssid1, password1);
+    if (WiFi.status() != WL_CONNECTED) {
+      conectarWiFi(ssid2, password2);
+    }
+    if (WiFi.status() != WL_CONNECTED) {
+      Serial.println("Não foi possível conectar a nenhuma rede Wi-Fi.");
+      Serial.println("Tentando conectar no Wi-Fi novamente.");
+    }
+  }
+
+
   double accX;
   double accY;
   double accZ;
@@ -131,8 +144,8 @@ void loop() {
   double angleY;
   double angleZ;
 
-  float latitude;
-  float longitude;
+  double latitude;
+  double longitude;
 
   long leituraControle = 0;
 
@@ -262,8 +275,8 @@ void enviarLocalizacao(double latitude, double longitude, String timestamp) {
   String endpoint = String(serverName) + "/localizacoes";
   HTTPClient http;
   String jsonData = "{";
-  jsonData += "\"latitude\": \"" + String(latitude) + "\", ";
-  jsonData += "\"longitude\": \"" + String(longitude) + "\", ";
+  jsonData += "\"latitude\": \"" + String(latitude, 6) + "\", ";
+  jsonData += "\"longitude\": \"" + String(longitude, 6) + "\", ";
   jsonData += "\"coleiraId\": \"" + coleiraId + "\", ";
   jsonData += "\"animalId\": \"" + animalId + "\", ";
   jsonData += "\"data\": \"" + timestamp + "\"";
@@ -316,4 +329,26 @@ void enviarMovimento(double accX, double accY, double accZ, double angleX, doubl
   }
 
   http.end();
+}
+
+
+void conectarWiFi(const char* ssid, const char* password) {
+  WiFi.begin(ssid, password);
+  Serial.print("Conectando à rede Wi-Fi: ");
+  Serial.println(ssid);
+
+  int tentativas = 0;
+  while (WiFi.status() != WL_CONNECTED && tentativas < 40) {
+    delay(500);
+    Serial.print(".");
+    tentativas++;
+  }
+
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("\nConectado ao Wi-Fi!");
+    Serial.print("IP: ");
+    Serial.println(WiFi.localIP());
+  } else {
+    Serial.println("\nFalha ao conectar.");
+  }
 }
