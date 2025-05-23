@@ -30,7 +30,7 @@ long lastBeat = 0;  //Time at which the last beat occurred
 float beatsPerMinute;
 int beatAvg;
 unsigned long leituraInicio = 0;
-const unsigned long duracaoLeitura = 20000;
+const unsigned long duracaoLeitura = 15000;
 bool lendo = false;
 
 
@@ -226,7 +226,9 @@ void loop() {
   if (beatAvg > 5) {
     enviarBatimento(beatAvg, timestamp);
   }
-  enviarLocalizacao(latitude, longitude, timestamp);
+  if (latitude != 0 || longitude != 0) {
+    enviarLocalizacao(latitude, longitude, timestamp);
+  }
   enviarMovimento(accX, accY, accZ, angleX, angleY, angleZ, timestamp);
 }
 
@@ -249,8 +251,8 @@ void enviarBatimento(int media, String timestamp) {
   HTTPClient http;
   String jsonData = "{";
   jsonData += "\"frequenciaMedia\": \"" + String(media) + "\", ";
-  jsonData += "\"coleiraId\": \"" + coleiraId + "\", ";
-  jsonData += "\"animalId\": \"" + animalId + "\", ";
+  jsonData += "\"coleira\": \"" + coleiraId + "\", ";
+  jsonData += "\"animal\": \"" + animalId + "\", ";
   jsonData += "\"data\": \"" + timestamp + "\"";
   jsonData += "}";
 
@@ -277,8 +279,8 @@ void enviarLocalizacao(double latitude, double longitude, String timestamp) {
   String jsonData = "{";
   jsonData += "\"latitude\": \"" + String(latitude, 6) + "\", ";
   jsonData += "\"longitude\": \"" + String(longitude, 6) + "\", ";
-  jsonData += "\"coleiraId\": \"" + coleiraId + "\", ";
-  jsonData += "\"animalId\": \"" + animalId + "\", ";
+  jsonData += "\"coleira\": \"" + coleiraId + "\", ";
+  jsonData += "\"animal\": \"" + animalId + "\", ";
   jsonData += "\"data\": \"" + timestamp + "\"";
   jsonData += "}";
 
@@ -309,8 +311,8 @@ void enviarMovimento(double accX, double accY, double accZ, double angleX, doubl
   jsonData += "\"giroscopioX\": \"" + String(angleX) + "\", ";
   jsonData += "\"giroscopioY\": \"" + String(angleY) + "\", ";
   jsonData += "\"giroscopioZ\": \"" + String(angleZ) + "\", ";
-  jsonData += "\"coleiraId\": \"" + coleiraId + "\", ";
-  jsonData += "\"animalId\": \"" + animalId + "\", ";
+  jsonData += "\"coleira\": \"" + coleiraId + "\", ";
+  jsonData += "\"animal\": \"" + animalId + "\", ";
   jsonData += "\"data\": \"" + timestamp + "\"";
   jsonData += "}";
 
