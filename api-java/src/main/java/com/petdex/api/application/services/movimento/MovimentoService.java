@@ -46,7 +46,7 @@ public class MovimentoService implements IMovimentoService {
     @Override
     public Page<MovimentoResDTO> findAllByAnimalId(String animalId, PageDTO pageDTO) {
         pageDTO.sortByNewest();
-        Page<Movimento> batimentosPage = movimentoRepository.findAllByAnimalId(animalId, pageDTO.mapPage());
+        Page<Movimento> batimentosPage = movimentoRepository.findAllByAnimal(animalId, pageDTO.mapPage());
 
         List<MovimentoResDTO> dtoList = batimentosPage.getContent().stream()
                 .map(b -> mapper.map(b, MovimentoResDTO.class))
@@ -58,7 +58,7 @@ public class MovimentoService implements IMovimentoService {
     @Override
     public Page<MovimentoResDTO> findAllByColeiraId(String coleiraId, PageDTO pageDTO) {
         pageDTO.sortByNewest();
-        Page<Movimento> batimentosPage = movimentoRepository.findAllByColeiraId(coleiraId, pageDTO.mapPage());
+        Page<Movimento> batimentosPage = movimentoRepository.findAllByColeira(coleiraId, pageDTO.mapPage());
 
         List<MovimentoResDTO> dtoList = batimentosPage.getContent().stream()
                 .map(b -> mapper.map(b, MovimentoResDTO.class))

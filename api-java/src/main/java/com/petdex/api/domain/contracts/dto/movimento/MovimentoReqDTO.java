@@ -7,37 +7,37 @@ import java.util.Date;
 @Schema(name = "Requisição Movimento", description = "Informações contidas nas requisições da API envolvendo a Localização")
 public class MovimentoReqDTO {
 
-    @Schema(description = "Data/Hora que foi feito a coleta do movimento", example = "", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Data/Hora que foi feito a coleta do movimento", example = "")
     private Date date;
 
-    @Schema(description = "Valor de aceleração no eixo X no momento da coleta", example = "", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Valor de aceleração no eixo X no momento da coleta", example = "")
     private Double acelerometroX;
 
-    @Schema(description = "Valor de aceleração no eixo Y no momento da coleta", example = "", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Valor de aceleração no eixo Y no momento da coleta", example = "")
     private Double acelerometroY;
 
-    @Schema(description = "Valor de aceleração no eixo Z no momento da coleta", example = "", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Valor de aceleração no eixo Z no momento da coleta", example = "")
     private Double acelerometroZ;
 
-    @Schema(description = "Valor da posição do giroscópio no eixo X no momento da coleta", example = "", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Valor da posição do giroscópio no eixo X no momento da coleta", example = "")
     private Double giroscopioX;
 
-    @Schema(description = "Valor da posição do giroscópio no eixo Y no momento da coleta", example = "", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Valor da posição do giroscópio no eixo Y no momento da coleta", example = "")
     private Double giroscopioY;
 
-    @Schema(description = "Valor da posição do giroscópio no eixo Z no momento da coleta", example = "", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Valor da posição do giroscópio no eixo Z no momento da coleta", example = "")
     private Double giroscopioZ;
 
-    @Schema(description = "ID do Animal que foi feito a coleta do movimento", example = "", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String animalId;
+    @Schema(description = "ID do Animal que foi feito a coleta do movimento", example = "")
+    private String animal;
 
-    @Schema(description = "ID da coleira que fez a coleta do movimento do animal", example = "", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String coleiraId;
+    @Schema(description = "ID da coleira que fez a coleta do movimento do animal", example = "")
+    private String coleira;
 
     public MovimentoReqDTO() {
     }
 
-    public MovimentoReqDTO(Date date, Double acelerometroX, Double acelerometroY, Double acelerometroZ, Double giroscopioX, Double giroscopioY, Double giroscopioZ, String animalId, String coleiraId) {
+    public MovimentoReqDTO(Date date, Double acelerometroX, Double acelerometroY, Double acelerometroZ, Double giroscopioX, Double giroscopioY, Double giroscopioZ, String animal, String coleira) {
         this.date = date;
         this.acelerometroX = acelerometroX;
         this.acelerometroY = acelerometroY;
@@ -45,8 +45,8 @@ public class MovimentoReqDTO {
         this.giroscopioX = giroscopioX;
         this.giroscopioY = giroscopioY;
         this.giroscopioZ = giroscopioZ;
-        this.animalId = animalId;
-        this.coleiraId = coleiraId;
+        this.animal = animal;
+        this.coleira = coleira;
     }
 
     public Date getDate() {
@@ -105,19 +105,19 @@ public class MovimentoReqDTO {
         this.giroscopioZ = giroscopioZ;
     }
 
-    public String getAnimalId() {
-        return animalId;
+    public String getAnimal() {
+        return animal;
     }
 
-    public void setAnimalId(String animalId) {
-        this.animalId = animalId;
+    public void setAnimal(String animal) {
+        this.animal = animal;
     }
 
-    public String getColeiraId() {
-        return coleiraId;
+    public String getColeira() {
+        return coleira;
     }
 
-    public void setColeiraId(String coleiraId) {
-        this.coleiraId = coleiraId;
+    public void setColeira(String coleira) {
+        this.coleira = coleira;
     }
 }

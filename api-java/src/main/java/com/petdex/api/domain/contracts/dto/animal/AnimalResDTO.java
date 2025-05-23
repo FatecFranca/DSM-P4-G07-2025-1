@@ -8,30 +8,30 @@ public class AnimalResDTO {
     private String sexo;
     private Float peso;
     private Boolean castrado;
-    private String usuarioId;
+    private String usuario;
     private String racaNome;
     private String especieNome;
 
     public AnimalResDTO() {
     }
 
-    public AnimalResDTO(String nome, Date dataNascimento, String sexo, Float peso, Boolean castrado, String usuarioId, String racaNome, String especieNome) {
+    public AnimalResDTO(String nome, Date dataNascimento, String sexo, Float peso, Boolean castrado, String usuario, String racaNome, String especieNome) {
         this.nome = nome;
         this.dataNascimento = dataNascimento;
         this.sexo = sexo;
         this.peso = peso;
         this.castrado = castrado;
-        this.usuarioId = usuarioId;
+        this.usuario = usuario;
         this.racaNome = racaNome;
     }
 
-    public AnimalResDTO(String id, String nome, Date dataNascimento, String sexo, Float peso, Boolean castrado, String usuarioId, String racaNome, String especieNome) {
+    public AnimalResDTO(String id, String nome, Date dataNascimento, String sexo, Float peso, Boolean castrado, String usuario, String racaNome, String especieNome) {
         this.nome = nome;
         this.dataNascimento = dataNascimento;
         this.sexo = sexo;
         this.peso = peso;
         this.castrado = castrado;
-        this.usuarioId = usuarioId;
+        this.usuario = usuario;
         this.racaNome = racaNome;
     }
 
@@ -83,8 +83,8 @@ public class AnimalResDTO {
         this.castrado = castrado;
     }
 
-    public String getUsuarioId() {
-        return usuarioId;
+    public String getUsuario() {
+        return usuario;
     }
 
     public String getEspecieNome() {
@@ -95,8 +95,8 @@ public class AnimalResDTO {
         this.especieNome = especieNome;
     }
 
-    public void setUsuarioId(String usuarioId) {
-        this.usuarioId = usuarioId;
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
     public String getRacaNome() {

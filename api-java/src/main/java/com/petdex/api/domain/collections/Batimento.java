@@ -21,27 +21,27 @@ public class Batimento {
     private Integer frequenciaMedia;
 
     @NotBlank(message = "animalId não pode ser nulo ou vazio")
-    private String animalId;
+    private String animal;
 
     @NotBlank(message = "coleiraId não pode ser nulo ou vazio")
-    private String coleiraId;
+    private String coleira;
 
     public Batimento() {
     }
 
-    public Batimento(Date data, Integer frequenciaMedia, String animalId, String coleiraId) {
+    public Batimento(Date data, Integer frequenciaMedia, String animal, String coleira) {
         this.data = data;
         this.frequenciaMedia = frequenciaMedia;
-        this.animalId = animalId;
-        this.coleiraId = coleiraId;
+        this.animal = animal;
+        this.coleira = coleira;
     }
 
-    public Batimento(String id, Date data, Integer frequenciaMedia, String animalId, String coleiraId) {
+    public Batimento(String id, Date data, Integer frequenciaMedia, String animal, String coleira) {
         this.id = id;
         this.data = data;
         this.frequenciaMedia = frequenciaMedia;
-        this.animalId = animalId;
-        this.coleiraId = coleiraId;
+        this.animal = animal;
+        this.coleira = coleira;
     }
 
     public String getId() {
@@ -68,19 +68,19 @@ public class Batimento {
         this.frequenciaMedia = frequenciaMedia;
     }
 
-    public String getAnimalId() {
-        return animalId;
+    public String getAnimal() {
+        return animal;
     }
 
-    public void setAnimalId(String animalId) {
-        this.animalId = animalId;
+    public void setAnimal(String animal) {
+        this.animal = animal;
     }
 
-    public String getColeiraId() {
-        return coleiraId;
+    public String getColeira() {
+        return coleira;
     }
 
-    public void setColeiraId(String coleiraId) {
-        this.coleiraId = coleiraId;
+    public void setColeira(String coleira) {
+        this.coleira = coleira;
     }
 }

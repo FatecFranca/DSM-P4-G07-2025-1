@@ -21,29 +21,29 @@ public class Localizacao {
     private Double longitude;
 
     @NotBlank(message = "animalId não pode ser nulo ou vazio")
-    private String animalId;
+    private String animal;
 
     @NotBlank(message = "coleiraId não pode ser nulo ou vazio")
-    private String coleiraId;
+    private String coleira;
 
     public Localizacao() {
     }
 
-    public Localizacao(Date data, Double latitude, Double longitude, String animalId, String coleiraId) {
+    public Localizacao(Date data, Double latitude, Double longitude, String animal, String coleira) {
         this.data = data;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.animalId = animalId;
-        this.coleiraId = coleiraId;
+        this.animal = animal;
+        this.coleira = coleira;
     }
 
-    public Localizacao(String id, Date data, Double latitude, Double longitude, String animalId, String coleiraId) {
+    public Localizacao(String id, Date data, Double latitude, Double longitude, String animal, String coleira) {
         this.id = id;
         this.data = data;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.animalId = animalId;
-        this.coleiraId = coleiraId;
+        this.animal = animal;
+        this.coleira = coleira;
     }
 
     public String getId() {
@@ -78,19 +78,19 @@ public class Localizacao {
         this.longitude = longitude;
     }
 
-    public String getAnimalId() {
-        return animalId;
+    public String getAnimal() {
+        return animal;
     }
 
-    public void setAnimalId(String animalId) {
-        this.animalId = animalId;
+    public void setAnimal(String animal) {
+        this.animal = animal;
     }
 
-    public String getColeiraId() {
-        return coleiraId;
+    public String getColeira() {
+        return coleira;
     }
 
-    public void setColeiraId(String coleiraId) {
-        this.coleiraId = coleiraId;
+    public void setColeira(String coleira) {
+        this.coleira = coleira;
     }
 }

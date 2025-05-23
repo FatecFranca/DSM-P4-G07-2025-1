@@ -9,7 +9,6 @@ import com.petdex.api.infrastructure.mongodb.AnimalRepository;
 import com.petdex.api.infrastructure.mongodb.ColeiraRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import java.util.List;
 
 @Service
-public class ColeiraService implements IColeiraService{
+public class ColeiraService implements IColeiraService {
 
     @Autowired
     ColeiraRepository coleiraRepository;
@@ -33,7 +32,7 @@ public class ColeiraService implements IColeiraService{
     @Override
     public ColeiraResDTO findById(String id) {
         return mapper.map(coleiraRepository.findById(id)
-                        .orElseThrow(() -> new HttpServerErrorException(HttpStatus.NOT_FOUND, "Não existe coleira com o ID: "+ id)),
+                        .orElseThrow(() -> new HttpServerErrorException(HttpStatus.NOT_FOUND, "Não existe coleira com o ID: " + id)),
                 ColeiraResDTO.class);
     }
 
@@ -58,8 +57,8 @@ public class ColeiraService implements IColeiraService{
     @Override
     public ColeiraResDTO create(ColeiraReqDTO coleiraReqDTO) {
 
-        Animal animal = animalRepository.findById(coleiraReqDTO.getAnimalId())
-                .orElseThrow(() -> new HttpServerErrorException(HttpStatus.NOT_FOUND, "Não existe animal com o ID: "+ coleiraReqDTO.getAnimalId()));
+        Animal animal = animalRepository.findById(coleiraReqDTO.getAnimal())
+                .orElseThrow(() -> new HttpServerErrorException(HttpStatus.NOT_FOUND, "Não existe animal com o ID: " + coleiraReqDTO.getAnimal()));
 
         return mapper.map(coleiraRepository.save(mapper.map(coleiraReqDTO, Coleira.class)), ColeiraResDTO.class);
     }
@@ -67,22 +66,22 @@ public class ColeiraService implements IColeiraService{
     @Override
     public ColeiraResDTO update(String id, ColeiraReqDTO coleiraReqDTO) {
         Coleira coleiraUpdate = coleiraRepository.findById(id).orElseThrow(() ->
-                new HttpServerErrorException(HttpStatus.NOT_FOUND, "Não existe coleira com o ID: "+ id));
+                new HttpServerErrorException(HttpStatus.NOT_FOUND, "Não existe coleira com o ID: " + id));
 
         if (coleiraReqDTO.getDescricao() != null) coleiraUpdate.setDescricao(coleiraReqDTO.getDescricao());
-        if (coleiraReqDTO.getAnimalId() != null) {
-            Animal animal = animalRepository.findById(coleiraReqDTO.getAnimalId())
-                    .orElseThrow(() -> new HttpServerErrorException(HttpStatus.NOT_FOUND, "Não existe aniaml com o ID: "+ coleiraReqDTO.getAnimalId()));
+        if (coleiraReqDTO.getAnimal() != null) {
+            Animal animal = animalRepository.findById(coleiraReqDTO.getAnimal())
+                    .orElseThrow(() -> new HttpServerErrorException(HttpStatus.NOT_FOUND, "Não existe aniaml com o ID: " + coleiraReqDTO.getAnimal()));
 
-            coleiraUpdate.setAnimalId(coleiraReqDTO.getAnimalId());
+            coleiraUpdate.setAnimal(coleiraReqDTO.getAnimal());
         }
         return mapper.map(coleiraRepository.save(coleiraUpdate), ColeiraResDTO.class);
     }
 
     @Override
     public void delete(String id) {
-       Coleira coleiraDelete = coleiraRepository.findById(id).orElseThrow(() ->
-                new HttpServerErrorException(HttpStatus.NOT_FOUND, "Não existe coleira com o ID: "+ id));
+        Coleira coleiraDelete = coleiraRepository.findById(id).orElseThrow(() ->
+                new HttpServerErrorException(HttpStatus.NOT_FOUND, "Não existe coleira com o ID: " + id));
 
         coleiraRepository.delete(coleiraDelete);
     }

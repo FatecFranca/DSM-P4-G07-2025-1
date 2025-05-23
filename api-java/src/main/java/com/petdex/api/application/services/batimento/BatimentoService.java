@@ -41,7 +41,7 @@ public class BatimentoService implements IBatimentoService {
 
     public Page<BatimentoResDTO> findAllByAnimalId(String animalId, PageDTO pageDTO) {
         pageDTO.sortByNewest();
-        Page<Batimento> batimentosPage = batimentoRepository.findAllByAnimalId(animalId, pageDTO.mapPage());
+        Page<Batimento> batimentosPage = batimentoRepository.findAllByAnimal(animalId, pageDTO.mapPage());
 
         List<BatimentoResDTO> dtoList = batimentosPage.getContent().stream()
                 .map(b -> mapper.map(b, BatimentoResDTO.class))
@@ -52,7 +52,7 @@ public class BatimentoService implements IBatimentoService {
 
     public Page<BatimentoResDTO> findAllByColeiraId(String coleiraId, PageDTO pageDTO) {
         pageDTO.sortByNewest();
-        Page<Batimento> batimentosPage = batimentoRepository.findAllByColeiraId(coleiraId, pageDTO.mapPage());
+        Page<Batimento> batimentosPage = batimentoRepository.findAllByColeira(coleiraId, pageDTO.mapPage());
 
         List<BatimentoResDTO> dtoList = batimentosPage.getContent().stream()
                 .map(b -> mapper.map(b, BatimentoResDTO.class))

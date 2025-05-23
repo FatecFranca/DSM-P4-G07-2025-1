@@ -17,20 +17,20 @@ public class BatimentoResDTO {
     private Integer frequenciaMedia;
 
     @Schema(description = "ID do Animal que foi coletado o batimento cardíaco", example = "60", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String animalId;
+    private String animal;
 
     @Schema(description = "ID da coleira que fez a coleta do batimento cardíaco", example = "60", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String coleiraId;
+    private String coleira;
 
     public BatimentoResDTO() {
     }
 
-    public BatimentoResDTO(String id, Date data, Integer frequenciaMedia, String animalId, String coleiraId) {
+    public BatimentoResDTO(String id, Date data, Integer frequenciaMedia, String animal, String coleira) {
         this.id = id;
         this.data = data;
         this.frequenciaMedia = frequenciaMedia;
-        this.animalId = animalId;
-        this.coleiraId = coleiraId;
+        this.animal = animal;
+        this.coleira = coleira;
     }
 
     public String getId() {
@@ -41,20 +41,20 @@ public class BatimentoResDTO {
         this.id = id;
     }
 
-    public String getColeiraId() {
-        return coleiraId;
+    public String getColeira() {
+        return coleira;
     }
 
-    public void setColeiraId(String coleiraId) {
-        this.coleiraId = coleiraId;
+    public void setColeira(String coleira) {
+        this.coleira = coleira;
     }
 
-    public String getAnimalId() {
-        return animalId;
+    public String getAnimal() {
+        return animal;
     }
 
-    public void setAnimalId(String animalId) {
-        this.animalId = animalId;
+    public void setAnimal(String animal) {
+        this.animal = animal;
     }
 
     public Integer getFrequenciaMedia() {

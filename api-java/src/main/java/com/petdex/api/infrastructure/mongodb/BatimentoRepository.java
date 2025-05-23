@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BatimentoRepository extends MongoRepository<Batimento, String> {
 
-    Page<Batimento> findAllByAnimalId(String animalId, Pageable pageable);
-    Page<Batimento> findAllByColeiraId(String coleiraId, Pageable pageable);
+    Page<Batimento> findAllByAnimal(String animal, Pageable pageable);
+    Page<Batimento> findAllByColeira(String coleira, Pageable pageable);
 }

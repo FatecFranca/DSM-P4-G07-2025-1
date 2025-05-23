@@ -33,16 +33,16 @@ public class Movimento {
     private Double giroscopioZ;
 
     @NotBlank(message = "animalId não pode ser nulo ou vazio")
-    private String animalId;
+    private String animal;
 
     @NotBlank(message = "coleiraId não pode ser nulo ou vazio")
-    private String coleiraId;
+    private String coleira;
 
 
     public Movimento() {
     }
 
-    public Movimento(Date date, Double acelerometroX, Double acelerometroY, Double acelerometroZ, Double giroscopioX, Double giroscopioY, Double giroscopioZ, String animalId, String coleiraId) {
+    public Movimento(Date date, Double acelerometroX, Double acelerometroY, Double acelerometroZ, Double giroscopioX, Double giroscopioY, Double giroscopioZ, String animal, String coleira) {
         this.date = date;
         this.acelerometroX = acelerometroX;
         this.acelerometroY = acelerometroY;
@@ -50,11 +50,11 @@ public class Movimento {
         this.giroscopioX = giroscopioX;
         this.giroscopioY = giroscopioY;
         this.giroscopioZ = giroscopioZ;
-        this.animalId = animalId;
-        this.coleiraId = coleiraId;
+        this.animal = animal;
+        this.coleira = coleira;
     }
 
-    public Movimento(String id, Date date, Double acelerometroX, Double acelerometroY, Double acelerometroZ, Double giroscopioX, Double giroscopioY, Double giroscopioZ, String animalId, String coleiraId) {
+    public Movimento(String id, Date date, Double acelerometroX, Double acelerometroY, Double acelerometroZ, Double giroscopioX, Double giroscopioY, Double giroscopioZ, String animal, String coleira) {
         this.id = id;
         this.date = date;
         this.acelerometroX = acelerometroX;
@@ -63,8 +63,8 @@ public class Movimento {
         this.giroscopioX = giroscopioX;
         this.giroscopioY = giroscopioY;
         this.giroscopioZ = giroscopioZ;
-        this.animalId = animalId;
-        this.coleiraId = coleiraId;
+        this.animal = animal;
+        this.coleira = coleira;
     }
 
     public String getId() {
@@ -131,19 +131,19 @@ public class Movimento {
         this.giroscopioZ = giroscopioZ;
     }
 
-    public String getAnimalId() {
-        return animalId;
+    public String getAnimal() {
+        return animal;
     }
 
-    public void setAnimalId(String animalId) {
-        this.animalId = animalId;
+    public void setAnimal(String animal) {
+        this.animal = animal;
     }
 
-    public String getColeiraId() {
-        return coleiraId;
+    public String getColeira() {
+        return coleira;
     }
 
-    public void setColeiraId(String coleiraId) {
-        this.coleiraId = coleiraId;
+    public void setColeira(String coleira) {
+        this.coleira = coleira;
     }
 }

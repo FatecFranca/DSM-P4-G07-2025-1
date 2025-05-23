@@ -4,18 +4,18 @@ public class RacaResDTO {
 
     private String id;
     private String nome;
-    private String especieId;
+    private String especie;
 
     public RacaResDTO() {
     }
 
-    public RacaResDTO(String nome, String especieId) {
+    public RacaResDTO(String nome, String especie) {
         this.nome = nome;
-        this.especieId = especieId;
+        this.especie = especie;
     }
 
-    public RacaResDTO(String id, String nome, String especieId) {
-        this.especieId = especieId;
+    public RacaResDTO(String id, String nome, String especie) {
+        this.especie = especie;
         this.nome = nome;
         this.id = id;
     }
@@ -36,11 +36,11 @@ public class RacaResDTO {
         this.nome = nome;
     }
 
-    public String getEspecieId() {
-        return especieId;
+    public String getespecie() {
+        return especie;
     }
 
-    public void setEspecieId(String especieID) {
-        this.especieId = especieID;
+    public void setespecie(String especie) {
+        this.especie = especie;
     }
 }

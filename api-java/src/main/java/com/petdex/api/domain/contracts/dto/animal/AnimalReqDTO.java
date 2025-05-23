@@ -1,7 +1,5 @@
 package com.petdex.api.domain.contracts.dto.animal;
 
-import com.petdex.api.domain.collections.Raca;
-
 import java.util.Date;
 
 public class AnimalReqDTO {
@@ -11,20 +9,20 @@ public class AnimalReqDTO {
     private String sexo;
     private Float peso;
     private Boolean castrado;
-    private String usuarioId;
-    private String racaId;
+    private String usuario;
+    private String raca;
 
     public AnimalReqDTO() {
     }
 
-    public AnimalReqDTO(String nome, Date dataNascimento, String sexo, Float peso, Boolean castrado, String usuarioId, String racaId) {
+    public AnimalReqDTO(String nome, Date dataNascimento, String sexo, Float peso, Boolean castrado, String usuario, String raca) {
         this.nome = nome;
         this.dataNascimento = dataNascimento;
         this.sexo = sexo;
         this.peso = peso;
         this.castrado = castrado;
-        this.usuarioId = usuarioId;
-        this.racaId = racaId;
+        this.usuario = usuario;
+        this.raca = raca;
     }
 
     public String getNome() {
@@ -67,19 +65,19 @@ public class AnimalReqDTO {
         this.castrado = castrado;
     }
 
-    public String getUsuarioId() {
-        return usuarioId;
+    public String getUsuario() {
+        return usuario;
     }
 
-    public void setUsuarioId(String usuarioId) {
-        this.usuarioId = usuarioId;
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
-    public String getRacaId() {
-        return racaId;
+    public String getRaca() {
+        return raca;
     }
 
-    public void setRacaId(String string) {
-        this.racaId = string;
+    public void setRaca(String string) {
+        this.raca = string;
     }
 }

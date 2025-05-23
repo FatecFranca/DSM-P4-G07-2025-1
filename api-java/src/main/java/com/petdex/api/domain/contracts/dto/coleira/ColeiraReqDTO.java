@@ -2,15 +2,15 @@ package com.petdex.api.domain.contracts.dto.coleira;
 
 public class ColeiraReqDTO {
     private String descricao;
-    private String animalId;
+    private String animal;
 
 
     public ColeiraReqDTO() {
     }
 
-    public ColeiraReqDTO(String descricao, String animalId) {
+    public ColeiraReqDTO(String descricao, String animal) {
         this.descricao = descricao;
-        this.animalId = animalId;
+        this.animal = animal;
     }
 
     public String getDescricao() {
@@ -21,12 +21,12 @@ public class ColeiraReqDTO {
         this.descricao = descricao;
     }
 
-    public String getAnimalId() {
-        return animalId;
+    public String getAnimal() {
+        return animal;
     }
 
-    public void setAnimalId(String animalId) {
-        this.animalId = animalId;
+    public void setAnimal(String animal) {
+        this.animal = animal;
     }
 
 

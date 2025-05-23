@@ -1,31 +1,31 @@
 package com.petdex.api.domain.contracts.dto.coleira;
 
 public class ColeiraResDTO {
-    private String id;
+    private String codigo;
     private String descricao;
-    private String animalId;
+    private String animal;
 
 
     public ColeiraResDTO() {
     }
 
-    public ColeiraResDTO(String descricao, String animalId) {
+    public ColeiraResDTO(String descricao, String animal) {
         this.descricao = descricao;
-        this.animalId = animalId;
+        this.animal = animal;
     }
 
-    public ColeiraResDTO(String id, String descricao, String animalId) {
-        this.id = id;
+    public ColeiraResDTO(String codigo, String descricao, String animal) {
+        this.codigo = codigo;
         this.descricao = descricao;
-        this.animalId = animalId;
+        this.animal = animal;
     }
 
-    public String getId() {
-        return id;
+    public String getCodigo() {
+        return codigo;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
     public String getDescricao() {
@@ -36,11 +36,11 @@ public class ColeiraResDTO {
         this.descricao = descricao;
     }
 
-    public String getAnimalId() {
-        return animalId;
+    public String getAnimal() {
+        return animal;
     }
 
-    public void setAnimalId(String animalId) {
-        this.animalId = animalId;
+    public void setAnimal(String animal) {
+        this.animal = animal;
     }
 }

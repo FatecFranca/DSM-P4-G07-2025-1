@@ -3,14 +3,14 @@ package com.petdex.api.domain.contracts.dto.raca;
 public class RacaReqDTO {
 
     private String nome;
-    private String especieId;
+    private String especie;
 
     public RacaReqDTO() {
     }
 
-    public RacaReqDTO(String nome, String especieId) {
+    public RacaReqDTO(String nome, String especie) {
         this.nome = nome;
-        this.especieId = especieId;
+        this.especie = especie;
     }
 
     public String getNome() {
@@ -21,11 +21,11 @@ public class RacaReqDTO {
         this.nome = nome;
     }
 
-    public String getEspecieId() {
-        return especieId;
+    public String getEspecie() {
+        return especie;
     }
 
-    public void setEspecieId(String especieId) {
-        this.especieId = especieId;
+    public void setEspecie(String especie) {
+        this.especie = especie;
     }
 }

@@ -10,21 +10,21 @@ public class Coleira {
     private String id;
     @NotBlank(message = "Descrição não pode ser nulo ou vazio")
     private String descricao;
-    @NotBlank(message = "animalId não pode ser nulo ou vazio")
-    private String animalId;
+    @NotBlank(message = "animal não pode ser nulo ou vazio")
+    private String animal;
 
     public Coleira() {
     }
 
-    public Coleira(String descricao, String animalId) {
+    public Coleira(String descricao, String animal) {
         this.descricao = descricao;
-        this.animalId = animalId;
+        this.animal = animal;
     }
 
-    public Coleira(String id, String descricao, String animalId) {
+    public Coleira(String id, String descricao, String animal) {
         this.id = id;
         this.descricao = descricao;
-        this.animalId = animalId;
+        this.animal = animal;
     }
 
     public String getId() {
@@ -43,11 +43,11 @@ public class Coleira {
         this.descricao = descricao;
     }
 
-    public String getAnimalId() {
-        return animalId;
+    public String getAnimal() {
+        return animal;
     }
 
-    public void setAnimalId(String animalId) {
-        this.animalId = animalId;
+    public void setAnimal(String animal) {
+        this.animal = animal;
     }
 }

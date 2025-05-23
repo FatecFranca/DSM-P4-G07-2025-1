@@ -26,33 +26,33 @@ public class Animal {
     @NotBlank(message = "Castrado não pode ser nulo ou vazio")
     private Boolean castrado;
     @NotBlank(message = "usuarioId não pode ser nulo ou vazio")
-    private String usuarioId;
+    private String usuario;
     @NotBlank(message = "racaId não pode ser nulo ou vazio")
-    private String racaId;
+    private String raca;
 
 
     public Animal() {
     }
 
-    public Animal(String id, String nome, Date dataNascimento, String sexo, Float peso, Boolean castrado, String usuarioId, String racaId) {
+    public Animal(String id, String nome, Date dataNascimento, String sexo, Float peso, Boolean castrado, String usuario, String raca) {
         this.id = id;
         this.nome = nome;
         this.dataNascimento = dataNascimento;
         this.sexo = sexo;
         this.peso = peso;
         this.castrado = castrado;
-        this.usuarioId = usuarioId;
-        this.racaId = racaId;
+        this.usuario = usuario;
+        this.raca = raca;
     }
 
-    public Animal(String nome, Date dataNascimento, String sexo, Float peso, Boolean castrado, String usuarioId, String racaId) {
+    public Animal(String nome, Date dataNascimento, String sexo, Float peso, Boolean castrado, String usuario, String raca) {
         this.nome = nome;
         this.dataNascimento = dataNascimento;
         this.sexo = sexo;
         this.peso = peso;
         this.castrado = castrado;
-        this.usuarioId = usuarioId;
-        this.racaId = racaId;
+        this.usuario = usuario;
+        this.raca = raca;
     }
 
     public String getId() {
@@ -103,19 +103,19 @@ public class Animal {
         this.castrado = castrado;
     }
 
-    public String getUsuarioId() {
-        return usuarioId;
+    public String getUsuario() {
+        return usuario;
     }
 
-    public void setUsuarioId(String usuarioId) {
-        this.usuarioId = usuarioId;
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
-    public String getRacaId() {
-        return racaId;
+    public String getRaca() {
+        return raca;
     }
 
-    public void setRacaId(String string) {
-        this.racaId = string;
+    public void setRaca(String string) {
+        this.raca = string;
     }
 }

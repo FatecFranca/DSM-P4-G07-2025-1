@@ -7,29 +7,29 @@ import java.util.Date;
 @Schema(name = "Requisição Localização", description = "Informações contidas nas requisições da API envolvendo a Localização")
 public class LocalizacaoReqDTO {
 
-    @Schema(description = "Data/Hora que foi realizado a coleta da localização", example = "", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Data/Hora que foi realizado a coleta da localização", example = "")
     private Date data;
 
-    @Schema(description = "Latitude que se encontra o animal no momento da coleta", example = "", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Latitude que se encontra o animal no momento da coleta", example = "")
     private Double latitude;
 
-    @Schema(description = "Longitude que se encontra o animal no momento da coleta", example = "", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Longitude que se encontra o animal no momento da coleta", example = "")
     private Double longitude;
 
-    @Schema(description = "ID do Animal que foi feito a coleta da localização", example = "", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String animalId;
+    @Schema(description = "ID do Animal que foi feito a coleta da localização", example = "")
+    private String animal;
 
-    @Schema(description = "ID da coleira que fez a coleta da localização do animal", example = "", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "ID da coleira que fez a coleta da localização do animal", example = "")
     private String coleiraId;
 
     public LocalizacaoReqDTO() {
     }
 
-    public LocalizacaoReqDTO(Date data, Double latitude, Double longitude, String animalId, String coleiraId) {
+    public LocalizacaoReqDTO(Date data, Double latitude, Double longitude, String animal, String coleiraId) {
         this.data = data;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.animalId = animalId;
+        this.animal = animal;
         this.coleiraId = coleiraId;
     }
 
@@ -57,12 +57,12 @@ public class LocalizacaoReqDTO {
         this.longitude = longitude;
     }
 
-    public String getAnimalId() {
-        return animalId;
+    public String getAnimal() {
+        return animal;
     }
 
-    public void setAnimalId(String animalId) {
-        this.animalId = animalId;
+    public void setAnimal(String animal) {
+        this.animal = animal;
     }
 
     public String getColeiraId() {

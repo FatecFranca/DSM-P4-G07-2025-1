@@ -41,7 +41,7 @@ public class LocalizacaoService implements ILocalizacaoService {
 
     public Page<LocalizacaoResDTO> findAllByAnimalId(String animalId, PageDTO pageDTO) {
         pageDTO.sortByNewest();
-        Page<Localizacao> localizacaosPage = localizacaoRepository.findAllByAnimalId(animalId, pageDTO.mapPage());
+        Page<Localizacao> localizacaosPage = localizacaoRepository.findAllByAnimal(animalId, pageDTO.mapPage());
 
         List<LocalizacaoResDTO> dtoList = localizacaosPage.getContent().stream()
                 .map(b -> mapper.map(b, LocalizacaoResDTO.class))
@@ -52,7 +52,7 @@ public class LocalizacaoService implements ILocalizacaoService {
 
     public Page<LocalizacaoResDTO> findAllByColeiraId(String coleiraId, PageDTO pageDTO) {
         pageDTO.sortByNewest();
-        Page<Localizacao> localizacaosPage = localizacaoRepository.findAllByColeiraId(coleiraId, pageDTO.mapPage());
+        Page<Localizacao> localizacaosPage = localizacaoRepository.findAllByColeira(coleiraId, pageDTO.mapPage());
 
         List<LocalizacaoResDTO> dtoList = localizacaosPage.getContent().stream()
                 .map(b -> mapper.map(b, LocalizacaoResDTO.class))

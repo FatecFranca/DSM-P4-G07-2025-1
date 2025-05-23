@@ -49,7 +49,7 @@ public class RacaService implements IRacaService{
     @Override
     public RacaResDTO create(RacaReqDTO racaReqDTO) {
 
-        Especie especie = especieRepository.findById(racaReqDTO.getEspecieId()).orElseThrow(() -> new RuntimeException("Especie com o ID não encontrada: " + racaReqDTO.getEspecieId()));
+        Especie especie = especieRepository.findById(racaReqDTO.getEspecie()).orElseThrow(() -> new RuntimeException("Especie com o ID não encontrada: " + racaReqDTO.getEspecie()));
         return mapper.map(racaRepository.save(mapper.map(racaReqDTO, Raca.class)), RacaResDTO.class);
     }
 
@@ -59,9 +59,9 @@ public class RacaService implements IRacaService{
         Raca racaUptade = racaRepository.findById(id).orElseThrow(()->new RuntimeException("Não foi possível encontrar uma raça com o ID: "+ id));
 
         if(racaReqDTO.getNome() != null) racaUptade.setNome(racaReqDTO.getNome());
-        if(racaReqDTO.getEspecieId()!=null) {
-            Especie especie = especieRepository.findById(racaReqDTO.getEspecieId()).orElseThrow(() -> new RuntimeException("Especie com o ID não encontrada: " + racaReqDTO.getEspecieId()));
-            racaUptade.setEspecieId(racaReqDTO.getEspecieId());
+        if(racaReqDTO.getEspecie()!=null) {
+            Especie especie = especieRepository.findById(racaReqDTO.getEspecie()).orElseThrow(() -> new RuntimeException("Especie com o ID não encontrada: " + racaReqDTO.getEspecie()));
+            racaUptade.setEspecie(racaReqDTO.getEspecie());
         }
 
         return mapper.map(racaRepository.save(racaUptade), RacaResDTO.class);
