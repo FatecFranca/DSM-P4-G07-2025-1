@@ -8,7 +8,7 @@ import java.util.Date;
 public class MovimentoReqDTO {
 
     @Schema(description = "Data/Hora que foi feito a coleta do movimento", example = "")
-    private Date date;
+    private Date data;
 
     @Schema(description = "Valor de aceleração no eixo X no momento da coleta", example = "")
     private Double acelerometroX;
@@ -37,8 +37,8 @@ public class MovimentoReqDTO {
     public MovimentoReqDTO() {
     }
 
-    public MovimentoReqDTO(Date date, Double acelerometroX, Double acelerometroY, Double acelerometroZ, Double giroscopioX, Double giroscopioY, Double giroscopioZ, String animal, String coleira) {
-        this.date = date;
+    public MovimentoReqDTO(Date data, Double acelerometroX, Double acelerometroY, Double acelerometroZ, Double giroscopioX, Double giroscopioY, Double giroscopioZ, String animal, String coleira) {
+        this.data = data;
         this.acelerometroX = acelerometroX;
         this.acelerometroY = acelerometroY;
         this.acelerometroZ = acelerometroZ;
@@ -49,12 +49,12 @@ public class MovimentoReqDTO {
         this.coleira = coleira;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getData() {
+        return data;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setData(Date data) {
+        this.data = data;
     }
 
     public Double getAcelerometroX() {

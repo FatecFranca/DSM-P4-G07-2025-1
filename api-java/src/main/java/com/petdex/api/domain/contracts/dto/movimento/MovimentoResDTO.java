@@ -11,7 +11,7 @@ public class MovimentoResDTO {
     private String id;
 
     @Schema(description = "Data/Hora que foi feito a coleta do movimento", example = "")
-    private Date date;
+    private Date data;
 
     @Schema(description = "Valor de aceleração no eixo X no momento da coleta", example = "")
     private Double acelerometroX;
@@ -40,9 +40,9 @@ public class MovimentoResDTO {
     public MovimentoResDTO() {
     }
 
-    public MovimentoResDTO(String id, Date date, Double acelerometroX, Double acelerometroY, Double acelerometroZ, Double giroscopioX, Double giroscopioY, Double giroscopioZ, String animal, String coleira) {
+    public MovimentoResDTO(String id, Date data, Double acelerometroX, Double acelerometroY, Double acelerometroZ, Double giroscopioX, Double giroscopioY, Double giroscopioZ, String animal, String coleira) {
         this.id = id;
-        this.date = date;
+        this.data = data;
         this.acelerometroX = acelerometroX;
         this.acelerometroY = acelerometroY;
         this.acelerometroZ = acelerometroZ;
@@ -61,12 +61,12 @@ public class MovimentoResDTO {
         this.id = id;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getData() {
+        return data;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setData(Date data) {
+        this.data = data;
     }
 
     public Double getAcelerometroX() {
