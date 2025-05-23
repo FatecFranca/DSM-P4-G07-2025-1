@@ -10,7 +10,7 @@
 
 const char* ssid = "Mirian";
 const char* password = "43871342";
-const char* serverName = "https://petdex-api.onrender.com";
+const char* serverName = "https://dsm-p4-g07-2025-7.onrender.com";
 const String coleiraId = "6819475baa479949daccea94";
 const String animalId = "68194120636f719fcd5ee5fd";
 
@@ -131,8 +131,8 @@ void loop() {
   double angleY;
   double angleZ;
 
-  double latitude;
-  double longitude;
+  float latitude;
+  float longitude;
 
   long leituraControle = 0;
 
