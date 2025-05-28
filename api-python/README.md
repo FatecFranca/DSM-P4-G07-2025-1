@@ -1,3 +1,3 @@
 # API EM PYTHON
 
-- Api para os calculos de estatistica
+- API para os calculos de estatistica 
