@@ -1,5 +1,5 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from "next/image"
+import Link from "next/link"
 
 export const Logo = ({ className = "" }) => {
   return (
@@ -15,5 +15,5 @@ export const Logo = ({ className = "" }) => {
         priority
       />
     </Link>
-  );
-};
+  )
+}

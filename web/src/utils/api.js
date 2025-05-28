@@ -1,21 +1,26 @@
-import axios from "axios";
-import { NormalizeError } from "next/dist/shared/lib/utils";
+import axios from "axios"
 
-// Base URL da sua API Swagger (ajuste para a sua real URL)
 const api = axios.create({
-  baseURL: "https://dsm-p4-g07-2025-7.onrender.com",
-  timeout: 20000,
-});
+  baseURL: '/api', // Usando o proxy do Next.js
+  timeout: 30000,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  }
+})
 
-// Função para pegar info do animal pelo id
 export async function getAnimalInfo(animalId) {
   try {
-    const response = await api.get(`/animais/${animalId}`);
-    console.log(response)
-    return response.data;
+    console.log(`[API] Buscando animal ID: ${animalId}`)
+    const response = await api.get(`/animais/${animalId}`)
+    return response.data
   } catch (error) {
-    console.error("Erro ao buscar info do animal:", error);
-    throw error;
+    const errorInfo = {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data
+    }
+    console.error('[API] Erro detalhado:', errorInfo)
+    throw error
   }
 }
-
