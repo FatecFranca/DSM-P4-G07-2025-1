@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="docs/img/capa-dex.svg" alt="Capa do Projeto" width="80%" />
+  <img src="docs/img/capa-dex.svg" alt="Capa do Projeto" width="100%" />
 </p>
 
-# DSM-P4-G07-2025-7
+# PetDex
 
 Repositório do **Grupo 07** do Projeto Interdisciplinar do **4º semestre** do curso de **Desenvolvimento de Software Multiplataforma - DSM** (Turma 2025/1).
 
