@@ -1,5 +1,6 @@
 import pandas as pd
-from scipy.stats import skew
+from statistics import mean, stdev
+from scipy.stats import skew, norm
 from typing import List
 from datetime import datetime
 
@@ -30,3 +31,20 @@ def media_por_data(dados: List[dict], inicio: str, fim: str) -> float:
         return 0.0
 
     return filtrados["frequenciaMedia"].mean()
+
+def calcular_probabilidade(dados: List[dict], valor: float) -> float:
+    valores = [item["frequenciaMedia"] for item in dados if "frequenciaMedia" in item]
+
+    if len(valores) < 2:
+        return 0.0  # Não é possível calcular desvio com menos de 2 valores
+
+    media = mean(valores)
+    desvio = stdev(valores)
+
+    if desvio == 0:
+        return 1.0 if valor == media else 0.0
+
+    probabilidade = norm.pdf(valor, loc=media, scale=desvio)
+
+    # Retorna 0.0 se a probabilidade for NaN (por precaução)
+    return float(probabilidade) if not (probabilidade is None or probabilidade != probabilidade) else 0.0

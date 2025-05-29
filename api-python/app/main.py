@@ -28,6 +28,12 @@ async def media_batimentos_por_data(
     media = stats.media_por_data(dados, data_inicio, data_fim)
     return {"media": media}
 
+@app.get("/batimentos/probabilidade", tags=["Batimentos"])
+async def probabilidade_batimento(valor: float = Query(..., description="Valor do batimento para calcular a probabilidade")):
+    dados = await java_api.buscar_batimentos()
+    prob = stats.calcular_probabilidade(dados, valor)
+    return {"probabilidade": prob}
+
 @app.get("/health", tags=["Status"])
 async def health_check():
     return {"status": "Ok"}
