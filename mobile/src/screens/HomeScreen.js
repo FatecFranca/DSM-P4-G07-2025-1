@@ -30,6 +30,6 @@ const styles = StyleSheet.create({
     mapText: {
         fontSize: 18,
         color: '#fff',
-        fontFamily: 'Poppins_500Medium',
+        fontFamily: 'Poppins_600SemiBold',
     },
 });

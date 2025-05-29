@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-    View,
-    Text,
-    Image,
-    StyleSheet,
-    ActivityIndicator,
-} from 'react-native';
+import {View,Text,Image, StyleSheet, ActivityIndicator,} from 'react-native';
 import { getAnimalInfo } from '../../services/api';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faMars, faVenus } from '@fortawesome/free-solid-svg-icons';

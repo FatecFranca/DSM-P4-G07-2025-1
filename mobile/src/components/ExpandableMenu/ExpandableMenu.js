@@ -1,12 +1,5 @@
 import React, { useState, useRef } from 'react';
-import {
-    View,
-    Text,
-    StyleSheet,
-    TouchableOpacity,
-    Animated,
-    Image,
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Animated, Image } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import {
     faChevronUp,
@@ -30,16 +23,12 @@ export default function ExpandableMenu() {
     const toggleExpand = () => {
         Animated.timing(animatedHeight, {
             toValue: expanded ? 180 : 400,
-            duration: 300,
+            duration: 250,
             useNativeDriver: false,
-        }).start();
-        setExpanded(!expanded);
+        }).start(() => setExpanded(!expanded));
     };
 
-    const animal = {
-        nome: 'Uno',
-        sexo: 'M',
-    };
+    const animal = { nome: 'Uno', sexo: 'M' };
     const bpm = 100;
     const battery = 20;
     const isConnected = true;
@@ -228,9 +217,10 @@ const styles = StyleSheet.create({
     batteryRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 10,
         justifyContent: 'flex-end',
         gap: 1,
+        marginTop: -10,
+        marginBottom: 4,
     },
     batteryLabel: {
         fontSize: 12,
@@ -241,10 +231,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: -35,
+        marginTop: -38,
     },
     statusLabel: {
-        fontSize: 12,
+        fontSize: 10,
         fontFamily: 'Poppins_400Regular',
         color: '#000',
     },
