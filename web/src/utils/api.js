@@ -24,3 +24,15 @@ export async function getAnimalInfo(animalId) {
     throw error
   }
 }
+
+export async function getLatestBatimentos(animalId) {
+  try {
+    const response = await api.get(`/batimentos/animal/${animalId}`)
+    console.log("[DEBUG] Dados de batimentos:", response.data)
+    return response.data?.[0] ?? null
+  } catch (error) {
+    console.error('[API] Erro ao buscar batimentos:', error)
+    throw error
+  }
+}
+

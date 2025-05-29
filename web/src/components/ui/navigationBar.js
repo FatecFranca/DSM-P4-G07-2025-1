@@ -5,7 +5,7 @@ export function NavigationBar({ activePage, activeColor = "var(--color-orange)" 
   return (
     <footer
       className="absolute bottom-0 left-0 right-0 h-20 flex justify-center gap-4 items-center lg:space-x-6"
-      style={{ backgroundColor: "var(--color-gray-light)" }}
+      style={{ backgroundColor: "var(--color-gray-light" }}
     >
       <NavItem href="/home" icon={faHouseChimney} label="Tela inicial" active={activePage === "home"} activeColor={activeColor} />
       <NavItem href="/localizacao" icon={faMapMarkerAlt} label="Localização" active={activePage === "localizacao"} activeColor={activeColor} />

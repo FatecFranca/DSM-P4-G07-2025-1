@@ -1,25 +1,29 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { getAnimalInfo } from "@/utils/api"
+import { getAnimalInfo, getLatestBatimentos } from "@/utils/api"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faMars, faVenus } from "@fortawesome/free-solid-svg-icons"
+import { faMars, faVenus, faHeartPulse } from "@fortawesome/free-solid-svg-icons"
 import Image from "next/image"
 
 export default function InfoAnimal({ id }) {
   const [animal, setAnimal] = useState(null)
+  const [batimento, setBatimento] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [loadingBatimento, setLoadingBatimento] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
     if (!id) {
       setError(new Error("ID do animal não fornecido"))
       setLoading(false)
+      setLoadingBatimento(false)
       return
     }
 
     const fetchData = async () => {
       try {
+        setLoading(true)
         const data = await getAnimalInfo(id)
         setAnimal(data)
       } catch (err) {
@@ -29,7 +33,23 @@ export default function InfoAnimal({ id }) {
       }
     }
 
+    const fetchBatimento = async () => {
+      try {
+        setLoadingBatimento(true)
+        const data = await getLatestBatimentos(id)
+        // Ajuste aqui conforme o nome do campo no retorno da API:
+        // Supondo que o batimento está em data.valorBatimento, troque se for diferente
+        setBatimento(data?.valorBatimento ?? data?.batimento ?? null)
+      } catch (err) {
+        console.error("Erro ao buscar batimento:", err)
+        setBatimento(null)
+      } finally {
+        setLoadingBatimento(false)
+      }
+    }
+
     fetchData()
+    fetchBatimento()
   }, [id])
 
   if (loading) return (
@@ -65,6 +85,15 @@ export default function InfoAnimal({ id }) {
           )}
         </div>
         <p className="text-sm">Espécie: {animal?.especieNome || 'Não informado'}</p>
+
+        {/* Exibindo batimento */}
+        <div className="mt-2 flex items-center gap-2 text-3xl font-bold text-red-500">
+          <FontAwesomeIcon icon={faHeartPulse} />
+          <span>
+            {loadingBatimento ? "..." : batimento ?? "--"}
+          </span>
+          <span className="text-xl font-normal ml-1">BPM</span>
+        </div>
       </div>
     </div>
   )
