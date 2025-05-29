@@ -1,51 +1,72 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { 
-  faChevronUp, 
-  faChevronDown,
-  faHeartPulse,
-  faCircle,
-  faBatteryFull,
-  faMars
-} from "@fortawesome/free-solid-svg-icons";
+import { faChevronUp, faChevronDown, faHeartPulse, faCircle, faBatteryFull, faMars } from "@fortawesome/free-solid-svg-icons";
 import { Logo } from "@/components/ui/logo";
 import Image from "next/image";
+import { getLatestBatimentos } from "@/utils/api";
 
-export function ExpandableMenu() {
+export function ExpandableMenu({ animalId, backgroundColor = "white" }) {
   const [expanded, setExpanded] = useState(false);
+  const [batimento, setBatimento] = useState(null);
+  const [loadingBatimento, setLoadingBatimento] = useState(false);
+  const [batimentoError, setBatimentoError] = useState(null);
+
+  useEffect(() => {
+    if (!animalId) return;
+
+    setLoadingBatimento(true);
+    getLatestBatimentos(animalId)
+      .then((data) => {
+        if (data && data.valorBatimento) {
+          setBatimento(data.valorBatimento); // Ajuste o nome conforme sua API
+        } else {
+          setBatimento(null);
+        }
+      })
+      .catch((err) => {
+        setBatimentoError(err);
+      })
+      .finally(() => {
+        setLoadingBatimento(false);
+      });
+  }, [animalId]);
 
   return (
-    <div className={`
-      fixed bottom-20 bg-white rounded-t-[40px] p-4
-      transition-all duration-300 overflow-hidden
-      ${expanded ? "h-[65vh]" : "h-[180px]"}
-      shadow-lg
-      /* Mobile (full width) */
-      left-0 right-0 mx-auto max-w-md
-      /* Desktop (colado à esquerda sem espaços) */
-      lg:left-0 lg:right-auto lg:mx-0 lg:max-w-none lg:w-auto
-    `}>
-      
-      {/* Botão de expandir (laranja) - CENTRALIZADO */}
-      <div className="relative flex justify-center mb-2">
-        <button
-          onClick={() => setExpanded(!expanded)}
-          className="bg-[var(--color-orange)] rounded-full px-8 py-2 flex items-center"
-        >
-          <FontAwesomeIcon 
-            icon={expanded ? faChevronDown : faChevronUp} 
-            className="text-white text-xl"
-          />
-        </button>
+    <div
+      className={`
+        fixed bottom-20 rounded-t-[40px] p-4
+        transition-all duration-300 overflow-hidden
+        ${expanded ? "h-[65vh]" : "h-[180px]"}
+        shadow-lg
+        left-0 right-0
+        lg:left-0 lg:right-auto lg:w-[400px]
+      `}
+      style={{ backgroundColor }}
+    >
+      {/* Cabeçalho com botão e logo */}
+      <div className="relative mb-2">
+        <div className="flex justify-center">
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="bg-[var(--color-orange)] rounded-full px-12 py-0 flex items-center"
+          >
+            <FontAwesomeIcon
+              icon={expanded ? faChevronDown : faChevronUp}
+              className="text-white text-xl"
+            />
+          </button>
+        </div>
+
+        <div className="absolute right-0 top-0">
+          <Logo className="h-10 w-auto lg:h-10" />
+        </div>
       </div>
 
-      {/* Container interno (protege o layout) */}
-      <div className="w-full max-w-md lg:max-w-full mx-auto">
-        {/* Conteúdo do card (MESMO LAYOUT ORIGINAL) */}
-        <div className="flex items-start gap-4 pt-2">
-          {/* Avatar */}
+      {/* Container interno */}
+      <div className="w-full max-w-md lg:max-w-full mx-auto pt-6 lg:pt-8 mt-4 lg:mt-2">
+        <div className="flex items-start gap-4">
           <div className="relative">
             <Image
               src="/uno.png"
@@ -56,54 +77,53 @@ export function ExpandableMenu() {
             />
           </div>
 
-          {/* Informações (TEXTO PROTEGIDO) */}
-          <div className="flex-1 min-w-0"> {/* Adicionei min-w-0 para prevenir quebra */}
+          <div className="flex-1 min-w-0">
             <div className="flex justify-between items-start">
-              <div className="overflow-hidden">
-                <h2 className="text-3xl font-bold flex items-center gap-2 truncate">
+              <div>
+                <h2 className="text-3xl font-bold flex items-center gap-2">
                   Uno
-                  <FontAwesomeIcon 
-                    icon={faMars} 
+                  <FontAwesomeIcon
+                    icon={faMars}
                     className="text-blue-500 text-xl flex-shrink-0"
                   />
                 </h2>
               </div>
-              
+
               <div className="flex items-center gap-1 flex-shrink-0">
-                <span className="text-3xl font-bold">100</span>
-                <FontAwesomeIcon 
-                  icon={faHeartPulse} 
+                <span className="text-3xl font-bold">
+                  {loadingBatimento ? "..." : batimento ?? "--"}
+                </span>
+                <FontAwesomeIcon
+                  icon={faHeartPulse}
                   className="text-red-500 text-xl"
                 />
                 <span className="text-xl font-bold ml-1">BPM</span>
               </div>
             </div>
 
-            {/* Status em UMA LINHA SÓ */}
-            <div className="flex justify-between items-center mt-4 whitespace-nowrap">
-              <div className="flex items-center overflow-hidden">
-                <span className="text-sm truncate">Status da PetDex:</span>
-                <FontAwesomeIcon 
-                  icon={faCircle} 
-                  className="text-green-500 text-xs ml-1 flex-shrink-0"
+            <div className="flex justify-between items-center mt-4">
+              <div className="flex items-center gap-1 text-sm font-medium whitespace-nowrap">
+                <span>Status da PetDex:</span>
+                <FontAwesomeIcon
+                  icon={faCircle}
+                  className="text-green-500 text-[11px]"
                 />
-                <span className="text-sm ml-1 truncate">Conectada</span>
+                <span>Conectada</span>
               </div>
-              
-              <div className="flex items-center gap-1 flex-shrink-0">
-                <FontAwesomeIcon 
-                  icon={faBatteryFull} 
+
+              <div className="flex items-center gap-1 flex-shrink-0 text-sm font-medium">
+                <FontAwesomeIcon
+                  icon={faBatteryFull}
                   className="text-green-500 text-xl -rotate-90"
                 />
-                <span className="text-sm">96%</span>
+                <span>96%</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Conteúdo expandido */}
         {expanded && (
-          <div className="mt-6 pt-4 border-t border-gray-200">
+          <div className="mt-6 pt-4 border-t border-[var(--color-gray-medium)]">
             <p className="text-center text-gray-500">Menu expandido</p>
           </div>
         )}
