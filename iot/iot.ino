@@ -6,7 +6,9 @@
 #include <MPU6050_tockn.h>
 #include <Wire.h>
 
-
+#define RED_PIN 11
+#define GREEN_PIN 12
+#define BLUE_PIN 13
 
 const char* ssid1 = "raizquadrada";
 const char* password1 = "qwertyuiop";
@@ -56,12 +58,16 @@ MPU6050 mpu6050(Wire);
 
 
 void setup() {
+  pinMode(RED_PIN, OUTPUT);
+  pinMode(GREEN_PIN, OUTPUT);
+  pinMode(BLUE_PIN, OUTPUT);
   Serial.begin(115200);
   delay(1000);
 
 
   // ------------- WIFI -------------
   while (WiFi.status() != WL_CONNECTED) {
+    digitalWrite(BLUE_PIN, HIGH);
     conectarWiFi(ssid1, password1);
 
     if (WiFi.status() != WL_CONNECTED) {
@@ -71,9 +77,12 @@ void setup() {
     if (WiFi.status() != WL_CONNECTED) {
       Serial.println("Não foi possível conectar a nenhuma rede Wi-Fi.");
       Serial.println("Tentando novamente!");
+      digitalWrite(BLUE_PIN, LOW);
+      digitalWrite(RED_PIN, HIGH);
+      delay(500);
     }
   }
-
+  digitalWrite(BLUE_PIN, LOW);
   // -------------- // --------------
 
 
@@ -82,10 +91,16 @@ void setup() {
   delay(2000);  // Espera a sincronização NTP
 
   struct tm timeinfo;
-  if (!getLocalTime(&timeinfo)) {
+  while (!getLocalTime(&timeinfo)) {
     Serial.println("Erro ao obter hora");
-    return;
+    digitalWrite(RED_PIN, HIGH);
+    digitalWrite(BLUE_PIN, HIGH);
+    digitalWrite(GREEN_PIN, HIGH);
   }
+
+  digitalWrite(RED_PIN, LOW);
+  digitalWrite(BLUE_PIN, LOW);
+  digitalWrite(GREEN_PIN, LOW);
 
   char isoTime[30];
   strftime(isoTime, sizeof(isoTime), "%Y-%m-%dT%H:%M:%SZ", &timeinfo);
@@ -98,8 +113,10 @@ void setup() {
 
   // ------------- BATIMENTO CARDÍACO  ------------
   while (!particleSensor.begin(Wire, I2C_SPEED_FAST)) {
+    digitalWrite(RED_PIN, HIGH);
     Serial.println("MAX30105 (Batimento Cardíaco) Não foi encontrado. ");
   }
+  digitalWrite(RED_PIN, LOW);
 
   // Ligando as luzes do Batimetno Cardíaco para ajudar a medir
   particleSensor.setup();                     //Configure sensor with default settings
@@ -123,8 +140,12 @@ void setup() {
 }
 
 void loop() {
+  digitalWrite(GREEN_PIN, LOW);
+  digitalWrite(BLUE_PIN, LOW);
+  digitalWrite(RED_PIN, LOW);
 
   while (WiFi.status() != WL_CONNECTED) {
+    digitalWrite(BLUE_PIN, HIGH);
     Serial.println("Conexão wifi perdida, tentando reestabelecer conexão");
     conectarWiFi(ssid1, password1);
     if (WiFi.status() != WL_CONNECTED) {
@@ -136,6 +157,7 @@ void loop() {
     }
   }
 
+  digitalWrite(BLUE_PIN, LOW);
 
   double accX;
   double accY;
@@ -247,6 +269,9 @@ String getISO8601Time() {
 }
 
 void enviarBatimento(int media, String timestamp) {
+  digitalWrite(GREEN_PIN, HIGH);
+  digitalWrite(RED_PIN, LOW);
+  digitalWrite(BLUE_PIN, LOW);
   String endpoint = String(serverName) + "/batimentos";
   HTTPClient http;
   String jsonData = "{";
@@ -267,13 +292,18 @@ void enviarBatimento(int media, String timestamp) {
     String response = http.getString();
     Serial.println("Resposta: " + response);
   } else {
+    digitalWrite(RED_PIN, HIGH);
     Serial.println("Erro ao enviar dados.");
+    delay(500);
   }
 
   http.end();
 }
 
 void enviarLocalizacao(double latitude, double longitude, String timestamp) {
+  digitalWrite(GREEN_PIN, HIGH);
+  digitalWrite(RED_PIN, LOW);
+  digitalWrite(BLUE_PIN, LOW);
   String endpoint = String(serverName) + "/localizacoes";
   HTTPClient http;
   String jsonData = "{";
@@ -296,12 +326,18 @@ void enviarLocalizacao(double latitude, double longitude, String timestamp) {
     Serial.println("Resposta: " + response);
   } else {
     Serial.println("Erro ao enviar dados.");
+    digitalWrite(RED_PIN, HIGH);
+    Serial.println("Erro ao enviar dados.");
+    delay(500);
   }
 
   http.end();
 }
 
 void enviarMovimento(double accX, double accY, double accZ, double angleX, double angleY, double angleZ, String timestamp) {
+  digitalWrite(GREEN_PIN, HIGH);
+  digitalWrite(RED_PIN, LOW);
+  digitalWrite(BLUE_PIN, LOW);
   String endpoint = String(serverName) + "/movimentos";
   HTTPClient http;
   String jsonData = "{";
@@ -328,6 +364,9 @@ void enviarMovimento(double accX, double accY, double accZ, double angleX, doubl
     Serial.println("Resposta: " + response);
   } else {
     Serial.println("Erro ao enviar dados.");
+    digitalWrite(RED_PIN, HIGH);
+    Serial.println("Erro ao enviar dados.");
+    delay(500);
   }
 
   http.end();
