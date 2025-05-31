@@ -1,5 +1,6 @@
 import { NavigationBar } from "@/components/ui/navigationBar";
 import { ExpandableMenu } from "@/components/ui/expandableMenu";
+import { animalId } from "@/utils/api";
 
 export default function Layout({ children, activePage = "home", activeColor = "var(--color-orange)" }) {
   return (
@@ -16,7 +17,7 @@ export default function Layout({ children, activePage = "home", activeColor = "v
       <main className="relative z-10">{children}</main>
 
       {/* Menu expansível */}
-      <ExpandableMenu backgroundColor="var(--color-white-matte)" />
+      <ExpandableMenu animalId={animalId} backgroundColor="var(--color-white-matte)" />
 
       {/* Barra inferior */}
       <NavigationBar activePage={activePage} activeColor={activeColor} />

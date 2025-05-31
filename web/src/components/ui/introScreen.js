@@ -4,10 +4,47 @@ import Image from "next/image";
 import { Button } from "./button";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMars } from "@fortawesome/free-solid-svg-icons";
+import { faMars, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { getAnimalInfo } from "@/utils/api";
+import { useEffect, useState } from "react";
 
-export const IntroScreen = () => {
+export function IntroScreen({ animalId }) {
     const router = useRouter();
+    const [animalInfo, setAnimalInfo] = useState(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const info = await getAnimalInfo(animalId);
+                console.log(info); // Aqui sim o valor correto
+                setAnimalInfo(info);
+            } catch (error) {
+                console.error("Erro ao buscar dados:", error);
+            }
+        };
+
+        if (animalId) {
+            fetchData();
+        }
+    }, [animalId]);
+
+    function calcularIdade(dataNascimentoString) {
+        if (!dataNascimentoString) return null;
+
+        const nascimento = new Date(dataNascimentoString);
+        const hoje = new Date();
+
+        let idade = hoje.getFullYear() - nascimento.getFullYear();
+        const mes = hoje.getMonth() - nascimento.getMonth();
+
+        if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
+            idade--;
+        }
+
+        return idade;
+    }
+
+
 
     return (
         <div className="relative w-full h-screen overflow-hidden px-6 py-8">
@@ -85,13 +122,54 @@ export const IntroScreen = () => {
                         />
                         <div className="text-left pt-2">
                             <div className="flex items-center mb-2">
-                                <h2 className="text-xl md:text-2xl font-bold text-gray-800 mr-3">Uno</h2>
-                                <FontAwesomeIcon icon={faMars} className="text-blue-500 h-4 md:h-5" />
+                                <h2 className="text-xl md:text-2xl font-bold text-gray-800 mr-3">
+                                    {
+                                        animalInfo?.nome ? animalInfo.nome : <FontAwesomeIcon
+                                            icon={faSpinner}
+                                            className="text-blue-500 text-xl flex-shrink-0"
+                                        />
+                                    }
+                                </h2>
+                                {
+                                    animalInfo?.sexo ? animalInfo?.sexo == "M" ? <FontAwesomeIcon
+                                        icon={faMars}
+                                        className="text-blue-500 text-xl flex-shrink-0"
+                                    /> : <FontAwesomeIcon
+                                        icon={faVenus}
+                                        className="text-blue-500 text-xl flex-shrink-0"
+                                    /> : <FontAwesomeIcon
+                                        icon={faSpinner}
+                                        className="text-blue-500 text-xl flex-shrink-0"
+                                    />
+                                }
                             </div>
-                            <p className="text-gray-600 text-sm md:text-base mb-3">Sem raça definida</p>
+                            <p className="text-gray-600 text-sm md:text-base mb-3">
+
+                                {
+                                    animalInfo?.racaNome ? animalInfo.racaNome : <FontAwesomeIcon
+                                        icon={faSpinner}
+                                        className="text-blue-500 text-xl flex-shrink-0"
+                                    />
+                                }
+                            </p>
+
                             <div className="flex gap-4 text-gray-800 text-sm md:text-base whitespace-nowrap">
-                                <span>10 anos</span>
-                                <span>28kg</span>
+                                <span>
+                                    {
+                                        animalInfo?.dataNascimento
+                                            ? `${calcularIdade(animalInfo.dataNascimento)} anos`
+                                            : <FontAwesomeIcon icon={faSpinner} className="text-blue-500 text-xl flex-shrink-0" />
+                                    }
+                                </span>
+
+                                <span>
+                                    {
+                                        animalInfo?.peso ? animalInfo.peso : <FontAwesomeIcon
+                                            icon={faSpinner}
+                                            className="text-blue-500 text-xl flex-shrink-0"
+                                        />
+                                    } kg
+                                </span>
                                 <span>Porte Grande</span>
                             </div>
                         </div>

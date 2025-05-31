@@ -1,5 +1,7 @@
 import axios from "axios"
 
+export const animalId = "68194120636f719fcd5ee5fd";
+
 const api = axios.create({
   baseURL: '/api', // Usando o proxy do Next.js
   timeout: 30000,
@@ -29,7 +31,7 @@ export async function getLatestBatimentos(animalId) {
   try {
     const response = await api.get(`/batimentos/animal/${animalId}`)
     console.log("[DEBUG] Dados de batimentos:", response.data)
-    return response.data?.[0] ?? null
+    return response.data?.content[0].frequenciaMedia
   } catch (error) {
     console.error('[API] Erro ao buscar batimentos:', error)
     throw error

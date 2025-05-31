@@ -2,36 +2,45 @@
 
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronUp, faChevronDown, faHeartPulse, faCircle, faBatteryFull, faMars } from "@fortawesome/free-solid-svg-icons";
+import { faChevronUp, faChevronDown, faHeartPulse, faCircle, faBatteryFull, faMars, faVenus, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { Logo } from "@/components/ui/logo";
 import Image from "next/image";
-import { getLatestBatimentos } from "@/utils/api";
+import { getAnimalInfo, getLatestBatimentos } from "@/utils/api";
 
 export function ExpandableMenu({ animalId, backgroundColor = "white" }) {
   const [expanded, setExpanded] = useState(false);
   const [batimento, setBatimento] = useState(null);
-  const [loadingBatimento, setLoadingBatimento] = useState(false);
+  const [animalInfo, setAnimalInfo] = useState(null);
+  const [loading, setloading] = useState(false);
   const [batimentoError, setBatimentoError] = useState(null);
 
   useEffect(() => {
-    if (!animalId) return;
+    const fetchData = async () => {
+      try {
+        setloading(true);
 
-    setLoadingBatimento(true);
-    getLatestBatimentos(animalId)
-      .then((data) => {
-        if (data && data.valorBatimento) {
-          setBatimento(data.valorBatimento); // Ajuste o nome conforme sua API
-        } else {
-          setBatimento(null);
-        }
-      })
-      .catch((err) => {
-        setBatimentoError(err);
-      })
-      .finally(() => {
-        setLoadingBatimento(false);
-      });
+        const [batimento, info] = await Promise.all([
+          getLatestBatimentos(animalId),
+          getAnimalInfo(animalId)
+        ]);
+
+        setBatimento(batimento);
+        setAnimalInfo(info);
+
+        console.log(info); // Agora isso mostrará os dados corretamente
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+        setBatimentoError(error.message);
+      } finally {
+        setloading(false);
+      }
+    };
+
+    if (animalId) {
+      fetchData();
+    }
   }, [animalId]);
+
 
   return (
     <div
@@ -81,17 +90,43 @@ export function ExpandableMenu({ animalId, backgroundColor = "white" }) {
             <div className="flex justify-between items-start">
               <div>
                 <h2 className="text-3xl font-bold flex items-center gap-2">
-                  Uno
-                  <FontAwesomeIcon
-                    icon={faMars}
-                    className="text-blue-500 text-xl flex-shrink-0"
-                  />
+                  {
+                    animalInfo?.nome ? animalInfo.nome : <FontAwesomeIcon
+                      icon={faSpinner}
+                      className="text-blue-500 text-xl flex-shrink-0"
+                    />
+                  }
+
+                  {
+                    animalInfo?.sexo ? animalInfo?.sexo == "M" ? <FontAwesomeIcon
+                      icon={faMars}
+                      className="text-blue-500 text-xl flex-shrink-0"
+                    /> : <FontAwesomeIcon
+                      icon={faVenus}
+                      className="text-blue-500 text-xl flex-shrink-0"
+                    /> : <FontAwesomeIcon
+                      icon={faSpinner}
+                      className="text-blue-500 text-xl flex-shrink-0"
+                    />
+                  }
+
                 </h2>
               </div>
 
               <div className="flex items-center gap-1 flex-shrink-0">
                 <span className="text-3xl font-bold">
-                  {loadingBatimento ? "..." : batimento ?? "--"}
+                  {
+                    loading ?
+                      <FontAwesomeIcon
+                        icon={faSpinner}
+                        className="text-blue-500 text-xl flex-shrink-0"
+                      />
+                      : batimento ?? <FontAwesomeIcon
+                        icon={faSpinner}
+                        className="text-blue-500 text-xl flex-shrink-0"
+                      />
+                  }
+
                 </span>
                 <FontAwesomeIcon
                   icon={faHeartPulse}
