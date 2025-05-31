@@ -35,7 +35,7 @@ export const WelcomeCard = () => {
         {/* Botão com mais margem superior no mobile */}
         <div className="flex justify-center mt-8 md:mt-10"> {/* Aumentado de mt-6 para mt-8 */}
           <Button
-            onClick={() => router.push('/home')}
+            onClick={() => router.push('/intro')}
             variant="primary"
             size="large"
             className="w-[240px] md:w-[240px] py-3 md:py-4 text-base md:text-lg"
