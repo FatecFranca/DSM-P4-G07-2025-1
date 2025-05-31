@@ -7,15 +7,43 @@ from datetime import datetime
 def calcular_estatisticas(dados: List[dict]) -> dict:
     df = pd.DataFrame(dados)
     
-    valores = df["frequenciaMedia"]
+    # Converte a coluna para numérico, se necessário
+    df["frequenciaMedia"] = pd.to_numeric(df["frequenciaMedia"], errors="coerce")
 
+    # Remove nulos
+    valores = df["frequenciaMedia"].dropna()
+
+    # Filtragem básica: limites fisiológicos plausíveis
+    valores = valores[(valores >= 30) & (valores <= 250)]
+
+    # Filtragem adicional: remoção de outliers com base no desvio padrão
+    media = valores.mean()
+    desvio = valores.std()
+
+    if desvio > 0:
+        limite_inferior = media - 3 * desvio
+        limite_superior = media + 3 * desvio
+        valores = valores[(valores >= limite_inferior) & (valores <= limite_superior)]
+
+    # Verifica se ainda há dados suficientes após filtragem
+    if valores.empty:
+        return {
+            "media": None,
+            "mediana": None,
+            "moda": None,
+            "desvio_padrao": None,
+            "assimetria": None
+        }
+
+    # Cálculos com conversão para tipos nativos
     return {
-        "media": valores.mean(),
-        "mediana": valores.median(),
-        "moda": valores.mode().iloc[0] if not valores.mode().empty else None,
-        "desvio_padrao": valores.std(),
-        "assimetria": skew(valores, bias=False)  
+        "media": float(valores.mean()),
+        "mediana": float(valores.median()),
+        "moda": float(valores.mode().iloc[0]) if not valores.mode().empty else None,
+        "desvio_padrao": float(valores.std()),
+        "assimetria": float(skew(valores, bias=False))
     }
+
 
 def media_por_data(dados: List[dict], inicio: str, fim: str) -> float:
     df = pd.DataFrame(dados)
