@@ -1,16 +1,20 @@
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import ExpandableMenu from '../components/ExpandableMenu/ExpandableMenu';
 import NavigationBar from '../components/NavigationBar';
+import MapaAnimal from '../components/AnimalMap/AnimalMap';
+
+const animalId = '68194120636f719fcd5ee5fd';
 
 export default function HomeScreen({ activeScreen, onNavigate }) {
     return (
         <View style={styles.container}>
-            <View style={styles.mapBackground}>
-                <Text style={styles.mapText}>🗺️ Mapa (GPS)</Text>
+            {/* Mapa exibindo localização do animal */}
+            <View style={styles.mapContainer}>
+                <MapaAnimal animalId={animalId} />
             </View>
 
-            <ExpandableMenu />
+            <ExpandableMenu animalId={animalId} />
             <NavigationBar activeScreen={activeScreen} onNavigate={onNavigate} />
         </View>
     );
@@ -22,14 +26,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#9D9D9C',
         position: 'relative',
     },
-    mapBackground: {
+    mapContainer: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    mapText: {
-        fontSize: 18,
-        color: '#fff',
-        fontFamily: 'Poppins_600SemiBold',
+        zIndex: 0,
     },
 });

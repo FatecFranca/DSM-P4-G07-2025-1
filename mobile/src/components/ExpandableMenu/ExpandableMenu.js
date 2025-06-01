@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated, Image } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import {
@@ -15,9 +15,12 @@ import {
     faVenus,
 } from '@fortawesome/free-solid-svg-icons';
 import Logo from '../Logo/Logo';
+import { getAnimalInfo, getLatestBatimentos } from '../../services/api';
 
-export default function ExpandableMenu() {
+export default function ExpandableMenu({animalId}) {
     const [expanded, setExpanded] = useState(false);
+    const [batimento, setBatimento] = useState(null);
+    const [animalInfo, setAnimalInfo] = useState(null);
     const animatedHeight = useRef(new Animated.Value(180)).current;
 
     const toggleExpand = () => {
@@ -47,6 +50,30 @@ export default function ExpandableMenu() {
         return faBatteryEmpty;
     };
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                
+
+                const [batimento, info] = await Promise.all([
+                    getLatestBatimentos(animalId),
+                    getAnimalInfo(animalId)
+                ]);
+
+                setBatimento(batimento);
+                setAnimalInfo(info);
+
+                console.log(info); // Agora isso mostrará os dados corretamente
+            } catch (error) {
+                console.error("Erro ao buscar dados:", error);
+            }
+        };
+
+        if (animalId) {
+            fetchData();
+        }
+    }, [animalId]);
+
     return (
         <Animated.View style={[styles.container, { height: animatedHeight }]}>
             <View style={styles.header}>
@@ -69,16 +96,16 @@ export default function ExpandableMenu() {
                     <View style={styles.infoBlock}>
                         <View style={styles.nameAndBpm}>
                             <View style={styles.nameRow}>
-                                <Text style={styles.name}>{animal.nome}</Text>
+                                <Text style={styles.name}>{animalInfo?.nome}</Text>
                                 <FontAwesomeIcon
-                                    icon={animal.sexo === 'M' ? faMars : faVenus}
+                                    icon={animalInfo?.sexo === 'M' ? faMars : faVenus}
                                     size={16}
-                                    color={animal.sexo === 'M' ? '#007AFF' : '#FF2D55'}
+                                    color={animalInfo?.sexo === 'M' ? '#007AFF' : '#FF2D55'}
                                     style={styles.genderIcon}
                                 />
                             </View>
                             <View style={styles.bpmRow}>
-                                <Text style={styles.bpmText}>{bpm}</Text>
+                                <Text style={styles.bpmText}>{batimento}</Text>
                                 <FontAwesomeIcon
                                     icon={faHeartPulse}
                                     size={20}
