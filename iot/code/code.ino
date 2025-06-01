@@ -10,10 +10,10 @@
 #define GREEN_PIN 12
 #define BLUE_PIN 11
 
-const char* ssid1 = "raizquadrada";
-const char* password1 = "qwertyuiop";
-const char* ssid2 = "Familia Resende 2.4G";
-const char* password2 = "89616412";
+const char* ssid1 = "M31 H";
+const char* password1 = "12345678";
+const char* ssid2 = "Mirian";
+const char* password2 = "43871342";
 const char* serverName = "https://dsm-p4-g07-2025-7.onrender.com";
 const String coleiraId = "6819475baa479949daccea94";
 const String animalId = "68194120636f719fcd5ee5fd";
