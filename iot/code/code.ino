@@ -6,9 +6,9 @@
 #include <MPU6050_tockn.h>
 #include <Wire.h>
 
-#define RED_PIN 11
+#define RED_PIN 13
 #define GREEN_PIN 12
-#define BLUE_PIN 13
+#define BLUE_PIN 11
 
 const char* ssid1 = "raizquadrada";
 const char* password1 = "qwertyuiop";
@@ -248,7 +248,7 @@ void loop() {
   if (beatAvg > 5) {
     enviarBatimento(beatAvg, timestamp);
   }
-  if (latitude != 0 || longitude != 0) {
+  if ((latitude > 1 && longitude > 1) || (latitude < -1 && longitude < -1)) {
     enviarLocalizacao(latitude, longitude, timestamp);
   }
   enviarMovimento(accX, accY, accZ, angleX, angleY, angleZ, timestamp);
