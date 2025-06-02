@@ -38,3 +38,14 @@ export async function getLatestBatimentos(animalId) {
   }
 }
 
+export async function getLatestLocalizacao(animalId) {
+    try {
+        const response = await api.get(`/localizacoes/animal/${animalId}`)
+        console.log("[DEBUG] Dados de localizacoes:", response.data)
+        return response.data?.content[0]
+    } catch (error) {
+        console.error('[API] Erro ao buscar localizacoes:', error)
+        throw error
+    }
+}
+
