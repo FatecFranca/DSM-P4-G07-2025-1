@@ -9,7 +9,7 @@ const containerStyle = {
 
 export default function MapComponent({ location }) {
   return (
-    <LoadScript googleMapsApiKey={"AIzaSyCwi5aDIM0TBLzxAPCO_4xbQBtqlGUedRg"}>
+    <LoadScript googleMapsApiKey={""}>
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={location}
