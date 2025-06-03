@@ -24,11 +24,11 @@ jobs:
       run: |
         git clone https://x-access-token:${TARGET_REPO_TOKEN}@github.com/gabrielspirlan/petdex.git destination
 
-    - name: Copy files to destination repo (overwrite everything)
+    - name: Copy files to destination repo
       run: |
+        shopt -s dotglob
         rm -rf destination/*
-        cp -r ./* destination/
-        cp -r ./.github destination/ || true
+        cp -r !(destination) destination/
 
     - name: Commit and push changes
       env:
