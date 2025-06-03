@@ -18,13 +18,25 @@ jobs:
         git config --global user.name "gabrielspirlan"
         git config --global user.email "grspirlandelli@gmail.com"
 
-    - name: Push to destination repo
+    - name: Clone destination repo
       env:
         TARGET_REPO_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }}
       run: |
-        git clone https://github.com/gabrielspirlan/petdex.git target-repo
-        rsync -av --delete --exclude='.git' ./ target-repo/
-        cd target-repo
+        git clone https://x-access-token:${TARGET_REPO_TOKEN}@github.com/gabrielspirlan/petdex.git destination
+
+    - name: Copy files to destination repo (overwrite everything)
+      run: |
+        rm -rf destination/*
+        cp -r ./* destination/
+        cp -r ./.github destination/ || true
+
+    - name: Commit and push changes
+      env:
+        TARGET_REPO_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }}
+      run: |
+        cd destination
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
         git add .
-        git commit -m "Sync from source repo: ${{ github.sha }}" || echo "No changes to commit"
-        git push https://x-access-token:${TARGET_REPO_TOKEN}@github.com/gabrielspirlan/petdex.git main
+        git commit -m "Full copy from source repo: ${{ github.sha }}" || echo "No changes to commit"
+        git push origin main
