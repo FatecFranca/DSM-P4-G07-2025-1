@@ -53,7 +53,7 @@ async def media_batimentos_ultimos_5_dias():
         todos_batimentos.extend(batimentos)
         pagina += 1
 
-    print(todos_batimentos[:5])  # 👈 Adiciona isso
+    print(todos_batimentos[:5])  
 
     if not todos_batimentos:
         return {"medias": {}}
