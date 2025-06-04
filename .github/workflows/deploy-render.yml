@@ -12,12 +12,9 @@ jobs:
     steps:
     - name: Checkout source repo
       uses: actions/checkout@v3
-      # O código fonte do repositório que acionou o workflow está agora em $GITHUB_WORKSPACE
 
     - name: Set up Git (global context for runner)
       run: |
-        # Esta configuração é para a identidade Git global do executor.
-        # O commit no repositório de destino usará uma identidade de bot mais específica.
         git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
 
@@ -25,59 +22,40 @@ jobs:
       env:
         TARGET_REPO_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }}
       run: |
-        # Conforme a estrutura original do script, clona para ../destination
-        # $GITHUB_WORKSPACE é o diretório do código fonte
-        # ../destination será o clone do repositório petdex
         echo "Creating directory ../destination"
         mkdir ../destination 
         echo "Cloning gabrielspirlan/petdex into ../destination"
         git clone https://x-access-token:${TARGET_REPO_TOKEN}@github.com/gabrielspirlan/petdex.git ../destination
 
-    # Este step substitui o problemático "Copy all files to destination (excluding .git)"
     - name: Sync files from source to destination's working tree
       run: |
-        # O diretório de trabalho atual (PWD) é $GITHUB_WORKSPACE (source repo)
         
-        # O backup opcional do usuário: cp -r ../destination/. destination-backup
-        # Isso criava $GITHUB_WORKSPACE/destination-backup a partir do conteúdo *original* de ../destination.
-        # Se este backup for desejado, ele deve ser feito ANTES do rsync que modifica ../destination.
         echo "Optional: Backing up original content of destination repo (../destination)..."
-        mkdir -p $GITHUB_WORKSPACE/destination_backup # Cria o diretório de backup dentro do workspace do source
+        mkdir -p $GITHUB_WORKSPACE/destination_backup
         rsync -a --exclude='.git/' ../destination/ $GITHUB_WORKSPACE/destination_backup/
 
         echo "Syncing files from source ($GITHUB_WORKSPACE) to destination's working tree (../destination)..."
-        # Use rsync para fazer com que a árvore de trabalho de ../destination espelhe $GITHUB_WORKSPACE.
-        # --delete: remove arquivos em ../destination que não existem em $GITHUB_WORKSPACE.
-        # --exclude='.git/': é crucial para:
-        #   1. Impedir que $GITHUB_WORKSPACE/.git (se existir) seja copiado.
-        #   2. Impedir que ../destination/.git seja afetado pelas operações de exclusão do rsync.
-        # A barra final em $GITHUB_WORKSPACE/ indica "o conteúdo de $GITHUB_WORKSPACE".
-        rsync -av --delete --exclude='.git/' $GITHUB_WORKSPACE/ ../destination/
-        # Nota: Se $GITHUB_WORKSPACE contiver arquivos muito grandes ou muitos arquivos
-        # que não se destinam ao repositório petdex, você pode querer ser mais específico
-        # com a origem do rsync ou usar arquivos .rsync-filter.
+        rsync -av --delete --exclude='.git/' --exclude='destination_backup/' --exclude='.github/' $GITHUB_WORKSPACE/ ../destination/
 
     - name: Commit and push to destination
       run: |
         echo "Changing directory to ../destination"
-        cd ../destination # Muda o diretório atual para o clone do repositório de destino
+        cd ../destination
         
         echo "Setting up Git identity for commit in destination repo..."
         git config user.name "github-actions[bot]"
-        git config user.email "41898282+github-actions[bot]@users.noreply.github.com" # Email padrão para o bot do GitHub Actions
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
         
         echo "Staging changes in destination repo..."
-        git add . # Adiciona todas as alterações (arquivos novos, modificados, excluídos)
+        git add .
         
         echo "Checking for changes to commit..."
         if git diff --staged --quiet; then
           echo "No changes to commit to the destination repository."
         else
           echo "Committing changes..."
-          # Mensagem de commit original do usuário: "Full copy from source repo: ${{ github.sha }}"
-          # Uma mensagem um pouco mais informativa:
           git commit -m "Sync: Update content from source ${{ github.repository }}@${{ github.sha }}"
           
           echo "Pushing changes to origin main of destination repo..."
-          git push origin main # Certifique-se de que 'main' é o branch correto para gabrielspirlan/petdex
+          git push origin main
         fi
