@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Query
 from app.clients import java_api
 from app.services import stats
-from datetime import datetime, timedelta
+from datetime import datetime
 import pandas as pd
 
 app = FastAPI(
@@ -18,7 +18,7 @@ async def get_batimentos():
 @app.get("/batimentos/estatisticas", tags=["Batimentos"])
 async def get_estatisticas():
     dados = await java_api.buscar_batimentos()
-    print(dados[:10])  # Mostra os 10 primeiros batimentos recebidos
+    print(dados[:10])
     resultado = stats.calcular_estatisticas(dados)
     return resultado
 
@@ -43,9 +43,6 @@ async def health_check():
 
 @app.get("/batimentos/media-ultimos-5-dias", tags=["Batimentos"])
 async def media_batimentos_ultimos_5_dias():
-    hoje = datetime.now()
-    cinco_dias_atras = hoje - timedelta(days=5)
-
     todos_batimentos = []
     pagina = 0
 
@@ -53,43 +50,14 @@ async def media_batimentos_ultimos_5_dias():
         batimentos = await java_api.buscar_batimentos(pagina)
         if not batimentos:
             break
-
-        for batimento in batimentos:
-            # Validação da chave 'dataHora'
-            if 'dataHora' not in batimento:
-                print(f"[AVISO] Registro ignorado por falta de 'dataHora': {batimento}")
-                continue
-
-            try:
-                data_batimento = datetime.fromisoformat(batimento['dataHora'])
-            except ValueError:
-                print(f"[AVISO] Formato inválido de dataHora: {batimento['dataHora']}")
-                continue
-
-            if data_batimento >= cinco_dias_atras:
-                todos_batimentos.append(batimento)
-
-        # Se o último batimento for mais antigo que o limite de 5 dias, encerramos
-        ultimo = batimentos[-1]
-        if 'dataHora' not in ultimo or datetime.fromisoformat(ultimo['dataHora']) < cinco_dias_atras:
-            break
-
+        todos_batimentos.extend(batimentos)
         pagina += 1
+
+    print(todos_batimentos[:5])  # 👈 Adiciona isso
 
     if not todos_batimentos:
         return {"medias": {}}
 
-    # Cria o DataFrame com os batimentos válidos
-    df = pd.DataFrame(todos_batimentos)
+    medias = stats.media_ultimos_5_dias_validos(todos_batimentos)
+    return {"medias": medias}
 
-    # Conversões e validações
-    df['data'] = pd.to_datetime(df['dataHora'], errors='coerce').dt.date
-    df['valor'] = pd.to_numeric(df['valor'], errors='coerce')
-
-    # Remove linhas com valores inválidos
-    df = df.dropna(subset=['data', 'valor'])
-
-    # Agrupa por data e calcula a média
-    medias_por_dia = df.groupby('data')['valor'].mean().round(2)
-
-    return {"medias": medias_por_dia.to_dict()}
