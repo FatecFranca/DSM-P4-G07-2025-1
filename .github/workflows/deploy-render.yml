@@ -22,13 +22,19 @@ jobs:
       env:
         TARGET_REPO_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }}
       run: |
-        git clone https://x-access-token:${TARGET_REPO_TOKEN}@github.com/gabrielspirlan/petdex.git destination
+        git clone https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/gabrielspirlan/petdex.git destination
 
-    - name: Copy files to destination repo
+    - name: Remove everything from destination
       run: |
-        shopt -s dotglob
-        rm -rf destination/*
-        cp -r !(destination) destination/
+        rm -rf destination/* destination/.* || true
+
+    - name: Copy source files to destination (without including destination/)
+      run: |
+        mkdir temp-copy
+        cp -a . temp-copy/
+        rm -rf temp-copy/destination
+        cp -a temp-copy/. destination/
+        rm -rf temp-copy
 
     - name: Commit and push changes
       env:
