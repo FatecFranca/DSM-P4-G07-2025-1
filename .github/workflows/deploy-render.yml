@@ -18,29 +18,24 @@ jobs:
         git config --global user.name "gabrielspirlan"
         git config --global user.email "grspirlandelli@gmail.com"
 
-    - name: Clone destination repo
+    - name: Clone destination repo outside current dir
       env:
         TARGET_REPO_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }}
       run: |
-        git clone https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/gabrielspirlan/petdex.git destination
+        mkdir ../destination
+        git clone https://x-access-token:${{ secrets.TARGET_REPO_TOKEN }}@github.com/gabrielspirlan/petdex.git ../destination
 
-    - name: Remove everything from destination
+    - name: Copy all files to destination (excluding .git)
       run: |
-        rm -rf destination/* destination/.* || true
+        shopt -s dotglob
+        cp -r ../destination/. destination-backup  # backup opcional de segurança
+        rm -rf ../destination/*
+        cp -r . ../destination/
+        rm -rf ../destination/.git  # remove repositório git da origem
 
-    - name: Copy source files to destination (without including destination/)
+    - name: Commit and push to destination
       run: |
-        mkdir temp-copy
-        cp -a . temp-copy/
-        rm -rf temp-copy/destination
-        cp -a temp-copy/. destination/
-        rm -rf temp-copy
-
-    - name: Commit and push changes
-      env:
-        TARGET_REPO_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }}
-      run: |
-        cd destination
+        cd ../destination
         git config user.name "github-actions"
         git config user.email "github-actions@github.com"
         git add .
