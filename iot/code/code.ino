@@ -245,6 +245,12 @@ void loop() {
   // -------------- // --------------
 
   String timestamp = getISO8601Time();
+  Serial.println("\n---------------------- LOCALIZACAO ----------------------");
+  Serial.print("Latitude: ");
+  Serial.print(latitude);
+  Serial.print("  Longitude: ");
+  Serial.println(longitude);
+  Serial.println("\n-----------------------------------------------------------");
   if (beatAvg > 5) {
     enviarBatimento(beatAvg, timestamp);
   }
