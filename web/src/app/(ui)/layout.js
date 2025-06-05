@@ -33,7 +33,7 @@ export default function Layout({ children, activePage = "home", activeColor = "v
 
 
   return (
-    <div className="relative h-screen w-full overflow-hidden">
+    <div className="fixed inset-0 overflow-hidden">
       {/* Mapa de fundo */}
       <div className="absolute inset-0" style={{ zIndex: 0 }}>
         {location ? (
