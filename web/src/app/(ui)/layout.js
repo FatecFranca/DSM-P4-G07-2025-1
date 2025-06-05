@@ -31,9 +31,6 @@ export default function Layout({ children, activePage = "home", activeColor = "v
     fetchData();
   }, []);
 
-  if (location == null) {
-    return "Carregando"
-  }
 
   return (
     <div className="relative h-screen w-full overflow-hidden">

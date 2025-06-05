@@ -248,7 +248,7 @@ void loop() {
   if (beatAvg > 5) {
     enviarBatimento(beatAvg, timestamp);
   }
-  if (((latitude > 1 && longitude > 1) || (latitude < -1 && longitude < -1)) && (latitude != -20.505828 && longitude != -47.407018)) {
+  if (((latitude > 1 && longitude > 1) || (latitude < -1 && longitude < -1)) && (latitude != 23.594131 && longitude != 23.93906)) {
     enviarLocalizacao(latitude, longitude, timestamp);
   }
   enviarMovimento(accX, accY, accZ, angleX, angleY, angleZ, timestamp);
