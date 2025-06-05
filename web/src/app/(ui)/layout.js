@@ -17,6 +17,19 @@ export default function Layout({ children, activePage = "home", activeColor = "v
   const pathname = usePathname();
   const isHomePage = pathname === "/home";
 
+  // Impede scroll apenas na página inicial
+  useEffect(() => {
+    if (isHomePage) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto"; // Resetar quando sair da rota
+    };
+  }, [isHomePage]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -47,19 +60,15 @@ export default function Layout({ children, activePage = "home", activeColor = "v
         </div>
       )}
 
-      {/* Conteúdo principal */}
-      <main className={`relative z-10 ${isHomePage ? 'pb-20' : ''}`}>
+      <main className={`relative z-10 ${isHomePage ? "pb-20" : ""}`}>
         {children}
       </main>
 
-      {/* Menu expansível */}
       {isHomePage && (
-        <ExpandableMenu animalId={animalId} backgroundColor="var(--color-white-matte)" />
-      )}
-
-      {/* Barra inferior fixa */}
-      {isHomePage && (
-        <NavigationBar activePage={activePage} activeColor={activeColor} />
+        <>
+          <ExpandableMenu animalId={animalId} backgroundColor="var(--color-white-matte)" />
+          <NavigationBar activePage={activePage} activeColor={activeColor} />
+        </>
       )}
     </div>
   );
