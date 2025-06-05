@@ -20,17 +20,17 @@ public class LocalizacaoReqDTO {
     private String animal;
 
     @Schema(description = "ID da coleira que fez a coleta da localização do animal", example = "")
-    private String coleiraId;
+    private String coleira;
 
     public LocalizacaoReqDTO() {
     }
 
-    public LocalizacaoReqDTO(Date data, Double latitude, Double longitude, String animal, String coleiraId) {
+    public LocalizacaoReqDTO(Date data, Double latitude, Double longitude, String animal, String coleira) {
         this.data = data;
         this.latitude = latitude;
         this.longitude = longitude;
         this.animal = animal;
-        this.coleiraId = coleiraId;
+        this.coleira = coleira;
     }
 
     public Date getData() {
@@ -65,11 +65,11 @@ public class LocalizacaoReqDTO {
         this.animal = animal;
     }
 
-    public String getColeiraId() {
-        return coleiraId;
+    public String getColeira() {
+        return coleira;
     }
 
-    public void setColeiraId(String coleiraId) {
-        this.coleiraId = coleiraId;
+    public void setColeira(String coleira) {
+        this.coleira = coleira;
     }
 }
