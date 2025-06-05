@@ -1,4 +1,4 @@
-name: Deploy render
+name: Sync Modules to Individual Repositories
 
 on:
   push:
@@ -6,56 +6,85 @@ on:
       - main
 
 jobs:
-  sync:
+  sync-modules:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false # Opcional: define se a falha em um job da matriz deve cancelar os outros. false = continua.
+      matrix:
+        module:
+          - name: api-java # Um nome identificador para o módulo/pasta
+            repo_slug: gabrielspirlan/petdex-api # O slug do repositório de destino (usuario/nome-repo)
+            source_path: api-java # O nome da pasta no repositório de origem (este repositório)
+          - name: iot
+            repo_slug: gabrielspirlan/petdex-iot
+            source_path: iot
+          - name: mobile
+            repo_slug: gabrielspirlan/petdex-app
+            source_path: mobile
+          - name: web
+            repo_slug: gabrielspirlan/petdex-web
+            source_path: web
+          - name: api-python
+            repo_slug: gabrielspirlan/petdex-estatistica
+            source_path: api-python
 
     steps:
-    - name: Checkout source repo
-      uses: actions/checkout@v3
+    - name: Checkout source monorepo
+      uses: actions/checkout@v4 # Recomenda-se usar a versão mais recente
 
-    - name: Set up Git (global context for runner)
-      run: |
-        git config --global user.name "${{ github.actor }}"
-        git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-
-    - name: Clone destination repo outside current dir
+    - name: Sync module (${{ matrix.module.name }}) to its repository
       env:
-        TARGET_REPO_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }}
+        TARGET_REPO_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }} # Token com permissão de escrita nos repositórios de destino
+        # Passando valores da matriz para o ambiente para simplificar o script
+        MODULE_NAME: ${{ matrix.module.name }}
+        DEST_REPO_SLUG: ${{ matrix.module.repo_slug }}
+        SOURCE_FOLDER_NAME: ${{ matrix.module.source_path }}
       run: |
-        echo "Creating directory ../destination"
-        mkdir ../destination 
-        echo "Cloning gabrielspirlan/petdex into ../destination"
-        git clone https://x-access-token:${TARGET_REPO_TOKEN}@github.com/gabrielspirlan/petdex.git ../destination
+        SOURCE_DIR_FULL_PATH="$GITHUB_WORKSPACE/${SOURCE_FOLDER_NAME}" # Caminho completo para a pasta de origem do módulo
 
-    - name: Sync files from source to destination's working tree
-      run: |
-        
-        echo "Optional: Backing up original content of destination repo (../destination)..."
-        mkdir -p $GITHUB_WORKSPACE/destination_backup
-        rsync -a --exclude='.git/' ../destination/ $GITHUB_WORKSPACE/destination_backup/
+        # Verifica se o diretório de origem do módulo existe
+        if [ ! -d "${SOURCE_DIR_FULL_PATH}" ]; then
+          echo "Diretório de origem '${SOURCE_DIR_FULL_PATH}' para o módulo '${MODULE_NAME}' não encontrado. Pulando este módulo."
+          exit 0 # Sai com sucesso para este item da matriz, permitindo que outros continuem
+        fi
 
-        echo "Syncing files from source ($GITHUB_WORKSPACE) to destination's working tree (../destination)..."
-        rsync -av --delete --exclude='.git/' --exclude='destination_backup/' --exclude='.github/' $GITHUB_WORKSPACE/ ../destination/
+        # Diretório temporário para clonar o repositório de destino
+        # Usar um nome de diretório único para cada módulo evita conflitos
+        DEST_CLONE_DIR="../${MODULE_NAME}_clone"
 
-    - name: Commit and push to destination
-      run: |
-        echo "Changing directory to ../destination"
-        cd ../destination
-        
-        echo "Setting up Git identity for commit in destination repo..."
+        echo "Clonando o repositório de destino '${DEST_REPO_SLUG}' em '${DEST_CLONE_DIR}'..."
+        # Clona apenas o branch principal (geralmente 'main') e com profundidade 1 para economizar tempo/espaço
+        # O token é usado para autenticação HTTPS
+        git clone --depth 1 "https://x-access-token:${TARGET_REPO_TOKEN}@github.com/${DEST_REPO_SLUG}.git" "${DEST_CLONE_DIR}"
+
+        echo "Sincronizando arquivos de '${SOURCE_DIR_FULL_PATH}/' para '${DEST_CLONE_DIR}/' para o módulo '${MODULE_NAME}'..."
+        # A barra final em SOURCE_DIR_FULL_PATH/ é crucial para o rsync copiar o *conteúdo* da pasta, não a pasta em si.
+        # A barra final em DEST_CLONE_DIR/ garante que seja tratado como um diretório.
+        # --delete remove arquivos no destino que não existem na origem.
+        # --exclude='.git/' evita copiar qualquer metadado .git da origem (improvável em subpastas, mas seguro).
+        rsync -av --delete --exclude='.git/' "${SOURCE_DIR_FULL_PATH}/" "${DEST_CLONE_DIR}/"
+
+        # Muda para o diretório do repositório clonado
+        cd "${DEST_CLONE_DIR}"
+
+        echo "Configurando a identidade do Git para commit em '${DEST_REPO_SLUG}'..."
         git config user.name "github-actions[bot]"
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        
-        echo "Staging changes in destination repo..."
+
+        echo "Adicionando alterações ao stage para o módulo '${MODULE_NAME}' em '${DEST_REPO_SLUG}'..."
         git add .
-        
-        echo "Checking for changes to commit..."
+
+        # Verifica se há alterações para commitar
         if git diff --staged --quiet; then
-          echo "No changes to commit to the destination repository."
+          echo "Nenhuma alteração para commitar para o módulo '${MODULE_NAME}' em '${DEST_REPO_SLUG}'."
         else
-          echo "Committing changes..."
-          git commit -m "Sync: Update content from source ${{ github.repository }}@${{ github.sha }}"
+          echo "Commitando alterações para o módulo '${MODULE_NAME}'..."
+          # Cria um SHA curto para a mensagem de commit
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          COMMIT_MESSAGE="Sync: Atualiza módulo '${MODULE_NAME}' do repositório ${{ github.repository }}@${SHORT_SHA}"
+          git commit -m "${COMMIT_MESSAGE}"
           
-          echo "Pushing changes to origin main of destination repo..."
+          echo "Enviando alterações para o branch 'main' de '${DEST_REPO_SLUG}'..."
+          # Assume que o branch de destino é 'main'. Adapte se necessário.
           git push origin main
         fi
