@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Button } from "./button";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMars, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { faMars, faVenus, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { getAnimalInfo } from "@/utils/api";
 import { useEffect, useState } from "react";
 
@@ -16,7 +16,7 @@ export function IntroScreen({ animalId }) {
         const fetchData = async () => {
             try {
                 const info = await getAnimalInfo(animalId);
-                console.log(info); // Aqui sim o valor correto
+                console.log(info);
                 setAnimalInfo(info);
             } catch (error) {
                 console.error("Erro ao buscar dados:", error);
@@ -44,11 +44,9 @@ export function IntroScreen({ animalId }) {
         return idade;
     }
 
-
-
     return (
         <div className="relative w-full h-screen overflow-hidden px-6 py-8">
-            {/* Logo: centralizada no mobile, canto direito com respiro no desktop */}
+            {/* Logo */}
             <div className="absolute top-0 w-full flex justify-center md:justify-end p-4 md:pr-10 z-10">
                 <Image
                     src="/logo-petdex.svg"
@@ -59,38 +57,34 @@ export function IntroScreen({ animalId }) {
                 />
             </div>
 
-
-
-            {/* Gato no canto superior esquerdo */}
+            {/* Elementos decorativos */}
             <div className="absolute top-0 left-0 p-2 opacity-20 z-0">
                 <Image
                     src="/gato-dex.svg"
                     alt="Gato"
                     width={180}
                     height={180}
-                    className="w-[120px] md:w-[280px]" // menor no mobile
+                    className="w-[120px] md:w-[280px]"
                 />
             </div>
 
-            {/* Cachorro centralizado na lateral direita */}
             <div className="absolute top-1/2 right-0 -translate-y-1/2 opacity-20 z-0 pr-2">
                 <Image
                     src="/cao-dex.svg"
                     alt="Cachorro"
                     width={240}
                     height={240}
-                    className="w-[160px] md:w-[340px]" // menor no mobile
+                    className="w-[160px] md:w-[340px]"
                 />
             </div>
 
-            {/* Pata no canto inferior esquerdo */}
             <div className="absolute bottom-0 left-0 p-2 opacity-20 z-0">
                 <Image
                     src="/pata-dex.svg"
                     alt="Pata"
                     width={200}
                     height={200}
-                    className="w-[120px] md:w-[260px]" // menor no mobile
+                    className="w-[120px] md:w-[260px]"
                 />
             </div>
 
@@ -101,10 +95,10 @@ export function IntroScreen({ animalId }) {
                     <h1 className="text-3xl md:text-4xl font-bold text-[var(--color-orange)]">
                         Boas-vindas a PetDex!
                     </h1>
-                    <p className="text-base md:text-lg font-semibold text-gray-700 leading-snug">
-                        Nesta plataforma, você poderá visualizar em<br className="hidden md:block" />
-                        tempo real os dados da coleira inteligente do seu<br className="hidden md:block" />
-                        pet, incluindo localização, frequência cardíaca e<br className="hidden md:block" />
+                    <p className="text-base md:text-lg font-semibold text-black-700 leading-snug">
+                        Nesta plataforma, você poderá visualizar em <br className="hidden md:block" />
+                        tempo real os dados da coleira inteligente do seu <br className="hidden md:block" />
+                        pet, incluindo localização, frequência cardíaca e <br className="hidden md:block" />
                         outras informações vitais.
                     </p>
                 </div>
@@ -123,61 +117,63 @@ export function IntroScreen({ animalId }) {
                         <div className="text-left pt-2">
                             <div className="flex items-center mb-2">
                                 <h2 className="text-xl md:text-2xl font-bold text-gray-800 mr-3">
-                                    {
-                                        animalInfo?.nome ? animalInfo.nome : <FontAwesomeIcon
+                                    {animalInfo?.nome ? animalInfo.nome : (
+                                        <FontAwesomeIcon
                                             icon={faSpinner}
                                             className="text-blue-500 text-xl flex-shrink-0"
                                         />
-                                    }
+                                    )}
                                 </h2>
-                                {
-                                    animalInfo?.sexo ? animalInfo?.sexo == "M" ? <FontAwesomeIcon
-                                        icon={faMars}
-                                        className="text-blue-500 text-xl flex-shrink-0"
-                                    /> : <FontAwesomeIcon
-                                        icon={faVenus}
-                                        className="text-blue-500 text-xl flex-shrink-0"
-                                    /> : <FontAwesomeIcon
+                                {animalInfo?.sexo ? (
+                                    animalInfo?.sexo == "M" ? (
+                                        <FontAwesomeIcon
+                                            icon={faMars}
+                                            className="text-blue-500 text-xl flex-shrink-0"
+                                        />
+                                    ) : (
+                                        <FontAwesomeIcon
+                                            icon={faVenus}
+                                            className="text-blue-500 text-xl flex-shrink-0"
+                                        />
+                                    )
+                                ) : (
+                                    <FontAwesomeIcon
                                         icon={faSpinner}
                                         className="text-blue-500 text-xl flex-shrink-0"
                                     />
-                                }
+                                )}
                             </div>
-                            <p className="text-gray-600 text-sm md:text-base mb-3">
-
-                                {
-                                    animalInfo?.racaNome ? animalInfo.racaNome : <FontAwesomeIcon
+                            <p className="text-black text-sm md:text-base mb-3 font-medium">
+                                {animalInfo?.racaNome ? animalInfo.racaNome : (
+                                    <FontAwesomeIcon
                                         icon={faSpinner}
                                         className="text-blue-500 text-xl flex-shrink-0"
                                     />
-                                }
+                                )}
                             </p>
 
-                            <div className="flex gap-4 text-gray-800 text-sm md:text-base whitespace-nowrap">
-                                <span>
-                                    {
-                                        animalInfo?.dataNascimento
-                                            ? `${calcularIdade(animalInfo.dataNascimento)} anos`
-                                            : <FontAwesomeIcon icon={faSpinner} className="text-blue-500 text-xl flex-shrink-0" />
-                                    }
+                            {/* Linha ajustada para mobile */}
+                            <div className="flex gap-2 md:gap-4 text-xs md:text-sm text-black font-medium whitespace-nowrap w-full">
+                                <span className="flex-shrink-0">
+                                    {animalInfo?.dataNascimento
+                                        ? `${calcularIdade(animalInfo.dataNascimento)} anos`
+                                        : <FontAwesomeIcon icon={faSpinner} className="text-blue-500 text-lg flex-shrink-0" />}
                                 </span>
 
-                                <span>
-                                    {
-                                        animalInfo?.peso ? animalInfo.peso : <FontAwesomeIcon
-                                            icon={faSpinner}
-                                            className="text-blue-500 text-xl flex-shrink-0"
-                                        />
-                                    } kg
+                                <span className="flex-shrink-0">
+                                    {animalInfo?.peso 
+                                        ? `${animalInfo.peso} kg`
+                                        : <FontAwesomeIcon icon={faSpinner} className="text-blue-500 text-lg flex-shrink-0" />}
                                 </span>
-                                <span>Porte Grande</span>
+                                
+                                <span className="flex-shrink-0">Porte Grande</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Seção de texto e botão */}
                     <div className="lg:w-[55%] flex flex-col pl-0 md:pl-4">
-                        <p className="text-sm md:text-lg text-gray-700 text-left mb-6 md:mb-8 ml-2">
+                        <p className="text-sm md:text-lg text-[var(--color-gray-medium)] text-left mb-6 md:mb-8 ml-2 font-semibold">
                             Para esta demonstração, vamos acompanhar o nosso companheiro de testes: Uno, um pet muito especial que representa todos os animais que queremos proteger.
                         </p>
 
