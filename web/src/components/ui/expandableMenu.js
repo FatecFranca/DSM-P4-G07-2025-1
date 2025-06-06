@@ -2,7 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronUp, faChevronDown, faHeartPulse, faCircle, faBatteryFull, faMars, faVenus, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChevronUp,
+  faChevronDown,
+  faHeartPulse,
+  faCircle,
+  faBatteryFull,
+  faMars,
+  faVenus,
+  faSpinner
+} from "@fortawesome/free-solid-svg-icons";
 import { Logo } from "@/components/ui/logo";
 import Image from "next/image";
 import { getAnimalInfo, getLatestBatimentos } from "@/utils/api";
@@ -26,8 +35,6 @@ export function ExpandableMenu({ animalId, backgroundColor = "white" }) {
 
         setBatimento(batimento);
         setAnimalInfo(info);
-
-        console.log(info); // Agora isso mostrará os dados corretamente
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
         setBatimentoError(error.message);
@@ -40,7 +47,6 @@ export function ExpandableMenu({ animalId, backgroundColor = "white" }) {
       fetchData();
     }
   }, [animalId]);
-
 
   return (
     <div
@@ -89,55 +95,66 @@ export function ExpandableMenu({ animalId, backgroundColor = "white" }) {
           <div className="flex-1 min-w-0">
             <div className="flex justify-between items-start">
               <div>
-                <h2 className="text-3xl font-bold flex items-center gap-2">
-                  {
-                    animalInfo?.nome ? animalInfo.nome : <FontAwesomeIcon
+                <h2 className="text-2xl font-bold flex items-center gap-2">
+                  {animalInfo?.nome ? (
+                    animalInfo.nome
+                  ) : (
+                    <FontAwesomeIcon
                       icon={faSpinner}
                       className="text-blue-500 text-xl flex-shrink-0"
                     />
-                  }
+                  )}
 
-                  {
-                    animalInfo?.sexo ? animalInfo?.sexo == "M" ? <FontAwesomeIcon
-                      icon={faMars}
-                      className="text-blue-500 text-xl flex-shrink-0"
-                    /> : <FontAwesomeIcon
-                      icon={faVenus}
-                      className="text-blue-500 text-xl flex-shrink-0"
-                    /> : <FontAwesomeIcon
+                  {animalInfo?.sexo ? (
+                    animalInfo?.sexo == "M" ? (
+                      <FontAwesomeIcon
+                        icon={faMars}
+                        className="text-blue-500 text-xl flex-shrink-0"
+                      />
+                    ) : (
+                      <FontAwesomeIcon
+                        icon={faVenus}
+                        className="text-blue-500 text-xl flex-shrink-0"
+                      />
+                    )
+                  ) : (
+                    <FontAwesomeIcon
                       icon={faSpinner}
                       className="text-blue-500 text-xl flex-shrink-0"
                     />
-                  }
-
+                  )}
                 </h2>
               </div>
 
-              <div className="flex items-center gap-1 flex-shrink-0">
-                <span className="text-3xl font-bold">
-                  {
-                    loading ?
+              {/* Batimentos */}
+              <div className="flex items-center gap-1 flex-shrink-0 ml-2 lg:ml-0">
+                <span className="text-2xl font-bold">
+                  {loading ? (
+                    <FontAwesomeIcon
+                      icon={faSpinner}
+                      className="text-blue-500 text-xl flex-shrink-0"
+                    />
+                  ) : (
+                    batimento ?? (
                       <FontAwesomeIcon
                         icon={faSpinner}
                         className="text-blue-500 text-xl flex-shrink-0"
                       />
-                      : batimento ?? <FontAwesomeIcon
-                        icon={faSpinner}
-                        className="text-blue-500 text-xl flex-shrink-0"
-                      />
-                  }
-
+                    )
+                  )}
                 </span>
                 <FontAwesomeIcon
                   icon={faHeartPulse}
                   className="text-red-500 text-xl"
                 />
-                <span className="text-xl font-bold ml-1">BPM</span>
+                <span className="text-base font-bold ml-1">BPM</span>
               </div>
             </div>
 
-            <div className="flex justify-between items-center mt-4">
-              <div className="flex items-center gap-1 text-sm font-medium whitespace-nowrap">
+            {/* Status + bateria */}
+            <div className="flex flex-row justify-between items-center mt-4 w-full">
+              {/* Status da PetDex */}
+              <div className="flex items-center gap-1 font-medium whitespace-nowrap text-xs sm:text-sm">
                 <span>Status da PetDex:</span>
                 <FontAwesomeIcon
                   icon={faCircle}
@@ -146,7 +163,8 @@ export function ExpandableMenu({ animalId, backgroundColor = "white" }) {
                 <span>Conectada</span>
               </div>
 
-              <div className="flex items-center gap-1 flex-shrink-0 text-sm font-medium">
+              {/* Bateria */}
+              <div className="flex items-center gap-1 font-medium text-xs sm:text-sm">
                 <FontAwesomeIcon
                   icon={faBatteryFull}
                   className="text-green-500 text-xl -rotate-90"

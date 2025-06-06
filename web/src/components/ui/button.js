@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export const Button = ({ 
+export const Button = ({
   children,
   href,
   onClick,
@@ -15,13 +15,14 @@ export const Button = ({
 }) => {
   // Classes base
   const baseClasses = "rounded-full font-semibold transition-all flex items-center justify-center gap-2";
-  
+
   // Variantes de cor
   const variants = {
-    primary: "bg-[var(--color-orange)] text-white hover:bg-orange-600",
-    secondary: "border-2 border-[var(--color-orange)] text-[var(--color-orange)] hover:bg-orange-50",
-    text: "text-[var(--color-orange)] hover:underline"
+    primary: "bg-[var(--color-orange)] text-white hover:bg-[var(--color-orange-hover)]",
+    secondary: "border-2 border-[var(--color-orange)] text-[var(--color-orange)] hover:bg-[var(--color-orange-hover)]",
+    text: "text-[var(--color-orange)] hover:text-[var(--color-orange-hover)] hover:underline"
   };
+
 
   // Tamanhos
   const sizes = {
