@@ -3,33 +3,38 @@
 import { useState, useEffect } from "react";
 import { ExpandableMenu } from "@/components/ui/expandableMenu";
 import { NavigationBar } from "@/components/ui/navigationBar";
-import { getAnimalInfo, getLatestBatimentos } from "@/utils/api";
-import { animalId } from "@/utils/api";
+import { 
+  getLatestBatimentos, 
+  animalId, 
+  getMediaUltimos5Dias, 
+  getEstatisticasCompletas
+} from "@/utils/api";
 
 export default function SaudePage() {
-  const [healthData, setHealthData] = useState(null);
+  const [healthData, setHealthData] = useState({
+    moda: "--",
+    mediana: "--",
+    desvioPadrao: "--",
+    media: "--"
+  });
+  const [mediasUltimos5Dias, setMediasUltimos5Dias] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [batimentos, animalInfo] = await Promise.all([
-          getLatestBatimentos(animalId),
-          getAnimalInfo(animalId)
-        ]);
-        
-        const mockHealthData = {
-          media: "78,82",
-          moda: "87,00",
-          mediana: "87,00",
-          desvioPadrao: "18,75",
-          assimetria: "-0,56",
-          ultimoBatimento: batimentos,
-          probabilidade: "95%"
-        };
 
-        setHealthData(mockHealthData);
+        const [estatisticas, medias] = await Promise.all([
+          getEstatisticasCompletas(),
+          getMediaUltimos5Dias()
+        ]);
+
+        setHealthData({
+          ...estatisticas
+        });
+
+        setMediasUltimos5Dias(medias);
       } catch (error) {
         console.error("Erro ao buscar dados de saúde:", error);
       } finally {
@@ -41,11 +46,10 @@ export default function SaudePage() {
   }, []);
 
   return (
-    <div className="relative h-screen flex flex-col">
-      {/* Área de conteúdo com scroll */}
-      <main className="flex-1 overflow-y-auto pb-20">
+    <div className="relative flex flex-col bg-[var(--color-background)] min-h-screen">
+      <main className="flex-grow overflow-y-auto pb-20 relative">
         {loading ? (
-          <div className="h-full flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center justify-center bg-[var(--color-background)]">
             <div className="text-center">
               <span className="loading loading-spinner text-[var(--color-orange)] text-4xl"></span>
               <p className="mt-4 text-lg">Carregando dados de saúde...</p>
@@ -53,71 +57,68 @@ export default function SaudePage() {
           </div>
         ) : (
           <div className="p-6">
-            <h1 className="text-2xl font-bold text-[var(--color-red)] mb-4">
+            <h1 className="text-2xl font-bold text-[var(--color-red)] text-center mb-4">
               Painel de Saúde
             </h1>
-            
-            <p className="text-gray-700 mb-6">
-              Frequência cardíaca, padrões de atividade e<br />
-              informações de saúde reunidas em um só lugar.<br />
-              Tudo sobre a saúde do seu pet.
-            </p>
 
-            <div className="bg-white rounded-lg p-4 shadow-md mb-6">
-              <h2 className="text-lg font-semibold mb-3">
-                Média de batimentos das últimas cinco dias:
+            <div className="flex justify-center">
+              <p
+                className="
+                  max-w-[320px] md:max-w-full
+                  text-base font-medium text-black text-center leading-snug mb-6
+                  break-words
+                  whitespace-normal md:whitespace-nowrap
+                "
+              >
+                Frequência cardíaca, padrões de atividade e informações de saúde reunidas em um só lugar. Tenha controle total da saúde do seu pet.
+              </p>
+            </div>
+
+            {/* Card das médias dos últimos 5 dias */}
+            <div className="bg-[var(--color-white-matte)] rounded-lg p-4 shadow-md mb-6 max-w-full break-words">
+              <h2 className="text-base font-bold mb-3 text-center text-[var(--color-red)] break-words max-w-full">
+                Média de batimentos dos últimos cinco dias:
               </h2>
-              
-              <div className="grid grid-cols-2 gap-2">
-                <StatItem label="Média" value={healthData?.media || "--"} />
-                <StatItem label="Moda" value={healthData?.moda || "--"} />
-                <StatItem label="Mediana" value={healthData?.mediana || "--"} />
-                <StatItem label="Desvio Padrão" value={healthData?.desvioPadrao || "--"} />
-                <StatItem label="Assimetria" value={healthData?.assimetria || "--"} />
+              <div className="grid grid-cols-1 gap-2">
+                {mediasUltimos5Dias.length > 0 ? (
+                  mediasUltimos5Dias.map(({ data, valor }, i) => (
+                    <StatItem key={i} label={data} value={`${valor.toFixed(1)} bpm`} />
+                  ))
+                ) : (
+                  <p className="text-gray-500 text-center">Nenhum dado disponível</p>
+                )}
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-4 shadow-md mb-6">
-              <h2 className="text-lg font-semibold mb-3">
-                Próximas características:
+            {/* Card de estatísticas */}
+            <div className="bg-[var(--color-white-matte)] rounded-lg p-4 shadow-md mb-6 max-w-full break-words">
+              <h2 className="text-base font-bold mb-3 text-center text-[var(--color-red)] break-words max-w-full">
+                Análise Estatística da Frequência Cardíaca
               </h2>
-              
-              <h3 className="font-medium mb-2">Probabilidade de Batimento</h3>
-              <p className="text-gray-700 text-sm mb-4">
-                Explica a probabilidade do seu pet apresentar um batimento cardíaco, 
-                com base na atividade real.
-              </p>
-              
-              <div className="bg-gray-100 p-3 rounded-lg">
-                <p className="text-sm font-medium mb-2">
-                  Último batimento registrado: {healthData?.ultimoBatimento || "--"} BPM
-                </p>
-                <p className="text-sm">
-                  Com base nos dados coletados nas últimas 5 dias, o 
-                  batimento do seu pet apresenta {healthData?.probabilidade || "--"} de probabilidade.
-                </p>
+              <div className="grid grid-cols-2 gap-3">
+                <StatItem
+                  label="Média geral"
+                  value={`${typeof healthData.media === "number" ? healthData.media.toFixed(1) : "--"} bpm`}
+                />
+                <StatItem
+                  label="Mediana"
+                  value={`${typeof healthData.mediana === "number" ? healthData.mediana.toFixed(1) : "--"} bpm`}
+                />
+                <StatItem
+                  label="Moda"
+                  value={`${typeof healthData.moda === "number" ? healthData.moda.toFixed(1) : "--"} bpm`}
+                />
+                <StatItem
+                  label="Desvio padrão"
+                  value={`${typeof healthData.desvioPadrao === "number" ? healthData.desvioPadrao.toFixed(1) : "--"}`}
+                />
               </div>
-            </div>
-
-            <div className="bg-white rounded-lg p-4 shadow-md mb-6">
-              <p className="text-sm mb-3">
-                Este batimento é significativamente mais alto do que
-                os valores normais registrados.
-              </p>
-              <p className="text-sm">
-                Recomendamos observar os níveis de atividade, 
-                temperatura ambiente ou procurar orientação veterinária
-                se o valor for recorrente.
-              </p>
             </div>
           </div>
         )}
       </main>
 
-      {/* Menu expansível - mantém a mesma cor da home */}
       <ExpandableMenu animalId={animalId} backgroundColor="var(--color-white-matte)" />
-
-      {/* Barra de navegação */}
       <NavigationBar activePage="saude" activeColor="var(--color-red)" />
     </div>
   );
