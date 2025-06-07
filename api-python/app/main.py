@@ -12,7 +12,7 @@ app = FastAPI(
 
 @app.get("/batimentos", tags=["Batimentos"])
 async def get_batimentos():
-    dados = await java_api.buscar_batimentos()
+    dados = await java_api.buscar_todos_batimentos()
     return {"dados": dados}
 
 @app.get("/batimentos/estatisticas", tags=["Batimentos"])
@@ -34,7 +34,10 @@ async def media_batimentos_por_data(
 
 @app.get("/batimentos/probabilidade", tags=["Batimentos"])
 async def probabilidade_batimento(valor: float = Query(..., description="Valor do batimento para calcular a probabilidade")):
-    dados = await java_api.buscar_batimentos()
+    try:
+        dados = await java_api.buscar_todos_batimentos()
+    except Exception as e:
+        return {"erro": f"Erro ao buscar dados: {str(e)}"}
     prob = stats.calcular_probabilidade(dados, valor)
     return {"probabilidade": prob}
 
