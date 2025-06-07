@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Query
 from app.clients import java_api
 from app.services import stats
-from datetime import datetime
+from datetime import datetime, date
 import pandas as pd
 
 app = FastAPI(
@@ -25,12 +25,12 @@ async def get_estatisticas():
 
 @app.get("/batimentos/media-por-data", tags=["Batimentos"])
 async def media_batimentos_por_data(
-    data_inicio: str = Query(..., alias="inicio"),
-    data_fim: str = Query(..., alias="fim")
+    inicio: date = Query(..., description="Data de início no formato YYYY-MM-DD"),
+    fim: date = Query(..., description="Data de fim no formato YYYY-MM-DD")
 ):
-    dados = await java_api.buscar_batimentos()
-    media = stats.media_por_data(dados, data_inicio, data_fim)
-    return {"media": media}
+    dados = await java_api.buscar_todos_batimentos()
+    resultado = stats.media_por_intervalo(dados, inicio, fim)
+    return resultado
 
 @app.get("/batimentos/probabilidade", tags=["Batimentos"])
 async def probabilidade_batimento(valor: float = Query(..., description="Valor do batimento para calcular a probabilidade")):
@@ -44,22 +44,14 @@ async def health_check():
 
 @app.get("/batimentos/media-ultimos-5-dias", tags=["Batimentos"])
 async def media_batimentos_ultimos_5_dias():
-    todos_batimentos = []
-    pagina = 0
+    batimentos = await java_api.buscar_todos_batimentos()
 
-    while True:
-        batimentos = await java_api.buscar_batimentos(pagina)
-        if not batimentos:
-            break
-        todos_batimentos.extend(batimentos)
-        pagina += 1
+    print(batimentos[:5])
 
-    print(todos_batimentos[:5])  
-
-    if not todos_batimentos:
+    if not batimentos:
         return {"medias": {}}
 
-    medias = stats.media_ultimos_5_dias_validos(todos_batimentos)
+    medias = stats.media_ultimos_5_dias_validos(batimentos)
     return {"medias": medias}
 
 

@@ -1,8 +1,8 @@
 import pandas as pd
 from statistics import mean, stdev
 from scipy.stats import skew, norm
-from typing import List
-from datetime import datetime, timedelta, timezone
+from typing import List, Dict
+from datetime import datetime, timedelta, timezone, date
 
 def calcular_estatisticas(dados: List[dict]) -> dict:
     df = pd.DataFrame(dados)
@@ -37,21 +37,27 @@ def calcular_estatisticas(dados: List[dict]) -> dict:
         
     }
 
-def media_por_data(dados: List[dict], inicio: str, fim: str) -> float:
+def media_por_intervalo(dados: List[dict], inicio: date, fim: date) -> Dict:
+    if not dados:
+        return {"media": None, "mensagem": "Nenhum dado disponível."}
+
     df = pd.DataFrame(dados)
-    df["data"] = pd.to_datetime(df["data"])
 
-    # Define o timezone UTC-3
-    tz = timezone(timedelta(hours=-3))
-    inicio_dt = datetime.fromisoformat(inicio).replace(tzinfo=tz)
-    fim_dt = datetime.fromisoformat(fim).replace(tzinfo=tz) + timedelta(days=1) - timedelta(seconds=1)
+    if 'data' not in df.columns or 'frequenciaMedia' not in df.columns:
+        return {"media": None, "mensagem": "Colunas esperadas não encontradas."}
 
-    filtrados = df[(df["data"] >= inicio_dt) & (df["data"] <= fim_dt)]
+    df['data'] = pd.to_datetime(df['data'], errors='coerce').dt.date
+    df['frequenciaMedia'] = pd.to_numeric(df['frequenciaMedia'], errors='coerce')
 
-    if filtrados.empty:
-        return 0.0
+    df = df.dropna(subset=['data', 'frequenciaMedia'])
 
-    return filtrados["frequenciaMedia"].mean()
+    df_filtrado = df[(df['data'] >= inicio) & (df['data'] <= fim)]
+
+    if df_filtrado.empty:
+        return {"media": None, "mensagem": "Nenhum dado encontrado para o intervalo fornecido."}
+
+    media = df_filtrado['frequenciaMedia'].mean().round(2)
+    return {"media": media}
 
 
 def calcular_probabilidade(dados: List[dict], valor: float) -> float:
