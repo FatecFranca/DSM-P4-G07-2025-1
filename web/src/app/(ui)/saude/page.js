@@ -3,19 +3,15 @@
 import { useState, useEffect } from "react";
 import { ExpandableMenu } from "@/components/ui/expandableMenu";
 import { NavigationBar } from "@/components/ui/navigationBar";
-import { 
-  getLatestBatimentos, 
-  animalId, 
-  getMediaUltimos5Dias, 
-  getEstatisticasCompletas
-} from "@/utils/api";
+import {animalId, getMediaUltimos5Dias, getEstatisticasCompletas,} from "@/utils/api";
+import { GraficoBarras } from "@/components/ui/grafico"; 
 
 export default function SaudePage() {
   const [healthData, setHealthData] = useState({
     moda: "--",
     mediana: "--",
     desvioPadrao: "--",
-    media: "--"
+    media: "--",
   });
   const [mediasUltimos5Dias, setMediasUltimos5Dias] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,11 +23,11 @@ export default function SaudePage() {
 
         const [estatisticas, medias] = await Promise.all([
           getEstatisticasCompletas(),
-          getMediaUltimos5Dias()
+          getMediaUltimos5Dias(),
         ]);
 
         setHealthData({
-          ...estatisticas
+          ...estatisticas,
         });
 
         setMediasUltimos5Dias(medias);
@@ -70,24 +66,17 @@ export default function SaudePage() {
                   whitespace-normal md:whitespace-nowrap
                 "
               >
-                Frequência cardíaca, padrões de atividade e informações de saúde reunidas em um só lugar. Tenha controle total da saúde do seu pet.
+                Frequência cardíaca, padrões de atividade e informações de saúde
+                reunidas em um só lugar. Tenha controle total da saúde do seu pet.
               </p>
             </div>
 
-            {/* Card das médias dos últimos 5 dias */}
+            {/* Usando o componente GraficoBarras */}
             <div className="bg-[var(--color-white-matte)] rounded-lg p-4 shadow-md mb-6 max-w-full break-words">
               <h2 className="text-base font-bold mb-3 text-center text-[var(--color-red)] break-words max-w-full">
                 Média de batimentos dos últimos cinco dias:
               </h2>
-              <div className="grid grid-cols-1 gap-2">
-                {mediasUltimos5Dias.length > 0 ? (
-                  mediasUltimos5Dias.map(({ data, valor }, i) => (
-                    <StatItem key={i} label={data} value={`${valor.toFixed(1)} bpm`} />
-                  ))
-                ) : (
-                  <p className="text-gray-500 text-center">Nenhum dado disponível</p>
-                )}
-              </div>
+              <GraficoBarras data={mediasUltimos5Dias} />
             </div>
 
             {/* Card de estatísticas */}
@@ -98,19 +87,35 @@ export default function SaudePage() {
               <div className="grid grid-cols-2 gap-3">
                 <StatItem
                   label="Média geral"
-                  value={`${typeof healthData.media === "number" ? healthData.media.toFixed(1) : "--"} bpm`}
+                  value={`${
+                    typeof healthData.media === "number"
+                      ? healthData.media.toFixed(1)
+                      : "--"
+                  } bpm`}
                 />
                 <StatItem
                   label="Mediana"
-                  value={`${typeof healthData.mediana === "number" ? healthData.mediana.toFixed(1) : "--"} bpm`}
+                  value={`${
+                    typeof healthData.mediana === "number"
+                      ? healthData.mediana.toFixed(1)
+                      : "--"
+                  } bpm`}
                 />
                 <StatItem
                   label="Moda"
-                  value={`${typeof healthData.moda === "number" ? healthData.moda.toFixed(1) : "--"} bpm`}
+                  value={`${
+                    typeof healthData.moda === "number"
+                      ? healthData.moda.toFixed(1)
+                      : "--"
+                  } bpm`}
                 />
                 <StatItem
                   label="Desvio padrão"
-                  value={`${typeof healthData.desvioPadrao === "number" ? healthData.desvioPadrao.toFixed(1) : "--"}`}
+                  value={`${
+                    typeof healthData.desvioPadrao === "number"
+                      ? healthData.desvioPadrao.toFixed(1)
+                      : "--"
+                  }`}
                 />
               </div>
             </div>
