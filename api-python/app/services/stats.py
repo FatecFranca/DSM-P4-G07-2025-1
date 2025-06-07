@@ -1,6 +1,8 @@
 import pandas as pd
 from statistics import mean, stdev
 from scipy.stats import skew, norm
+import numpy as np
+import scipy.stats as stats
 from typing import List, Dict
 from datetime import datetime, timedelta, timezone, date
 
@@ -8,7 +10,7 @@ def calcular_estatisticas(dados: List[dict]) -> dict:
     df = pd.DataFrame(dados)
     df["frequenciaMedia"] = pd.to_numeric(df["frequenciaMedia"], errors="coerce")
     valores = df["frequenciaMedia"].dropna()
-    valores = valores[(valores >= 30) & (valores <= 250)]
+    valores = valores[(valores >= 30) & (valores <= 200)]
     print(f"Total bruto: {len(df)} | Após filtro de faixa: {len(valores)}")
 
     media = valores.mean()
@@ -60,20 +62,61 @@ def media_por_intervalo(dados: List[dict], inicio: date, fim: date) -> Dict:
     return {"media": media}
 
 
-def calcular_probabilidade(dados: List[dict], valor: float) -> float:
-    valores = [item["frequenciaMedia"] for item in dados if "frequenciaMedia" in item]
+def calcular_probabilidade(valor: int, dados: list):
+    # Filtra apenas valores válidos
+    valores_validos = [v for v in dados if isinstance(v, (int, float)) and 30 <= v <= 200]
 
-    if len(valores) < 2:
-        return 0.0
+    if not valores_validos:
+        return {
+            "erro": "Não há dados suficientes dentro da faixa fisiológica (30 a 200 BPM) para análise."
+        }
 
-    media = mean(valores)
-    desvio = stdev(valores)
+    media = np.mean(valores_validos)
+    desvio = np.std(valores_validos)
 
-    if desvio == 0:
-        return 1.0 if valor == media else 0.0
+    # Se valor for muito fora do plausível
+    if valor < 30 or valor > 250:
+        return {
+            "valor_informado": valor,
+            "media_registrada": round(media, 2),
+            "desvio_padrao": round(desvio, 2),
+            "titulo": "Valor inválido ❌",
+            "avaliacao": "O valor informado está fora da faixa fisiológica plausível para cães e gatos (30 a 200 BPM)."
+        }
 
-    probabilidade = norm.pdf(valor, loc=media, scale=desvio)
-    return float(probabilidade) if not (probabilidade is None or probabilidade != probabilidade) else 0.0
+    # Probabilidade acumulada (valor ≤ x)
+    prob = norm.cdf(valor, loc=media, scale=desvio) * 100
+
+    # Classificação por z-score
+    z = abs((valor - media) / desvio)
+    if z < 1:
+        classificacao = "Normal"
+        interpretacao = "Com base nos dados dos últimos 5 dias, este valor está dentro da faixa considerada normal."
+        titulo = "Tudo certo! ✅"
+    elif z < 2:
+        classificacao = "Levemente fora do normal"
+        interpretacao = "Com base nos dados dos últimos 5 dias, o valor está um pouco fora da média, mas pode ser aceitável em certas condições."
+        titulo = "Atenção ⚠️"
+    elif z < 3:
+        classificacao = "Fora do padrão"
+        interpretacao = "Com base nos dados dos últimos 5 dias, o batimento está significativamente diferente da média."
+        titulo = "Aviso! ❗"
+    else:
+        classificacao = "Muito fora do padrão"
+        interpretacao = "Com base nos dados dos últimos 5 dias, o valor é extremamente diferente dos batimentos normais. Pode indicar erro ou situação crítica."
+        titulo = "Alerta! 🚨"
+
+    return {
+        "valor_informado": valor,
+        "media_registrada": round(media, 2),
+        "desvio_padrao": round(desvio, 2),
+        "probabilidade_percentual": round(prob, 2),
+        "interpretacao": interpretacao,
+        "classificacao": classificacao,
+        "titulo": titulo,
+        "avaliacao": interpretacao  # pode personalizar mais se quiser
+    }
+
 
 def media_ultimos_5_dias_validos(dados: List[dict]) -> dict:
     df = pd.DataFrame(dados)

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, APIRouter
 from app.clients import java_api
 from app.services import stats
 from datetime import datetime, date
@@ -33,13 +33,16 @@ async def media_batimentos_por_data(
     return resultado
 
 @app.get("/batimentos/probabilidade", tags=["Batimentos"])
-async def probabilidade_batimento(valor: float = Query(..., description="Valor do batimento para calcular a probabilidade")):
-    try:
-        dados = await java_api.buscar_todos_batimentos()
-    except Exception as e:
-        return {"erro": f"Erro ao buscar dados: {str(e)}"}
-    prob = stats.calcular_probabilidade(dados, valor)
-    return {"probabilidade": prob}
+async def probabilidade_batimento(valor: int = Query(..., gt=0)):
+    dados = await java_api.buscar_todos_batimentos()
+    valores = [bat["frequenciaMedia"] for bat in dados if isinstance(bat.get("frequenciaMedia"), (int, float))]
+    
+    if not valores:
+        return {"erro": "Nenhum dado de batimentos disponível para análise."}
+
+    resultado = stats.calcular_probabilidade(valor, valores)
+    return resultado
+
 
 @app.get("/health", tags=["Status"])
 async def health_check():
