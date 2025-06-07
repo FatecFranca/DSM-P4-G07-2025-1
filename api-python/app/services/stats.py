@@ -9,6 +9,7 @@ def calcular_estatisticas(dados: List[dict]) -> dict:
     df["frequenciaMedia"] = pd.to_numeric(df["frequenciaMedia"], errors="coerce")
     valores = df["frequenciaMedia"].dropna()
     valores = valores[(valores >= 30) & (valores <= 250)]
+    print(f"Total bruto: {len(df)} | Após filtro de faixa: {len(valores)}")
 
     media = valores.mean()
     desvio = valores.std()
@@ -33,6 +34,7 @@ def calcular_estatisticas(dados: List[dict]) -> dict:
         "moda": float(valores.mode().iloc[0]) if not valores.mode().empty else None,
         "desvio_padrao": float(valores.std()),
         "assimetria": float(skew(valores, bias=False))
+        
     }
 
 def media_por_data(dados: List[dict], inicio: str, fim: str) -> float:
@@ -84,3 +86,41 @@ def media_ultimos_5_dias_validos(dados: List[dict]) -> dict:
     ultimos_5_dias = medias_por_dia.sort_index(ascending=False).head(5)
 
     return ultimos_5_dias.sort_index().to_dict()
+
+def media_ultimas_5_horas_registradas(dados: List[dict]) -> dict:
+    df = pd.DataFrame(dados)
+    if df.empty:
+        return {"media": None, "media_por_hora": {}, "mensagem": "Nenhum dado disponível."}
+
+    # Conversão e limpeza
+    df["data"] = pd.to_datetime(df["data"], errors="coerce")
+    df = df.dropna(subset=["data", "frequenciaMedia"])
+    df["frequenciaMedia"] = pd.to_numeric(df["frequenciaMedia"], errors="coerce")
+    df = df.dropna(subset=["frequenciaMedia"])
+
+    # Ordenar por data decrescente
+    df = df.sort_values(by="data", ascending=False)
+
+    # Arredondar para hora cheia com 'h'
+    df["hora"] = df["data"].dt.floor("h")
+
+    # Selecionar as últimas 5 horas únicas
+    ultimas_5_horas = df["hora"].drop_duplicates().head(5)
+
+    # Filtrar os dados dessas horas
+    df_filtrado = df[df["hora"].isin(ultimas_5_horas)]
+
+    if df_filtrado.empty:
+        return {"media": None, "media_por_hora": {}, "mensagem": "Nenhum dado nas últimas 5 horas registradas."}
+
+    # Calcular média por hora
+    medias_por_hora = df_filtrado.groupby("hora")["frequenciaMedia"].mean().sort_index()
+    medias_formatadas = {str(hora): round(media, 2) for hora, media in medias_por_hora.items()}
+
+    # Corrigindo a média geral (média das médias por hora)
+    media_geral = round(medias_por_hora.mean(), 2)
+
+    return {
+        "media": media_geral,
+        "media_por_hora": medias_formatadas
+    }

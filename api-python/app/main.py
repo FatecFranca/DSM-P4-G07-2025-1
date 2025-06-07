@@ -17,10 +17,11 @@ async def get_batimentos():
 
 @app.get("/batimentos/estatisticas", tags=["Batimentos"])
 async def get_estatisticas():
-    dados = await java_api.buscar_batimentos()
-    print(dados[:10])
+    dados = await java_api.buscar_todos_batimentos()
+    print(f"Total de batimentos carregados: {len(dados)}")
     resultado = stats.calcular_estatisticas(dados)
     return resultado
+
 
 @app.get("/batimentos/media-por-data", tags=["Batimentos"])
 async def media_batimentos_por_data(
@@ -60,4 +61,11 @@ async def media_batimentos_ultimos_5_dias():
 
     medias = stats.media_ultimos_5_dias_validos(todos_batimentos)
     return {"medias": medias}
+
+
+@app.get("/batimentos/media-ultimas-5-horas-registradas", tags=["Batimentos"])
+async def media_batimentos_ultimas_5_horas():
+    dados = await java_api.buscar_todos_batimentos()
+    resultado = stats.media_ultimas_5_horas_registradas(dados)
+    return resultado
 
