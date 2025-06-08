@@ -3,8 +3,12 @@
 import { useState, useEffect } from "react";
 import { ExpandableMenu } from "@/components/ui/expandableMenu";
 import { NavigationBar } from "@/components/ui/navigationBar";
-import {animalId, getMediaUltimos5Dias, getEstatisticasCompletas,} from "@/utils/api";
-import { GraficoBarras } from "@/components/ui/grafico"; 
+import {
+  animalId,
+  getMediaUltimos5Dias,
+  getEstatisticasCompletas,
+} from "@/utils/api";
+import { GraficoBarras } from "@/components/ui/grafico";
 
 export default function SaudePage() {
   const [healthData, setHealthData] = useState({
@@ -71,17 +75,15 @@ export default function SaudePage() {
               </p>
             </div>
 
-            {/* Usando o componente GraficoBarras */}
-            <div className="bg-[var(--color-white-matte)] rounded-lg p-4 shadow-md mb-6 max-w-full break-words">
-              <h2 className="text-base font-bold mb-3 text-center text-[var(--color-red)] break-words max-w-full">
-                Média de batimentos dos últimos cinco dias:
-              </h2>
-              <GraficoBarras data={mediasUltimos5Dias} />
-            </div>
+            {/* Título do gráfico ajustado: tamanho menor e não quebra */}
+            <h2 className="text-sm font-bold mb-1 text-center text-[var(--color-red)] whitespace-nowrap max-w-full">
+              Média de batimentos dos últimos cinco dias:
+            </h2>
+            <GraficoBarras data={mediasUltimos5Dias} />
 
-            {/* Card de estatísticas */}
-            <div className="bg-[var(--color-white-matte)] rounded-lg p-4 shadow-md mb-6 max-w-full break-words">
-              <h2 className="text-base font-bold mb-3 text-center text-[var(--color-red)] break-words max-w-full">
+            {/* Card de estatísticas com título menor e sem quebra */}
+            <div className="bg-[var(--color-white-matte)] rounded-lg p-4 shadow-md mb-2 max-w-full break-words">
+              <h2 className="text-sm font-bold mb-3 text-center text-[var(--color-red)] whitespace-nowrap max-w-full">
                 Análise Estatística da Frequência Cardíaca
               </h2>
               <div className="grid grid-cols-2 gap-3">
