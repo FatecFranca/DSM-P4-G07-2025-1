@@ -46,17 +46,18 @@ export default function SaudePage() {
   }, []);
 
   return (
-    <div className="relative flex flex-col bg-[var(--color-background)] min-h-screen">
-      <main className="flex-grow overflow-y-auto pb-20 relative">
+    <div className="relative flex flex-col bg-[var(--color-background)] min-h-screen h-screen">
+      {/* Conteúdo principal flexível e scrollable */}
+      <main className="flex-grow overflow-y-auto p-6 pb-36">
         {loading ? (
-          <div className="absolute inset-0 flex items-center justify-center bg-[var(--color-background)]">
+          <div className="flex items-center justify-center h-full bg-[var(--color-background)]">
             <div className="text-center">
               <span className="loading loading-spinner text-[var(--color-orange)] text-4xl"></span>
               <p className="mt-4 text-lg">Carregando dados de saúde...</p>
             </div>
           </div>
         ) : (
-          <div className="p-6">
+          <>
             <h1 className="text-2xl font-bold text-[var(--color-red)] text-center mb-4">
               Painel de Saúde
             </h1>
@@ -75,15 +76,13 @@ export default function SaudePage() {
               </p>
             </div>
 
-            {/* Título do gráfico ajustado: tamanho menor e não quebra */}
-            <h2 className="text-sm font-bold mb-1 text-center text-[var(--color-red)] whitespace-nowrap max-w-full">
+            <h2 className="text-sm md:text-base font-bold mb-1 text-center text-[var(--color-red)] whitespace-nowrap">
               Média de batimentos dos últimos cinco dias:
             </h2>
             <GraficoBarras data={mediasUltimos5Dias} />
 
-            {/* Card de estatísticas com título menor e sem quebra */}
-            <div className="bg-[var(--color-white-matte)] rounded-lg p-4 shadow-md mb-2 max-w-full break-words">
-              <h2 className="text-sm font-bold mb-3 text-center text-[var(--color-red)] whitespace-nowrap max-w-full">
+            <div className="bg-[var(--color-white-matte)] rounded-lg p-4 shadow-md mb-4 max-w-full break-words">
+              <h2 className="text-sm md:text-base font-bold mb-3 text-center text-[var(--color-red)] whitespace-nowrap">
                 Análise Estatística da Frequência Cardíaca
               </h2>
               <div className="grid grid-cols-2 gap-3">
@@ -121,12 +120,36 @@ export default function SaudePage() {
                 />
               </div>
             </div>
-          </div>
+
+            {/* Cards extras para testar scroll */}
+            {[1, 2, 3].map((n) => (
+              <div
+                key={n}
+                className="bg-[var(--color-white-matte)] rounded-lg p-4 shadow-md mb-4 max-w-full"
+              >
+                <h3 className="text-base font-semibold mb-2 text-center text-[var(--color-red)]">
+                  Card Extra #{n}
+                </h3>
+                <p className="text-sm text-gray-700 text-center">
+                  Conteúdo extra para testar o scroll na página.
+                </p>
+              </div>
+            ))}
+          </>
         )}
       </main>
 
-      <ExpandableMenu animalId={animalId} backgroundColor="var(--color-white-matte)" />
-      <NavigationBar activePage="saude" activeColor="var(--color-red)" />
+      {/* Menus fixos com posição fixa e z-index alto */}
+      <ExpandableMenu
+        animalId={animalId}
+        backgroundColor="var(--color-white-matte)"
+        className="fixed bottom-16 left-0 right-0 z-50"
+      />
+      <NavigationBar
+        activePage="saude"
+        activeColor="var(--color-red)"
+        className="fixed bottom-0 left-0 right-0 z-50"
+      />
     </div>
   );
 }
