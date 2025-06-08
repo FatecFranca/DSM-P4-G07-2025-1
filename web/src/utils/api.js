@@ -101,3 +101,36 @@ export async function getEstatisticasCompletas() {
     return null
   }
 }
+
+// Função para pegar média por data (com intervalo inicio e fim iguais)
+export async function getMediaPorData(data) {
+  try {
+    console.log(`[API] Buscando média por data: ${data}`);
+
+    // Aqui usamos inicio e fim iguais para pegar dados de um dia específico
+    const response = await apiEstatistica.get(
+      `/batimentos/media-por-data`,
+      {
+        params: {
+          inicio: data,
+          fim: data,
+        }
+      }
+    );
+
+    console.log("[DEBUG] Resposta média por data:", response.data);
+
+    // Considerando que a resposta retorna o valor direto
+    // Ajuste aqui conforme o formato real da API
+    if (typeof response.data.media === "number") {
+      return response.data.media;
+    }
+
+    // Caso seja um array ou outro formato, ajuste conforme necessário
+    // Se não encontrou o dado esperado, retorna null
+    return null;
+  } catch (error) {
+    console.error('[API] Erro ao buscar média por data:', error);
+    return null;
+  }
+}
