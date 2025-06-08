@@ -13,7 +13,7 @@ const api = axios.create({
 })
 
 // Configuração para a API de estatísticas
-const apiEstatistica = axios.create({
+export const apiEstatistica = axios.create({
   baseURL: '/api-estatistica',
   timeout: 30000,
   headers: {
@@ -134,3 +134,15 @@ export async function getMediaPorData(data) {
     return null;
   }
 }
+
+export async function getProbabilidadePorValor(valor) {
+  try {
+    const response = await apiEstatistica.get(`/batimentos/probabilidade?valor=${valor}`);
+    console.log("[DEBUG] Resposta probabilidade por valor:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("[API] Erro ao buscar probabilidade por valor:", error);
+    throw error;
+  }
+}
+
