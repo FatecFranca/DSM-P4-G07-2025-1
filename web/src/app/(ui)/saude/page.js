@@ -229,7 +229,7 @@ export default function SaudePage() {
       {probabilidade?.probabilidade_percentual !== undefined ? (
         <>
           <p>
-            Com base nos dados coletados nos últimos 5 dias, a chance do seu pet apresentar{" "}
+            A chance do seu pet apresentar{" "}
             <span className="font-semibold">{probabilidade.valor_informado} BPM</span> é de{" "}
             <span className="font-semibold">
               {probabilidade.probabilidade_percentual.toFixed(2)}%
