@@ -3,14 +3,11 @@
 import { useState, useEffect } from "react";
 import { ExpandableMenu } from "@/components/ui/expandableMenu";
 import { NavigationBar } from "@/components/ui/navigationBar";
-import {
-  animalId,
-  getMediaUltimos5Dias,
-  getEstatisticasCompletas,
-  getMediaPorData,
-  getProbabilidadePorValor,
-} from "@/utils/api";
+import {animalId, getMediaUltimos5Dias, getEstatisticasCompletas, getMediaPorData, getProbabilidadePorValor, } from "@/utils/api";
 import { GraficoBarras } from "@/components/ui/grafico";
+import {faHeartPulse } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 
 export default function SaudePage() {
   const [healthData, setHealthData] = useState({
@@ -27,7 +24,8 @@ export default function SaudePage() {
   const [mediaPorData, setMediaPorData] = useState(null);
   const [loadingMediaData, setLoadingMediaData] = useState(false);
 
-  const [valorDigitado, setValorDigitado] = useState("");
+  const [valorTemporario, setValorTemporario] = useState(""); 
+  const [valorDigitado, setValorDigitado] = useState("");     
   const [probabilidade, setProbabilidade] = useState(null);
   const [loadingProbabilidade, setLoadingProbabilidade] = useState(false);
 
@@ -116,6 +114,8 @@ export default function SaudePage() {
               </p>
             </div>
 
+            
+
             <h2 className="text-sm md:text-base font-bold mb-1 text-center text-[var(--color-red)] whitespace-nowrap">
               Média de batimentos dos últimos cinco dias:
             </h2>
@@ -179,39 +179,74 @@ export default function SaudePage() {
             </div>
 
             {/* === PROBABILIDADE DE BATIMENTO === */}
-            <h3 className="text-[var(--color-red)] font-bold text-base text-center mb-1 mt-6">
-              Probabilidade de Batimento
-            </h3>
-            <p className="text-black font-semibold text-sm text-center mb-4 px-2">
-              Digite um valor e descubra a chance de o seu pet apresentar esse batimento cardíaco, com base no histórico real.
-            </p>
+<h3 className="text-[var(--color-red)] font-bold text-base text-center mb-1 mt-6">
+  Probabilidade de Batimento
+</h3>
 
-            <div className="max-w-xs mx-auto mb-2">
-              <input
-                type="number"
-                placeholder="Insira o valor"
-                value={valorDigitado}
-                onChange={(e) => setValorDigitado(e.target.value)}
-                className="bg-[var(--color-gray-light)] rounded-3xl px-3 py-2 text-base font-medium border border-gray-300 w-42 mx-auto block mb-3 text-center"
-              />
-            </div>
+<p className="text-black font-semibold text-sm text-center mb-4 px-2">
+  Digite um valor e descubra a chance de o seu pet apresentar esse batimento cardíaco, com base no histórico real.
+</p>
 
-            {valorDigitado && (
-              <div className="text-center mb-6">
-                <p className="text-[var(--color-red)] font-bold text-sm">Você digitou:</p>
-                <p className="text-black font-semibold text-lg">{valorDigitado} BPM</p>
-                <p className="text-[var(--color-red)] font-bold mt-3">Probabilidade:</p>
-                <p className="text-black font-semibold text-lg">
-                  {loadingProbabilidade ? (
-                    <span className="loading loading-spinner"></span>
-                  ) : probabilidade !== null && probabilidade !== undefined ? (
-                    `${(probabilidade * 100).toFixed(2)}%`
-                  ) : (
-                    "--"
-                  )}
-                </p>
-              </div>
-            )}
+<div className="max-w-xs mx-auto mb-2">
+  <input
+    type="number"
+    placeholder="Insira o valor"
+    value={valorTemporario}
+    onChange={(e) => setValorTemporario(e.target.value)}
+    onKeyDown={(e) => {
+      if (e.key === "Enter") {
+        setValorDigitado(valorTemporario);
+      }
+    }}
+    className="bg-[var(--color-gray-light)] rounded-3xl px-3 py-2 text-base font-medium border border-gray-300 w-42 mx-auto block mb-3 text-center"
+  />
+</div>
+
+
+{valorDigitado && (
+  <div className="text-center mb-6">
+    <p className="text-[var(--color-red)] font-bold text-sm">Você digitou:</p>
+    <p className="text-black font-semibold text-lg">{valorDigitado} BPM</p>
+
+    <p className="text-[var(--color-red)] font-bold mt-3">Probabilidade:</p>
+    <p className="text-black font-semibold text-lg">
+      {loadingProbabilidade ? (
+        <span className="loading loading-spinner"></span>
+      ) : probabilidade?.probabilidade_percentual !== undefined ? (
+        `${probabilidade.probabilidade_percentual.toFixed(2)}%`
+      ) : (
+        "--"
+      )}
+    </p>
+
+    {!loadingProbabilidade &&
+  probabilidade?.titulo && (
+    <div className="mt-4 px-4 text-sm text-black text-center">
+      <p className="text-base font-semibold mb-1 text-[var(--color-red)]">
+        {probabilidade.titulo}
+      </p>
+
+      {probabilidade?.probabilidade_percentual !== undefined ? (
+        <>
+          <p>
+            Com base nos dados coletados nos últimos 5 dias, a chance do seu pet apresentar{" "}
+            <span className="font-semibold">{probabilidade.valor_informado} BPM</span> é de{" "}
+            <span className="font-semibold">
+              {probabilidade.probabilidade_percentual.toFixed(2)}%
+            </span>.
+          </p>
+          <p className="mt-2">{probabilidade.avaliacao}</p>
+        </>
+      ) : (
+        <p className="mt-2">{probabilidade.avaliacao}</p>
+      )}
+    </div>
+)}
+
+
+  </div>
+)}
+
           </>
         )}
       </main>
