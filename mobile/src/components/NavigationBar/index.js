@@ -10,30 +10,42 @@ import {
 import NavItem from '../NavItem/NavItem';
 
 export default function NavigationBar({ activeScreen, onNavigate }) {
+    const getIconColor = (screen) => {
+        if (activeScreen === screen) {
+            if (screen === 'home') return '#F39200';
+            if (screen === 'saude') return '#FF0000';
+        }
+        return '#000000';
+    };
+
     return (
         <View style={styles.container}>
             <NavItem
                 icon={faHouseChimney}
                 label="Tela Inicial"
                 isActive={activeScreen === 'home'}
+                iconColor={getIconColor('home')}
                 onPress={() => onNavigate('home')}
             />
             <NavItem
                 icon={faMapMarkerAlt}
                 label="Localização"
                 isActive={activeScreen === 'localizacao'}
+                iconColor={getIconColor('localizacao')}
                 onPress={() => onNavigate('localizacao')}
             />
             <NavItem
                 icon={faHeartPulse}
                 label="Saúde"
                 isActive={activeScreen === 'saude'}
+                iconColor={getIconColor('saude')}
                 onPress={() => onNavigate('saude')}
             />
             <NavItem
                 icon={faCog}
                 label="Configurações"
                 isActive={activeScreen === 'config'}
+                iconColor={getIconColor('config')}
                 onPress={() => onNavigate('config')}
             />
         </View>

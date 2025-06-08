@@ -12,29 +12,24 @@ export default function MapaAnimal({ animalId }) {
             try {
                 const data = await getLatestLocalizacao(animalId);
 
-                /**
-                 * ✅ Quando sua API retornar coordenadas válidas (diferentes de 0),
-                 * remova o bloco de fallback abaixo e use diretamente os dados reais:
-                 * 
-                 * if (data && Number(data.latitude) !== 0 && Number(data.longitude) !== 0) {
-                 *     setLocalizacao({
-                 *         latitude: parseFloat(data.latitude),
-                 *         longitude: parseFloat(data.longitude),
-                 *     });
-                 * } else {
-                 *     setError("Localização não disponível");
-                 * }
-                 */
+                if (data && Number(data.latitude) !== 0 && Number(data.longitude) !== 0) {
+                    setLocalizacao({
+                        latitude: parseFloat(data.latitude),
+                        longitude: parseFloat(data.longitude),
+                    });
+                } else {
+                    setLocalizacao({
+                        latitude: -23.55052,
+                        longitude: -46.633308,
+                    });
+                }
 
-                // Fallback temporário para testes
+            } catch (err) {
+                console.error('Erro ao buscar localização:', err);
                 setLocalizacao({
                     latitude: -23.55052,
                     longitude: -46.633308,
                 });
-
-            } catch (err) {
-                console.error('Erro ao buscar localização:', err);
-                setError("Localização não disponível");
             }
         }
 
@@ -46,7 +41,6 @@ export default function MapaAnimal({ animalId }) {
             <View style={styles.center}>
                 <ActivityIndicator size="large" color="#F39200" />
                 <Text style={styles.loadingText}>Carregando localização...</Text>
-                {error && <Text style={styles.errorText}>{error}</Text>}
             </View>
         );
     }
@@ -60,8 +54,11 @@ export default function MapaAnimal({ animalId }) {
                 longitudeDelta: 0.01,
             }}
         >
-            <Marker coordinate={localizacao}>
-                <View style={styles.marker}>
+            <Marker
+                coordinate={localizacao}
+                anchor={{ x: 0.5, y: 0.5 }}
+            >
+                <View style={styles.markerContainer}>
                     <Image
                         source={require('../../../assets/imagens/uno.png')}
                         style={styles.avatar}
@@ -95,16 +92,16 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontFamily: 'Poppins_600SemiBold',
     },
-    marker: {
-        borderWidth: 3,
-        borderColor: '#F39200',
-        borderRadius: 30,
-        padding: 2,
-        backgroundColor: '#fff',
+    markerContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     avatar: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
+        width: 38,
+        height: 38,
+        borderRadius: 25,
+        borderWidth: 4,
+        borderColor: '#F39200',
+        backgroundColor: '#ccc',
     },
 });

@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 import * as SplashScreen from 'expo-splash-screen';
 import HomeScreen from './screens/HomeScreen';
+import HealthScreen from './screens/HealthScreen'; 
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -24,16 +25,21 @@ export default function App() {
     prepare();
   }, [fontsLoaded]);
 
-  if (!appIsReady) {
-    return null;
-  }
+  if (!appIsReady) return null;
+
+  const renderScreen = () => {
+    switch (activeScreen) {
+      case 'saude':
+        return <HealthScreen activeScreen={activeScreen} onNavigate={setActiveScreen} />;
+      case 'home':
+      default:
+        return <HomeScreen activeScreen={activeScreen} onNavigate={setActiveScreen} />;
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <HomeScreen
-        activeScreen={activeScreen}
-        onNavigate={setActiveScreen}
-      />
+      {renderScreen()}
     </View>
   );
 }

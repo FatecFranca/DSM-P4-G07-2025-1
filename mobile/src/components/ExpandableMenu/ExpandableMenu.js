@@ -33,7 +33,7 @@ export default function ExpandableMenu({animalId}) {
 
     const animal = { nome: 'Uno', sexo: 'M' };
     const bpm = 100;
-    const battery = 20;
+    const battery = 97;
     const isConnected = true;
 
     const getBatteryColor = () => {
