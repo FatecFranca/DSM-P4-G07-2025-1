@@ -63,7 +63,6 @@ def media_por_intervalo(dados: List[dict], inicio: date, fim: date) -> Dict:
 
 
 def calcular_probabilidade(valor: int, dados: list):
-    # Filtra apenas valores válidos
     valores_validos = [v for v in dados if isinstance(v, (int, float)) and 30 <= v <= 200]
 
     if not valores_validos:
@@ -74,49 +73,57 @@ def calcular_probabilidade(valor: int, dados: list):
     media = np.mean(valores_validos)
     desvio = np.std(valores_validos)
 
-    # Se valor for muito fora do plausível
     if valor < 30 or valor > 250:
         return {
             "valor_informado": valor,
             "media_registrada": round(media, 2),
             "desvio_padrao": round(desvio, 2),
-            "titulo": "Valor inválido ❌",
+            "titulo": "Valor fora da faixa ❌",
             "avaliacao": "O valor informado está fora da faixa fisiológica plausível para cães e gatos (30 a 200 BPM)."
         }
 
-    # Probabilidade acumulada (valor ≤ x)
-    prob = norm.cdf(valor, loc=media, scale=desvio) * 100
-
-    # Classificação por z-score
     z = abs((valor - media) / desvio)
+    prob = (1 - norm.cdf(z)) * 2 * 100
+
     if z < 1:
-        classificacao = "Normal"
-        interpretacao = "Com base nos dados dos últimos 5 dias, este valor está dentro da faixa considerada normal."
-        titulo = "Tudo certo! ✅"
+        classificacao = "Dentro do esperado"
+        titulo = "Batimento esperado ✅"
+        interpretacao = (
+            f"O valor de {valor} BPM está dentro do comportamento normal observado nos últimos dias. "
+            f"A chance de ocorrer é alta ({round(prob, 2)}%)."
+        )
     elif z < 2:
-        classificacao = "Levemente fora do normal"
-        interpretacao = "Com base nos dados dos últimos 5 dias, o valor está um pouco fora da média, mas pode ser aceitável em certas condições."
-        titulo = "Atenção ⚠️"
+        classificacao = "Ligeiramente incomum"
+        titulo = "Batimento um pouco fora do comum ⚠️"
+        interpretacao = (
+            f"O valor de {valor} BPM é um pouco diferente da média recente. "
+            f"A chance de ocorrer é de aproximadamente {round(prob, 2)}%. Não necessariamente é preocupante, mas vale observar."
+        )
     elif z < 3:
-        classificacao = "Fora do padrão"
-        interpretacao = "Com base nos dados dos últimos 5 dias, o batimento está significativamente diferente da média."
-        titulo = "Aviso! ❗"
+        classificacao = "Incomum"
+        titulo = "Batimento incomum ❗"
+        interpretacao = (
+            f"O valor de {valor} BPM é estatisticamente incomum com base nos últimos 5 dias. "
+            f"A chance de isso ocorrer naturalmente é de apenas {round(prob, 2)}%. Pode representar agitação, estresse ou outra condição fisiológica fora do padrão."
+        )
     else:
-        classificacao = "Muito fora do padrão"
-        interpretacao = "Com base nos dados dos últimos 5 dias, o valor é extremamente diferente dos batimentos normais. Pode indicar erro ou situação crítica."
-        titulo = "Alerta! 🚨"
+        classificacao = "Raro ou fora do padrão"
+        titulo = "Batimento raro ou atípico 🚨"
+        interpretacao = (
+            f"O valor de {valor} BPM é muito raro com base nos dados recentes. "
+            f"A chance de ocorrer é de apenas {round(prob, 2)}%. Isso pode indicar uma situação atípica, erro na medição ou necessidade de atenção veterinária se persistir."
+        )
 
     return {
         "valor_informado": valor,
         "media_registrada": round(media, 2),
         "desvio_padrao": round(desvio, 2),
         "probabilidade_percentual": round(prob, 2),
-        "interpretacao": interpretacao,
         "classificacao": classificacao,
         "titulo": titulo,
-        "avaliacao": interpretacao  # pode personalizar mais se quiser
+        "interpretacao": interpretacao,
+        "avaliacao": interpretacao
     }
-
 
 def media_ultimos_5_dias_validos(dados: List[dict]) -> dict:
     df = pd.DataFrame(dados)
