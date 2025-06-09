@@ -181,7 +181,7 @@ export function ExpandableMenu({
         </div>
 
         {expanded && (
-          <div className="mt-4 pt-2">
+          <div className="mt-8 pt-2">
             {showGraph ? (
               <div className="h-[calc(40vh-100px)] lg:h-[50vh] overflow-y-auto">
                 <GraficoLinhas />

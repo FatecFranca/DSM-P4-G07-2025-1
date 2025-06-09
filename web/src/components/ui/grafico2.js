@@ -86,7 +86,7 @@ export function GraficoLinhas() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex justify-center items-center h-40">
         <span className="loading loading-spinner text-[var(--color-orange)]"></span>
       </div>
     );
@@ -173,7 +173,7 @@ export function GraficoLinhas() {
   };
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full overflow-hidden">
       <div className="text-center mb-4 md:mb-6">
   <p className="text-[var(--color-red)] font-bold text-xs whitespace-nowrap">
     Gráfico de Batimento Cardíaco das últimas cinco horas:

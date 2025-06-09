@@ -275,7 +275,7 @@ export default function SaudePage() {
         backgroundColor="var(--color-white-matte)"
         className="fixed bottom-16 left-0 right-0 z-50"
         showGraph={true}
-        graphType="linhas" 
+        graphType="linhas"
       />
       
       <NavigationBar
