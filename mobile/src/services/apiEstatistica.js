@@ -1,81 +1,61 @@
 import axios from 'axios';
 export const animalId = "68194120636f719fcd5ee5fd";
 
-
-const apiEstatisticas = axios.create({
+const apiEstatistica = axios.create({
     baseURL: 'https://api-petdex-estatistica.onrender.com',
     timeout: 20000,
 });
 
 export async function getMediaUltimos5Dias() {
     try {
-        const response = await apiEstatisticas.get('/batimentos/media-ultimos-5-dias');
-        const medias = response.data.medias;
-
-        if (!medias) {
-            console.warn('[API] medias não encontradas na resposta');
-            return { content: [] };
-        }
-
-        const content = Object.entries(medias).map(([data, frequenciaMedia]) => ({
+        const response = await apiEstatistica.get('/batimentos/media-ultimos-5-dias');
+        const mediasArray = Object.entries(response.data.medias || {}).map(([data, valor]) => ({
             data,
-            frequenciaMedia
+            valor
         }));
-
-        return { content };
+        return mediasArray;
     } catch (error) {
-        console.error('[API] Erro ao buscar médias dos últimos 5 dias:', error.message);
-        return { content: [] };
+        console.error('Erro ao buscar médias dos últimos 5 dias:', error);
+        return [];
     }
 }
 
-// 2. Estatísticas gerais
-export async function getEstatisticasGerais() {
+export async function getEstatisticasCompletas() {
     try {
-        const response = await apiEstatisticas.get('/batimentos/estatisticas');
+        const response = await apiEstatistica.get('/batimentos/estatisticas');
+        if (!response.data) return null;
+
         return {
-            media: response.data.media || 0,
-            mediana: response.data.mediana || 0,
-            moda: response.data.moda || 0,
-            desvioPadrao: response.data.desvio_padrao || 0,
-            assimetria: response.data.assimetria || 0
+            media: response.data.media ?? 0,
+            mediana: response.data.mediana ?? 0,
+            moda: response.data.moda ?? 0,
+            desvioPadrao: response.data.desvio_padrao ?? 0,
+            assimetria: response.data.assimetria ?? 0,
         };
     } catch (error) {
-        console.error('[API] Erro ao buscar estatísticas:', error.message);
+        console.error('Erro ao buscar estatísticas completas:', error);
         return null;
     }
 }
 
-// 3. Média por período (usado para buscar média de uma data específica)
-export async function getMediaPorPeriodo(inicio, fim) {
+export async function getMediaPorData(data) {
     try {
-        const response = await apiEstatisticas.get('/batimentos/media-por-data', {
-            params: { inicio, fim }
+        const response = await apiEstatistica.get('/batimentos/media-por-data', {
+            params: { inicio: data, fim: data }
         });
-        return response.data;
+        return typeof response.data.media === 'number' ? response.data.media : null;
     } catch (error) {
-        console.error('[API] Erro ao buscar média por período:', error.message);
-        return { media: null };
-    }
-}
-
-// 4. Probabilidade de um valor de batimento
-export async function getProbabilidadeValor(valor) {
-    try {
-        const response = await apiEstatisticas.get(`/batimentos/probabilidade?valor=${valor}`);
-        return response.data;
-    } catch (error) {
-        console.error('[API] Erro ao calcular probabilidade:', error.message);
+        console.error('Erro ao buscar média por data:', error);
         return null;
     }
 }
 
-export async function getMediaUltimas5Horas() {
+export async function getProbabilidadePorValor(valor) {
     try {
-        const response = await apiEstatisticas.get('/batimentos/media-ultimas-5-horas-registradas');
+        const response = await apiEstatistica.get(`/batimentos/probabilidade?valor=${valor}`);
         return response.data;
     } catch (error) {
-        console.error('[API] Erro ao buscar média últimas 5 horas:', error.message);
+        console.error('Erro ao buscar probabilidade por valor:', error);
         return null;
     }
 }
