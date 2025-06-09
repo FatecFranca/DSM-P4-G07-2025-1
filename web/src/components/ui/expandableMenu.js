@@ -15,8 +15,13 @@ import {
 import { Logo } from "@/components/ui/logo";
 import Image from "next/image";
 import { getAnimalInfo, getLatestBatimentos } from "@/utils/api";
+import { GraficoLinhas } from "@/components/ui/grafico2";
 
-export function ExpandableMenu({ animalId, backgroundColor = "white" }) {
+export function ExpandableMenu({ 
+  animalId, 
+  backgroundColor = "white",
+  showGraph = false
+}) {
   const [expanded, setExpanded] = useState(false);
   const [batimento, setBatimento] = useState(null);
   const [animalInfo, setAnimalInfo] = useState(null);
@@ -53,7 +58,7 @@ export function ExpandableMenu({ animalId, backgroundColor = "white" }) {
       className={`
         fixed bottom-20 rounded-t-[40px] p-4
         transition-all duration-300 overflow-hidden
-        ${expanded ? "h-[65vh]" : "h-[180px]"}
+        ${expanded ? showGraph ? "h-[55vh] lg:h-[70vh]" : "h-[65vh]" : "h-[180px]"}
         shadow-lg
         left-0 right-0
         lg:left-0 lg:right-auto lg:w-[400px]
@@ -176,8 +181,16 @@ export function ExpandableMenu({ animalId, backgroundColor = "white" }) {
         </div>
 
         {expanded && (
-          <div className="mt-6 pt-4 border-t border-[var(--color-gray-medium)]">
-            <p className="text-center text-gray-500">Menu expandido</p>
+          <div className="mt-4 pt-2">
+            {showGraph ? (
+              <div className="h-[calc(40vh-100px)] lg:h-[50vh] overflow-y-auto">
+                <GraficoLinhas />
+              </div>
+            ) : (
+              <div className="border-t border-[var(--color-gray-medium)] pt-4">
+                <p className="text-center text-gray-500">Menu expandido</p>
+              </div>
+            )}
           </div>
         )}
       </div>

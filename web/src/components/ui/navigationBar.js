@@ -1,5 +1,5 @@
 import { NavItem } from "@/components/nav/nav-item";
-import { faMapMarkerAlt, faHeartPulse, faCog, faHouseChimney } from "@fortawesome/free-solid-svg-icons";
+import { faMapMarkerAlt, faHeartPulse, faHouseChimney } from "@fortawesome/free-solid-svg-icons";
 
 export function NavigationBar({ activePage, activeColor = "var(--color-orange)" }) {
   return (
@@ -10,7 +10,6 @@ export function NavigationBar({ activePage, activeColor = "var(--color-orange)" 
       <NavItem href="/home" icon={faHouseChimney} label="Tela inicial" active={activePage === "home"} activeColor={activeColor} />
       <NavItem href="/localizacao" icon={faMapMarkerAlt} label="Localização" active={activePage === "localizacao"} activeColor={activeColor} />
       <NavItem href="/saude" icon={faHeartPulse} label="Saúde" active={activePage === "saude"} activeColor={activeColor} />
-      <NavItem href="/configuracoes" icon={faCog} label="Configurações" active={activePage === "configuracoes"} activeColor={activeColor} />
     </footer>
   );
 }

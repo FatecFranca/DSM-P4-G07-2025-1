@@ -146,3 +146,31 @@ export async function getProbabilidadePorValor(valor) {
   }
 }
 
+export async function getMediaUltimas5Horas() {
+  try {
+    const response = await apiEstatistica.get('/batimentos/media-ultimas-5-horas-registradas');
+    console.log("[DEBUG] Dados de médias das últimas 5 horas:", response.data);
+
+    if (!response.data.media_por_hora) {
+      console.warn('[API] A propriedade media_por_hora não foi encontrada na resposta');
+      return { media: 0, dados: [] };
+    }
+
+    // Transforma o objeto em array e formata as horas
+    const dadosArray = Object.entries(response.data.media_por_hora)
+      .map(([dataHora, valor]) => {
+        // Extrai apenas a hora (HH:MM) da string de data
+        const hora = new Date(dataHora).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return { hora, valor };
+      })
+      .sort((a, b) => a.hora.localeCompare(b.hora)); // Ordena por hora
+
+    return {
+      media: response.data.media,
+      dados: dadosArray
+    };
+  } catch (error) {
+    console.error('[API] Erro ao buscar médias das últimas 5 horas:', error);
+    return { media: 0, dados: [] };
+  }
+}

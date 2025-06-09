@@ -5,9 +5,6 @@ import { ExpandableMenu } from "@/components/ui/expandableMenu";
 import { NavigationBar } from "@/components/ui/navigationBar";
 import {animalId, getMediaUltimos5Dias, getEstatisticasCompletas, getMediaPorData, getProbabilidadePorValor, } from "@/utils/api";
 import { GraficoBarras } from "@/components/ui/grafico";
-import {faHeartPulse } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 
 export default function SaudePage() {
   const [healthData, setHealthData] = useState({
@@ -277,7 +274,10 @@ export default function SaudePage() {
         animalId={animalId}
         backgroundColor="var(--color-white-matte)"
         className="fixed bottom-16 left-0 right-0 z-50"
+        showGraph={true}
+        graphType="linhas" 
       />
+      
       <NavigationBar
         activePage="saude"
         activeColor="var(--color-red)"
