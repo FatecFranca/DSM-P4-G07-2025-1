@@ -1,19 +1,17 @@
-#include <WiFi.h>
 #include <HTTPClient.h>
 #include "MAX30105.h"
 #include "heartRate.h"
 #include <TinyGPS++.h>
 #include <MPU6050_tockn.h>
 #include <Wire.h>
+#include <WiFiManager.h>
+
+    WiFiManager wm;
 
 #define RED_PIN 13
 #define GREEN_PIN 12
 #define BLUE_PIN 11
 
-const char* ssid1 = "M31 H";
-const char* password1 = "12345678";
-const char* ssid2 = "Mirian";
-const char* password2 = "43871342";
 const char* serverName = "https://dsm-p4-g07-2025-7.onrender.com";
 const String coleiraId = "6819475baa479949daccea94";
 const String animalId = "68194120636f719fcd5ee5fd";
@@ -68,18 +66,13 @@ void setup() {
   // ------------- WIFI -------------
   while (WiFi.status() != WL_CONNECTED) {
     digitalWrite(BLUE_PIN, HIGH);
-    conectarWiFi(ssid1, password1);
+    Serial.println("Configurar Wifi! Acesse a rede PetDex com a senha petdex1234 e selecione um Wifi para conexão.");
+    wm.autoConnect("PetDex", "petdex1234");
 
-    if (WiFi.status() != WL_CONNECTED) {
-      conectarWiFi(ssid2, password2);
-    }
-
-    if (WiFi.status() != WL_CONNECTED) {
-      Serial.println("Não foi possível conectar a nenhuma rede Wi-Fi.");
-      Serial.println("Tentando novamente!");
-      digitalWrite(BLUE_PIN, LOW);
-      digitalWrite(RED_PIN, HIGH);
-      delay(500);
+    if (WiFi.status() == WL_CONNECTED) {
+      Serial.println("Conectado com sucesso!");
+    } else {
+      Serial.println("Falha ao reconectar.");
     }
   }
   digitalWrite(BLUE_PIN, LOW);
@@ -146,14 +139,13 @@ void loop() {
 
   while (WiFi.status() != WL_CONNECTED) {
     digitalWrite(BLUE_PIN, HIGH);
-    Serial.println("Conexão wifi perdida, tentando reestabelecer conexão");
-    conectarWiFi(ssid1, password1);
-    if (WiFi.status() != WL_CONNECTED) {
-      conectarWiFi(ssid2, password2);
-    }
-    if (WiFi.status() != WL_CONNECTED) {
-      Serial.println("Não foi possível conectar a nenhuma rede Wi-Fi.");
-      Serial.println("Tentando conectar no Wi-Fi novamente.");
+    Serial.println("WiFi desconectado. Tentando reconectar...");
+    wm.autoConnect("PetDex", "petdex1234");
+
+    if (WiFi.status() == WL_CONNECTED) {
+      Serial.println("Reconectado com sucesso!");
+    } else {
+      Serial.println("Falha ao reconectar.");
     }
   }
 
@@ -376,26 +368,4 @@ void enviarMovimento(double accX, double accY, double accZ, double angleX, doubl
   }
 
   http.end();
-}
-
-
-void conectarWiFi(const char* ssid, const char* password) {
-  WiFi.begin(ssid, password);
-  Serial.print("Conectando à rede Wi-Fi: ");
-  Serial.println(ssid);
-
-  int tentativas = 0;
-  while (WiFi.status() != WL_CONNECTED && tentativas < 40) {
-    delay(500);
-    Serial.print(".");
-    tentativas++;
-  }
-
-  if (WiFi.status() == WL_CONNECTED) {
-    Serial.println("\nConectado ao Wi-Fi!");
-    Serial.print("IP: ");
-    Serial.println(WiFi.localIP());
-  } else {
-    Serial.println("\nFalha ao conectar.");
-  }
 }
