@@ -63,7 +63,7 @@ void setup() {
   Serial.begin(115200);
   delay(1000);
 
-
+  wm.resetSettings();
   // ------------- WIFI -------------
   while (WiFi.status() != WL_CONNECTED) {
     digitalWrite(BLUE_PIN, HIGH);
