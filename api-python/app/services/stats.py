@@ -5,6 +5,9 @@ import numpy as np
 import scipy.stats as stats
 from typing import List, Dict
 from datetime import datetime, timedelta, timezone, date
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+from scipy.stats import pearsonr
 
 def calcular_estatisticas(dados: List[dict]) -> dict:
     df = pd.DataFrame(dados)
@@ -179,4 +182,56 @@ def media_ultimas_5_horas_registradas(dados: List[dict]) -> dict:
     return {
         "media": media_geral,
         "media_por_hora": medias_formatadas
+    }
+
+def executar_regressao(batimentos: List[dict], movimentos: List[dict]) -> Dict:
+    # Converte para DataFrame
+    df_bat = pd.DataFrame(batimentos)
+    df_mov = pd.DataFrame(movimentos)
+
+    # Converte a coluna de data para datetime e arredonda para minuto
+    df_bat['data'] = pd.to_datetime(df_bat['data']).dt.floor('min')
+    df_mov['data'] = pd.to_datetime(df_mov['data']).dt.floor('min')
+
+    # Agrupa por minuto e faz a média
+    df_bat_grouped = df_bat.groupby('data').agg({'frequenciaMedia': 'mean'}).reset_index()
+    df_mov_grouped = df_mov.groupby('data').mean(numeric_only=True).reset_index()
+
+    # Junta os dados pela coluna de data
+    df = pd.merge(df_bat_grouped, df_mov_grouped, on='data')
+
+    # Remove colunas não numéricas
+    df = df.dropna(subset=['frequenciaMedia'])
+
+    # Variáveis independentes (X) e dependente (y)
+    X = df[['acelerometroX', 'acelerometroY', 'acelerometroZ',
+            'giroscopioX', 'giroscopioY', 'giroscopioZ']]
+    y = df['frequenciaMedia']
+
+    # Correlações de Pearson
+    correlacoes = {col: round(pearsonr(X[col], y)[0], 3) for col in X.columns}
+
+    # Treina modelo de regressão linear
+    modelo = LinearRegression()
+    modelo.fit(X, y)
+
+    # Coeficientes
+    coeficientes = dict(zip(X.columns, modelo.coef_.round(3)))
+
+    # Predição dos próximos 5 minutos (baseado na média dos movimentos)
+    media_movimentos = X.tail(10).mean().values.reshape(1, -1)
+    predicoes = [modelo.predict(media_movimentos)[0]]
+    for i in range(4):
+        predicoes.append(modelo.predict(media_movimentos)[0])
+
+    horas_futuras = [(df['data'].max() + timedelta(hours=i+1)).isoformat() for i in range(5)]
+
+    projecao = dict(zip(horas_futuras, np.round(predicoes, 2)))
+
+    return {
+        "coeficientes": coeficientes,
+        "correlacoes": correlacoes,
+        "r2": round(modelo.score(X, y), 3),
+        "media_erro_quadratico": round(mean_squared_error(y, modelo.predict(X)), 2),
+        "projecao_5_horas": projecao
     }

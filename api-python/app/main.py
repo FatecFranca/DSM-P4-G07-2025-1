@@ -67,3 +67,14 @@ async def media_batimentos_ultimas_5_horas():
     resultado = stats.media_ultimas_5_horas_registradas(dados)
     return resultado
 
+
+@app.get("/batimentos/regressao", tags=["Batimentos"])
+async def analise_regressao_batimentos():
+    batimentos = await java_api.buscar_todos_batimentos()
+    movimentos = await java_api.buscar_todos_movimentos()
+
+    if not batimentos or not movimentos:
+        return {"erro": "Dados insuficientes para análise."}
+
+    resultado = stats.executar_regressao(batimentos, movimentos)
+    return resultado
