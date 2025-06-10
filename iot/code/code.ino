@@ -1,3 +1,4 @@
+#include <WiFi.h>
 #include <HTTPClient.h>
 #include "MAX30105.h"
 #include "heartRate.h"
@@ -6,7 +7,7 @@
 #include <Wire.h>
 #include <WiFiManager.h>
 
-    WiFiManager wm;
+WiFiManager wm;
 
 #define RED_PIN 13
 #define GREEN_PIN 12
