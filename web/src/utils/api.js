@@ -159,16 +159,24 @@ export async function getMediaUltimas5Horas() {
     // Transforma o objeto em array e formata as horas
     const dadosArray = Object.entries(response.data.media_por_hora)
       .map(([dataHora, valor]) => {
-        // Extrai apenas a hora (HH:MM) da string de data
-        const hora = new Date(dataHora).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        return { hora, valor };
+        const dataObj = new Date(dataHora);
+
+        return {
+          hora: [
+            dataObj.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
+            dataObj.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+          ],
+          valor,
+          data: dataObj,
+        };
       })
-      .sort((a, b) => a.hora.localeCompare(b.hora)); // Ordena por hora
+      .sort((a, b) => a.data - b.data); // ordena com precisão
 
     return {
       media: response.data.media,
       dados: dadosArray
     };
+
   } catch (error) {
     console.error('[API] Erro ao buscar médias das últimas 5 horas:', error);
     return { media: 0, dados: [] };

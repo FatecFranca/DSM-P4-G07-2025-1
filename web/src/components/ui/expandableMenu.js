@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useMenu } from "@/app/context/MenuContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronUp,
@@ -15,40 +16,30 @@ import {
 import { Logo } from "@/components/ui/logo";
 import Image from "next/image";
 import { getAnimalInfo, getLatestBatimentos } from "@/utils/api";
-import { GraficoLinhas } from "@/components/ui/grafico2";
+import { GraficoLinhas } from "@/components/graficos/graficoLinhas";
 
-export function ExpandableMenu({ 
-  animalId, 
-  backgroundColor = "white",
-  showGraph = false
-}) {
-  const [expanded, setExpanded] = useState(false);
-  const [batimento, setBatimento] = useState(null);
-  const [animalInfo, setAnimalInfo] = useState(null);
-  const [loading, setloading] = useState(false);
-  const [batimentoError, setBatimentoError] = useState(null);
+export function ExpandableMenu({ animalId = "defaultId", backgroundColor = "white", showGraph = false }) {
+  const { expanded, setExpanded, animalInfo, setAnimalInfo, batimento, setBatimento } = useMenu();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setloading(true);
-
-        const [batimento, info] = await Promise.all([
+        setLoading(true);
+        const [bat, info] = await Promise.all([
           getLatestBatimentos(animalId),
-          getAnimalInfo(animalId)
+          getAnimalInfo(animalId),
         ]);
-
-        setBatimento(batimento);
+        setBatimento(bat);
         setAnimalInfo(info);
-      } catch (error) {
-        console.error("Erro ao buscar dados:", error);
-        setBatimentoError(error.message);
+      } catch (err) {
+        console.error(err);
       } finally {
-        setloading(false);
+        setLoading(false);
       }
     };
 
-    if (animalId) {
+    if (!animalInfo && !batimento) {
       fetchData();
     }
   }, [animalId]);
@@ -106,8 +97,9 @@ export function ExpandableMenu({
                   ) : (
                     <FontAwesomeIcon
                       icon={faSpinner}
-                      className="text-blue-500 text-xl flex-shrink-0"
+                      className="animate-spin text-[var(--color-orange)] text-xl flex-shrink-0"
                     />
+
                   )}
 
                   {animalInfo?.sexo ? (
@@ -125,8 +117,9 @@ export function ExpandableMenu({
                   ) : (
                     <FontAwesomeIcon
                       icon={faSpinner}
-                      className="text-blue-500 text-xl flex-shrink-0"
+                      className="animate-spin text-[var(--color-orange)] text-xl flex-shrink-0"
                     />
+
                   )}
                 </h2>
               </div>
@@ -137,14 +130,16 @@ export function ExpandableMenu({
                   {loading ? (
                     <FontAwesomeIcon
                       icon={faSpinner}
-                      className="text-blue-500 text-xl flex-shrink-0"
+                      className="animate-spin text-[var(--color-orange)] text-xl flex-shrink-0"
                     />
+
                   ) : (
                     batimento ?? (
                       <FontAwesomeIcon
                         icon={faSpinner}
-                        className="text-blue-500 text-xl flex-shrink-0"
+                        className="animate-spin text-[var(--color-orange)] text-xl flex-shrink-0"
                       />
+
                     )
                   )}
                 </span>

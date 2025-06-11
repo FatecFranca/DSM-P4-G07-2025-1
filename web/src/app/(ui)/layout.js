@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { NavigationBar } from "@/components/ui/navigationBar";
+import { NavigationBar } from "@/components/nav/navigationBar";
 import { ExpandableMenu } from "@/components/ui/expandableMenu";
 import { getAnimalInfo, animalId, getLatestLocalizacao } from "@/utils/api";
 import dynamic from "next/dynamic";
@@ -66,7 +66,13 @@ export default function Layout({ children, activePage = "home", activeColor = "v
 
       {isHomePage && (
         <>
-          <ExpandableMenu animalId={animalId} backgroundColor="var(--color-white-matte)" />
+          <ExpandableMenu
+            animalId={animalId}
+            backgroundColor="var(--color-white-matte)"
+            className="fixed bottom-16 left-0 right-0 z-50"
+            showGraph={true}
+            graphType="linhas"
+          />
           <NavigationBar activePage={activePage} activeColor={activeColor} />
         </>
       )}

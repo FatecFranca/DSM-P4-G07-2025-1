@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { ExpandableMenu } from "@/components/ui/expandableMenu";
-import { NavigationBar } from "@/components/ui/navigationBar";
-import {animalId, getMediaUltimos5Dias, getEstatisticasCompletas, getMediaPorData, getProbabilidadePorValor, } from "@/utils/api";
-import { GraficoBarras } from "@/components/ui/grafico";
+import { NavigationBar } from "@/components/nav/navigationBar";
+import { animalId, getMediaUltimos5Dias, getEstatisticasCompletas, getMediaPorData, getProbabilidadePorValor, } from "@/utils/api";
+import { GraficoBarras } from "@/components/graficos/graficoBarras";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 export default function SaudePage() {
   const [healthData, setHealthData] = useState({
@@ -21,8 +23,8 @@ export default function SaudePage() {
   const [mediaPorData, setMediaPorData] = useState(null);
   const [loadingMediaData, setLoadingMediaData] = useState(false);
 
-  const [valorTemporario, setValorTemporario] = useState(""); 
-  const [valorDigitado, setValorDigitado] = useState("");     
+  const [valorTemporario, setValorTemporario] = useState("");
+  const [valorDigitado, setValorDigitado] = useState("");
   const [probabilidade, setProbabilidade] = useState(null);
   const [loadingProbabilidade, setLoadingProbabilidade] = useState(false);
 
@@ -94,7 +96,10 @@ export default function SaudePage() {
         {loading ? (
           <div className="flex items-center justify-center h-full bg-[var(--color-background)]">
             <div className="text-center">
-              <span className="loading loading-spinner text-[var(--color-orange)] text-4xl"></span>
+              <FontAwesomeIcon
+                icon={faSpinner}
+                className="animate-spin text-[var(--color-orange)] text-xl flex-shrink-0"
+              />
               <p className="mt-4 text-lg">Carregando dados de saúde...</p>
             </div>
           </div>
@@ -124,7 +129,7 @@ export default function SaudePage() {
                     <GraficoBarras data={mediasUltimos5Dias} />
                   </div>
                 </div>
-                
+
                 {/* Estatísticas - Centralizado na web */}
                 <div className="lg:w-1/2 lg:flex lg:flex-col lg:items-center">
                   <h2 className="text-sm md:text-base font-bold mb-2 text-center text-[var(--color-red)] whitespace-nowrap">
@@ -194,7 +199,7 @@ export default function SaudePage() {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Probabilidade - Centralizado na web */}
                 <div className="lg:w-1/2 lg:flex lg:flex-col lg:items-center">
                   <div className="max-w-xs mx-auto lg:mx-0">
@@ -238,28 +243,28 @@ export default function SaudePage() {
                         </p>
 
                         {!loadingProbabilidade &&
-                      probabilidade?.titulo && (
-                        <div className="mt-4 px-4 text-sm text-black text-center">
-                          <p className="text-base font-semibold mb-1 text-[var(--color-red)]">
-                            {probabilidade.titulo}
-                          </p>
-
-                          {probabilidade?.probabilidade_percentual !== undefined ? (
-                            <>
-                              <p>
-                                A chance do seu pet apresentar{" "}
-                                <span className="font-semibold">{probabilidade.valor_informado} BPM</span> é de{" "}
-                                <span className="font-semibold">
-                                  {probabilidade.probabilidade_percentual.toFixed(2)}%
-                                </span>.
+                          probabilidade?.titulo && (
+                            <div className="mt-4 px-4 text-sm text-black text-center">
+                              <p className="text-base font-semibold mb-1 text-[var(--color-red)]">
+                                {probabilidade.titulo}
                               </p>
-                              <p className="mt-2">{probabilidade.avaliacao}</p>
-                            </>
-                          ) : (
-                            <p className="mt-2">{probabilidade.avaliacao}</p>
+
+                              {probabilidade?.probabilidade_percentual !== undefined ? (
+                                <>
+                                  <p>
+                                    A chance do seu pet apresentar{" "}
+                                    <span className="font-semibold">{probabilidade.valor_informado} BPM</span> é de{" "}
+                                    <span className="font-semibold">
+                                      {probabilidade.probabilidade_percentual.toFixed(2)}%
+                                    </span>.
+                                  </p>
+                                  <p className="mt-2">{probabilidade.avaliacao}</p>
+                                </>
+                              ) : (
+                                <p className="mt-2">{probabilidade.avaliacao}</p>
+                              )}
+                            </div>
                           )}
-                        </div>
-                      )}
                       </div>
                     )}
                   </div>
@@ -277,7 +282,7 @@ export default function SaudePage() {
         showGraph={true}
         graphType="linhas"
       />
-      
+
       <NavigationBar
         activePage="saude"
         activeColor="var(--color-red)"
