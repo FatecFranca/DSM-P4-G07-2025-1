@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { VictoryLine, VictoryChart, VictoryTheme, VictoryAxis } from 'victory-native';
 import { getMediaUltimas5Horas } from '../services/apiEstatistica';
 
@@ -10,14 +10,31 @@ const GraficoLinha = () => {
     useEffect(() => {
         const carregarDados = async () => {
             try {
-                const { dados } = await getMediaUltimas5Horas();
-                const dadosFormatados = dados.map(item => ({
-                    x: item.hora,
-                    y: item.valor,
-                }));
+                const resposta = await getMediaUltimas5Horas();
+                const mediaPorHora = resposta.media_por_hora;
+
+                if (!mediaPorHora || typeof mediaPorHora !== 'object') {
+                    console.warn("Dados inválidos:", resposta);
+                    setDadosGrafico([]);
+                    return;
+                }
+
+                const dadosFormatados = Object.entries(mediaPorHora).map(([dataHora, valor]) => {
+                    const data = new Date(dataHora);
+                    const dia = String(data.getDate()).padStart(2, '0');
+                    const mes = String(data.getMonth() + 1).padStart(2, '0');
+                    const hora = String(data.getHours()).padStart(2, '0');
+
+                    return {
+                        x: `${dia}/${mes} ${hora}h`,
+                        y: valor
+                    };
+                });
+
                 setDadosGrafico(dadosFormatados);
             } catch (error) {
                 console.error('Erro ao carregar dados do gráfico:', error);
+                setDadosGrafico([]);
             } finally {
                 setLoading(false);
             }
@@ -48,11 +65,16 @@ const GraficoLinha = () => {
             <VictoryChart
                 theme={VictoryTheme.material}
                 height={200}
-                padding={{ top: 20, bottom: 50, left: 50, right: 60 }}
+                padding={{ top: 20, bottom: 70, left: 50, right: 60 }}
             >
                 <VictoryAxis
                     style={{
-                        tickLabels: { fontSize: 10, fill: '#000' },
+                        tickLabels: {
+                            fontSize: 10,
+                            fill: '#000',
+                            angle: -30,
+                            padding: 15,
+                        },
                         grid: { stroke: 'transparent' }
                     }}
                 />
@@ -60,7 +82,7 @@ const GraficoLinha = () => {
                     dependentAxis
                     tickFormat={(x) => `${x} BPM`}
                     style={{
-                        tickLabels: { fontSize: 10, fill: '#FF0000', fontWeight: 'bold' },
+                        tickLabels: { fontSize: 10, fill: '#FF0000' },
                         grid: { stroke: '#ccc' }
                     }}
                 />

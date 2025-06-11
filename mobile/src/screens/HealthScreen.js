@@ -1,8 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, ScrollView, ActivityIndicator, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import {
+    View, Text, TextInput, ScrollView, ActivityIndicator,
+    StyleSheet, KeyboardAvoidingView, Platform
+} from 'react-native';
 import ExpandableMenu from '../components/ExpandableMenu/ExpandableMenuSaude';
 import NavigationBar from '../components/NavigationBar';
-import { animalId, getMediaUltimos5Dias, getEstatisticasCompletas, getMediaPorData, getProbabilidadePorValor } from '../services/apiEstatistica';
+import {
+    animalId,
+    getMediaUltimos5Dias,
+    getEstatisticasCompletas,
+    getMediaPorData,
+    getProbabilidadePorValor
+} from '../services/apiEstatistica';
 import GraficoBarras from '../components/GraficoBarras';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faHeartbeat } from '@fortawesome/free-solid-svg-icons';
@@ -18,6 +27,7 @@ export default function HealthScreen({ activeScreen, onNavigate }) {
     const [loading, setLoading] = useState(true);
     const [loadingMediaData, setLoadingMediaData] = useState(false);
     const [loadingProbabilidade, setLoadingProbabilidade] = useState(false);
+    const debounceTimer = useRef(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -82,11 +92,14 @@ export default function HealthScreen({ activeScreen, onNavigate }) {
     }, [selectedDate]);
 
     useEffect(() => {
-        const buscarProbabilidade = async () => {
-            if (!valorDigitado) {
-                setProbabilidade(null);
-                return;
-            }
+        if (debounceTimer.current) clearTimeout(debounceTimer.current);
+
+        if (!valorDigitado) {
+            setProbabilidade(null);
+            return;
+        }
+
+        debounceTimer.current = setTimeout(async () => {
             setLoadingProbabilidade(true);
             try {
                 const resultado = await getProbabilidadePorValor(valorDigitado);
@@ -97,15 +110,21 @@ export default function HealthScreen({ activeScreen, onNavigate }) {
             } finally {
                 setLoadingProbabilidade(false);
             }
-        };
-        buscarProbabilidade();
+        }, 800); // 800ms de debounce
     }, [valorDigitado]);
 
     return (
-        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
             <View style={styles.container}>
                 <FontAwesomeIcon icon={faHeartbeat} size={120} color="#FF0000" style={styles.heartIcon} />
-                <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+                <ScrollView
+                    style={styles.scroll}
+                    contentContainerStyle={styles.scrollContent}
+                    keyboardShouldPersistTaps="handled"
+                >
                     {loading ? (
                         <ActivityIndicator size="large" color="#F39200" style={{ marginTop: 50 }} />
                     ) : (
@@ -163,13 +182,15 @@ export default function HealthScreen({ activeScreen, onNavigate }) {
                                     <ActivityIndicator color="#F39200" />
                                 ) : (
                                     <View style={styles.card}>
-                                        {mediaPorData !== null ? (
+                                        {selectedDate === '' ? (
+                                            <Text style={styles.statLabel}>Digite uma data válida</Text>
+                                        ) : mediaPorData === null ? (
+                                            <Text style={styles.statLabel}>Sem dados de batimento para a data selecionada</Text>
+                                        ) : (
                                             <>
                                                 <Text style={styles.statLabel}>A média do dia é igual a:</Text>
-                                                <Text style={styles.largeValue}>{mediaPorData?.toFixed(2) || 'Nenhum dado encontrado'}</Text>
+                                                <Text style={styles.largeValue}>{mediaPorData?.toFixed(2)}</Text>
                                             </>
-                                        ) : (
-                                            <Text style={styles.statLabel}>Digite uma data válida</Text>
                                         )}
                                     </View>
                                 )}
