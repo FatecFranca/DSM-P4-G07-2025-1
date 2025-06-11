@@ -16,8 +16,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import Logo from '../Logo/Logo';
 import { getAnimalInfo, getLatestBatimentos } from '../../services/api';
+import GraficoLinha from '../GraficoLinha';
 
-export default function ExpandableMenu({animalId}) {
+export default function ExpandableMenuSaude({ animalId }) {
     const [expanded, setExpanded] = useState(false);
     const [batimento, setBatimento] = useState(null);
     const [animalInfo, setAnimalInfo] = useState(null);
@@ -25,14 +26,12 @@ export default function ExpandableMenu({animalId}) {
 
     const toggleExpand = () => {
         Animated.timing(animatedHeight, {
-            toValue: expanded ? 180 : 400,
+            toValue: expanded ? 180 : 420,
             duration: 250,
             useNativeDriver: false,
         }).start(() => setExpanded(!expanded));
     };
 
-    const animal = { nome: 'Uno', sexo: 'M' };
-    const bpm = 100;
     const battery = 97;
     const isConnected = true;
 
@@ -53,19 +52,14 @@ export default function ExpandableMenu({animalId}) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                
-
                 const [batimento, info] = await Promise.all([
                     getLatestBatimentos(animalId),
-                    getAnimalInfo(animalId)
+                    getAnimalInfo(animalId),
                 ]);
-
                 setBatimento(batimento);
                 setAnimalInfo(info);
-
-                console.log(info);
             } catch (error) {
-                console.error("Erro ao buscar dados:", error);
+                console.error('Erro ao buscar dados:', error);
             }
         };
 
@@ -123,16 +117,14 @@ export default function ExpandableMenu({animalId}) {
                                 color={getBatteryColor()}
                                 style={{ transform: [{ rotate: '-90deg' }] }}
                             />
-                            <Text style={[styles.batteryLabel, { color: '#000' }]}>
-                                {battery}%
-                            </Text>
+                            <Text style={styles.batteryLabel}>{battery}%</Text>
                         </View>
                     </View>
                 </View>
 
                 <View style={styles.statusCenter}>
                     <Text style={styles.statusLabel}>
-                        Status da PetDex: {isConnected ? 'Conectada' : 'Desconectada'}
+                        Status da PetDex: {isConnected ? 'Conectada' : 'Desconectada'}{' '}
                     </Text>
                     <FontAwesomeIcon
                         icon={faCircle}
@@ -143,6 +135,14 @@ export default function ExpandableMenu({animalId}) {
                 </View>
 
                 {expanded && <View style={styles.separator} />}
+
+                {expanded && (
+                    <View style={styles.chartContainer}>
+                        <View style={styles.chartWrapper}>
+                            <GraficoLinha />
+                        </View>
+                    </View>
+                )}
             </View>
         </Animated.View>
     );
@@ -271,5 +271,12 @@ const styles = StyleSheet.create({
         marginTop: -10,
         marginHorizontal: -1,
         borderRadius: 2,
+    },
+    chartContainer: {
+        marginTop: -10, // ← Sobe o gráfico
+    },
+    chartWrapper: {
+        width: '95%', // ← Reduz largura do gráfico
+        alignSelf: 'center',
     },
 });

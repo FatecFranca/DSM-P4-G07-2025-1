@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, ScrollView, ActivityIndicator, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
-import ExpandableMenu from '../components/ExpandableMenu/ExpandableMenu';
+import ExpandableMenu from '../components/ExpandableMenu/ExpandableMenuSaude';
 import NavigationBar from '../components/NavigationBar';
-import {animalId, getMediaUltimos5Dias, getEstatisticasCompletas, getMediaPorData, getProbabilidadePorValor} from '../services/apiEstatistica';
+import { animalId, getMediaUltimos5Dias, getEstatisticasCompletas, getMediaPorData, getProbabilidadePorValor } from '../services/apiEstatistica';
 import GraficoBarras from '../components/GraficoBarras';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faHeartbeat } from '@fortawesome/free-solid-svg-icons';
 
-export default function HealthScreen() {
+export default function HealthScreen({ activeScreen, onNavigate }) {
     const [healthData, setHealthData] = useState(null);
     const [mediasUltimos5Dias, setMediasUltimos5Dias] = useState([]);
     const [selectedDate, setSelectedDate] = useState('');
@@ -215,7 +215,7 @@ export default function HealthScreen() {
                     )}
                 </ScrollView>
                 <ExpandableMenu animalId={animalId} />
-                <NavigationBar activeScreen="saude" onNavigate={() => { }} />
+                <NavigationBar activeScreen={activeScreen} onNavigate={onNavigate} />
             </View>
         </KeyboardAvoidingView>
     );

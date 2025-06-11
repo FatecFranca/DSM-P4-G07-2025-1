@@ -41,13 +41,6 @@ export default function NavigationBar({ activeScreen, onNavigate }) {
                 iconColor={getIconColor('saude')}
                 onPress={() => onNavigate('saude')}
             />
-            <NavItem
-                icon={faCog}
-                label="Configurações"
-                isActive={activeScreen === 'config'}
-                iconColor={getIconColor('config')}
-                onPress={() => onNavigate('config')}
-            />
         </View>
     );
 }
