@@ -155,6 +155,7 @@ export async function getMediaUltimas5Horas() {
       console.warn('[API] A propriedade media_por_hora não foi encontrada na resposta');
       return { media: 0, dados: [] };
     }
+    
 
     // Transforma o objeto em array e formata as horas
     const dadosArray = Object.entries(response.data.media_por_hora)
@@ -183,6 +184,17 @@ export async function getMediaUltimas5Horas() {
   }
 }
 
+export async function getRegressaoCorrelacao() {
+  try {
+    const response = await apiEstatistica.get('/batimentos/regressao');
+    console.log("[DEBUG] Dados de regressão e correlação:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error('[API] Erro ao buscar dados de regressão e correlação:', error);
+    return null;
+  }
+}
+
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const lat = searchParams.get('lat');
@@ -203,3 +215,4 @@ export async function GET(req) {
 
   return Response.json({ address: data.results[0]?.formatted_address });
 }
+

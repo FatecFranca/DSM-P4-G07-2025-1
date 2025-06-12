@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { ExpandableMenu } from "@/components/ui/expandableMenu";
 import { NavigationBar } from "@/components/nav/navigationBar";
-import { animalId, getMediaUltimos5Dias, getEstatisticasCompletas, getMediaPorData, getProbabilidadePorValor, } from "@/utils/api";
+import { animalId, getMediaUltimos5Dias, getEstatisticasCompletas, getMediaPorData, getProbabilidadePorValor, getRegressaoCorrelacao } from "@/utils/api";
 import { GraficoBarras } from "@/components/graficos/graficoBarras";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
@@ -28,16 +28,21 @@ export default function SaudePage() {
   const [probabilidade, setProbabilidade] = useState(null);
   const [loadingProbabilidade, setLoadingProbabilidade] = useState(false);
 
+  const [regressaoData, setRegressaoData] = useState(null);
+  const [loadingRegressao, setLoadingRegressao] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [estatisticas, medias] = await Promise.all([
+        const [estatisticas, medias, regressao] = await Promise.all([
           getEstatisticasCompletas(),
           getMediaUltimos5Dias(),
+          getRegressaoCorrelacao()
         ]);
         setHealthData(estatisticas);
         setMediasUltimos5Dias(medias);
+        setRegressaoData(regressao);
       } catch (error) {
         console.error("Erro ao buscar dados de saúde:", error);
       } finally {
@@ -268,6 +273,98 @@ export default function SaudePage() {
                       </div>
                     )}
                   </div>
+                </div>
+              </div>
+
+              {/* Terceira linha - Regressão e Correlação */}
+              <div className="lg:flex lg:justify-center lg:w-full lg:max-w-5xl mt-6">
+                <div className="w-full lg:max-w-3xl">
+                  <h3 className="text-[var(--color-red)] font-bold text-base text-center mb-4">
+                    Regressão e Correlação dos dados de movimento com a frequência cardíaca
+                  </h3>
+                  
+                  {loadingRegressao ? (
+                    <div className="flex justify-center">
+                      <FontAwesomeIcon
+                        icon={faSpinner}
+                        className="animate-spin text-[var(--color-orange)] text-xl"
+                      />
+                    </div>
+                  ) : regressaoData ? (
+                    <div className="bg-[var(--color-white-matte)] rounded-lg p-4 shadow-md">
+                      {/* Coeficientes e Correlações */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        {/* Coeficientes */}
+                        <div className="bg-gray-50 p-3 rounded">
+                          <h4 className="text-[var(--color-red)] font-bold text-sm mb-2 text-center">Coeficientes de Regressão</h4>
+                          <div className="grid grid-cols-3 gap-2">
+                            <div className="text-center">
+                              <p className="text-black font-medium text-xs">Eixo X</p>
+                              <p className="text-black font-bold">{regressaoData.coeficientes.acelerometroX.toFixed(3)}</p>
+                            </div>
+                            <div className="text-center">
+                              <p className="text-black font-medium text-xs">Eixo Y</p>
+                              <p className="text-black font-bold">{regressaoData.coeficientes.acelerometroY.toFixed(3)}</p>
+                            </div>
+                            <div className="text-center">
+                              <p className="text-black font-medium text-xs">Eixo Z</p>
+                              <p className="text-black font-bold">{regressaoData.coeficientes.acelerometroZ.toFixed(3)}</p>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Correlações */}
+                        <div className="bg-gray-50 p-3 rounded">
+                          <h4 className="text-[var(--color-red)] font-bold text-sm mb-2 text-center">Correlações</h4>
+                          <div className="grid grid-cols-3 gap-2">
+                            <div className="text-center">
+                              <p className="text-black font-medium text-xs">Eixo X</p>
+                              <p className="text-black font-bold">{regressaoData.correlacoes.acelerometroX.toFixed(3)}</p>
+                            </div>
+                            <div className="text-center">
+                              <p className="text-black font-medium text-xs">Eixo Y</p>
+                              <p className="text-black font-bold">{regressaoData.correlacoes.acelerometroY.toFixed(3)}</p>
+                            </div>
+                            <div className="text-center">
+                              <p className="text-black font-medium text-xs">Eixo Z</p>
+                              <p className="text-black font-bold">{regressaoData.correlacoes.acelerometroZ.toFixed(3)}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Métricas Gerais */}
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+                        <div className="bg-gray-50 p-3 rounded text-center">
+                          <p className="text-[var(--color-red)] font-bold text-xs">Coeficiente Geral</p>
+                          <p className="text-black font-bold text-lg">{regressaoData.coeficiente_geral.toFixed(3)}</p>
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded text-center">
+                          <p className="text-[var(--color-red)] font-bold text-xs">Coeficiente R²</p>
+                          <p className="text-black font-bold text-lg">{regressaoData.r2.toFixed(3)}</p>
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded text-center">
+                          <p className="text-[var(--color-red)] font-bold text-xs">Erro Quadrático</p>
+                          <p className="text-black font-bold text-lg">{regressaoData.media_erro_quadratico.toFixed(3)}</p>
+                        </div>
+                      </div>
+                      
+                      {/* Descrição e Função de Regressão */}
+                      <div className="mt-4">
+                        <p className="text-black text-sm mb-2 text-center px-4">
+                          Através da análise da correlação entre os dados de movimento é possível perceber que a frequência é influênciada apenas pelos valores de aceleração nos três eixos (X, Y e Z)
+                        </p>
+                        <div className="p-3 bg-gray-100 rounded">
+                          <h4 className="text-[var(--color-red)] font-bold text-sm mb-1 text-center">Função de Regressão</h4>
+                          <p className="text-black text-xs font-mono break-words text-center">
+                            {regressaoData.funcao_regressao}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-center text-gray-500">Não foi possível carregar os dados de regressão.</p>
+                  )}
                 </div>
               </div>
             </div>
