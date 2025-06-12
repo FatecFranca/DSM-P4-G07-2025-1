@@ -8,7 +8,7 @@ const containerStyle = {
   height: '100%',
 };
 
-export default function apComponent() {
+export default function MapComponent() {
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
   });
