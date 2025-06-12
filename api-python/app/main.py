@@ -78,3 +78,35 @@ async def analise_regressao_batimentos():
 
     resultado = stats.executar_regressao(batimentos, movimentos)
     return resultado
+
+@app.get("/batimentos/predizer", tags=["Batimentos"])
+async def predizer_batimento(
+    acelerometroX: float = Query(...),
+    acelerometroY: float = Query(...),
+    acelerometroZ: float = Query(...)
+):
+    # Busca dados históricos para treinar o modelo
+    batimentos = await java_api.buscar_todos_batimentos()
+    movimentos = await java_api.buscar_todos_movimentos()
+
+    if not batimentos or not movimentos:
+        return {"erro": "Dados insuficientes para gerar o modelo de regressão."}
+
+    resultado = stats.executar_regressao(batimentos, movimentos)
+
+    # Extrai os coeficientes e intercepto
+    coef = resultado["coeficientes"]
+    intercepto = resultado["coeficiente_geral"]
+
+    # Aplica a função de regressão manualmente
+    frequencia_prevista = (
+        intercepto
+        + coef["acelerometroX"] * acelerometroX
+        + coef["acelerometroY"] * acelerometroY
+        + coef["acelerometroZ"] * acelerometroZ
+    )
+
+    return {
+        "frequencia_prevista": round(frequencia_prevista, 2),
+        "funcao_usada": resultado["funcao_regressao"]
+    }
