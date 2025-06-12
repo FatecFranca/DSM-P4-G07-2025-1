@@ -42,7 +42,7 @@ export function ExpandableMenu({ animalId = "defaultId", backgroundColor = "whit
     if (!animalInfo && !batimento) {
       fetchData();
     }
-  }, [animalId]);
+  }, [animalInfo, batimento, setAnimalInfo, setBatimento]);
 
   return (
     <div
