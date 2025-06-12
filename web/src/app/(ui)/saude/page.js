@@ -31,6 +31,13 @@ export default function SaudePage() {
   const [regressaoData, setRegressaoData] = useState(null);
   const [loadingRegressao, setLoadingRegressao] = useState(false);
 
+  // Estados para a previsão de batimento
+  const [acelerometroX, setAcelerometroX] = useState("");
+  const [acelerometroY, setAcelerometroY] = useState("");
+  const [acelerometroZ, setAcelerometroZ] = useState("");
+  const [frequenciaPrevista, setFrequenciaPrevista] = useState(null);
+  const [loadingPrevisao, setLoadingPrevisao] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -94,6 +101,21 @@ export default function SaudePage() {
 
     fetchProbabilidade();
   }, [valorDigitado]);
+
+  const calcularPrevisao = async () => {
+    try {
+      setLoadingPrevisao(true);
+      const response = await fetch(
+        `https://api-petdex-estatistica.onrender.com/batimentos/predizer?acelerometroX=${acelerometroX}&acelerometroY=${acelerometroY}&acelerometroZ=${acelerometroZ}`
+      );
+      const data = await response.json();
+      setFrequenciaPrevista(data.frequencia_prevista);
+    } catch (error) {
+      console.error("Erro ao calcular previsão:", error);
+    } finally {
+      setLoadingPrevisao(false);
+    }
+  };
 
   return (
     <div className="relative flex flex-col bg-[var(--color-background)] min-h-screen h-screen">
@@ -360,6 +382,69 @@ export default function SaudePage() {
                             {regressaoData.funcao_regressao}
                           </p>
                         </div>
+                      </div>
+
+                      {/* Nova seção de Previsão de Batimento */}
+                      <div className="mt-6 bg-[var(--color-white-matte)] rounded-lg p-4 shadow-md">
+                        <h4 className="text-[var(--color-red)] font-bold text-base text-center mb-3">
+                          Fazer previsão de batimento
+                        </h4>
+                        <p className="text-black text-sm text-center mb-4">
+                          Informe os valores de aceleração abaixo  
+                        </p>
+                        
+                        <div className="flex justify-center space-x-4 mb-4">
+                          <input
+                            type="number"
+                            placeholder="X"
+                            value={acelerometroX}
+                            onChange={(e) => setAcelerometroX(e.target.value)}
+                            className="bg-[var(--color-gray-light)] rounded-lg px-3 py-2 text-base font-medium border border-gray-300 w-16 text-center"
+                          />
+                          <input
+                            type="number"
+                            placeholder="Y"
+                            value={acelerometroY}
+                            onChange={(e) => setAcelerometroY(e.target.value)}
+                            className="bg-[var(--color-gray-light)] rounded-lg px-3 py-2 text-base font-medium border border-gray-300 w-16 text-center"
+                          />
+                          <input
+                            type="number"
+                            placeholder="Z"
+                            value={acelerometroZ}
+                            onChange={(e) => setAcelerometroZ(e.target.value)}
+                            className="bg-[var(--color-gray-light)] rounded-lg px-3 py-2 text-base font-medium border border-gray-300 w-16 text-center"
+                          />
+                        </div>
+
+                        <div className="flex justify-center">
+                          <button
+                            onClick={calcularPrevisao}
+                            disabled={loadingPrevisao}
+                            className="bg-[var(--color-red)] hover:bg-[var(--color-red-hover)] text-white font-bold py-2 px-6 rounded-lg"
+                          >
+                            {loadingPrevisao ? (
+                              <FontAwesomeIcon
+                                icon={faSpinner}
+                                className="animate-spin"
+                              />
+                            ) : (
+                              "Calcular batimento"
+                            )}
+                          </button>
+                        </div>
+
+                        {frequenciaPrevista !== null && (
+                          <div className="mt-4 text-center">
+                            <p className="text-[var(--color-red)] font-bold text-sm">Resultado do batimento:</p>
+                            <p className="text-black font-bold text-xl">
+                              {frequenciaPrevista.toFixed(2)}
+                            </p>
+                            <p className="text-black text-xs mt-2">
+                              Função utilizada: {regressaoData.funcao_regressao}
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ) : (

@@ -22,6 +22,7 @@ body {
 :root {
   --color-orange: #F39200;
   --color-orange-hover: #cd800c; 
+  --color-red-hover: #c20e0e; 
   --color-red: #FF0000;
   --color-gray-medium: #9D9D9C;
   --color-white: #FFFFFF;

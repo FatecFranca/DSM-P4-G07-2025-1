@@ -195,6 +195,21 @@ export async function getRegressaoCorrelacao() {
   }
 }
 
+const calcularPrevisao = async () => {
+  try {
+    setLoadingPrevisao(true);
+    const response = await fetch(
+      `https://api-petdex-estatistica.onrender.com/batimentos/predizer?acelerometroX=${acelerometroX}&acelerometroY=${acelerometroY}&acelerometroZ=${acelerometroZ}`
+    );
+    const data = await response.json();
+    setFrequenciaPrevista(data.frequencia_prevista);
+  } catch (error) {
+    console.error("Erro ao calcular previsão:", error);
+  } finally {
+    setLoadingPrevisao(false);
+  }
+};
+
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const lat = searchParams.get('lat');
