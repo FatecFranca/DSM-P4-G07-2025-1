@@ -182,3 +182,24 @@ export async function getMediaUltimas5Horas() {
     return { media: 0, dados: [] };
   }
 }
+
+export async function GET(req) {
+  const { searchParams } = new URL(req.url);
+  const lat = searchParams.get('lat');
+  const lng = searchParams.get('lng');
+
+  if (!lat || !lng) {
+    return Response.json({ error: 'Latitude e longitude são obrigatórias.' }, { status: 400 });
+  }
+
+  const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+
+  const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`);
+  const data = await response.json();
+
+  if (data.status !== "OK") {
+    return Response.json({ error: data.error_message || "Erro desconhecido" }, { status: 500 });
+  }
+
+  return Response.json({ address: data.results[0]?.formatted_address });
+}

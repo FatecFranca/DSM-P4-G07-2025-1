@@ -5,6 +5,8 @@ import { Poppins } from "next/font/google";
 import { animalId } from "@/utils/api";
 import { MenuProvider } from "./context/MenuContext";
 import { GraficoLinhasProvider } from "./context/GraficoLinhasContext";
+import { MapProvider } from "./context/MapContext";
+import dynamic from "next/dynamic";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -17,25 +19,30 @@ export const metadata = {
   title: "Petdex",
 };
 
+
+
 export default function RootLayout({ children }) {
   return (
     <html lang="pt-br" className={poppins.variable}>
       <body className="font-poppins bg-white">
-        <GraficoLinhasProvider>
+        <MapProvider>
+          <GraficoLinhasProvider>
+            <MenuProvider>
+              {children}
+              <mapComponent>
 
+              </mapComponent>
+              <ExpandableMenu
+                animalId={animalId}
+                backgroundColor="var(--color-white-matte)"
+                className="fixed bottom-16 left-0 right-0 z-50"
+                showGraph={true}
+                graphType="linhas"
+              />
 
-          <MenuProvider>
-            {children}
-
-            <ExpandableMenu
-              animalId={animalId}
-              backgroundColor="var(--color-white-matte)"
-              className="fixed bottom-16 left-0 right-0 z-50"
-              showGraph={true}
-              graphType="linhas"
-            />
-          </MenuProvider>
-        </GraficoLinhasProvider>
+            </MenuProvider>
+          </GraficoLinhasProvider>
+        </MapProvider>
       </body>
     </html>
   );
