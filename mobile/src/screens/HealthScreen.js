@@ -3,10 +3,7 @@ import {
     View, Text, TextInput, ScrollView, ActivityIndicator,
     StyleSheet, KeyboardAvoidingView, Platform
 } from 'react-native';
-import ExpandableMenu from '../components/ExpandableMenu/ExpandableMenuSaude';
-import NavigationBar from '../components/NavigationBar';
 import {
-    animalId,
     getMediaUltimos5Dias,
     getEstatisticasCompletas,
     getMediaPorData,
@@ -16,7 +13,7 @@ import GraficoBarras from '../components/GraficoBarras';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faHeartbeat } from '@fortawesome/free-solid-svg-icons';
 
-export default function HealthScreen({ activeScreen, onNavigate }) {
+export default function HealthScreen({ animalId }) {
     const [healthData, setHealthData] = useState(null);
     const [mediasUltimos5Dias, setMediasUltimos5Dias] = useState([]);
     const [selectedDate, setSelectedDate] = useState('');
@@ -110,8 +107,9 @@ export default function HealthScreen({ activeScreen, onNavigate }) {
             } finally {
                 setLoadingProbabilidade(false);
             }
-        }, 800); // 800ms de debounce
+        }, 800);
     }, [valorDigitado]);
+
 
     return (
         <KeyboardAvoidingView
@@ -235,8 +233,6 @@ export default function HealthScreen({ activeScreen, onNavigate }) {
                         </>
                     )}
                 </ScrollView>
-                <ExpandableMenu animalId={animalId} />
-                <NavigationBar activeScreen={activeScreen} onNavigate={onNavigate} />
             </View>
         </KeyboardAvoidingView>
     );
@@ -247,7 +243,7 @@ const styles = StyleSheet.create({
     heartIcon: {
         position: 'absolute', top: 50, right: 20, opacity: 0.1, zIndex: -1,
     },
-    scroll: { paddingHorizontal: 20, paddingBottom: 180 },
+    scroll: { paddingHorizontal: 20 },
     scrollContent: { paddingTop: 40, paddingBottom: 250 },
     title: {
         fontSize: 24,
