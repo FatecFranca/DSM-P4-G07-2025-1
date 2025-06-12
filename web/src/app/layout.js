@@ -16,7 +16,10 @@ const poppins = Poppins({
 });
 
 export const metadata = {
-  title: "Petdex",
+  title: "PetDex",
+  icons: {
+    icon: "/pata-dex.svg", 
+  },
 };
 
 
