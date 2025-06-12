@@ -421,7 +421,7 @@ export default function SaudePage() {
                           <button
                             onClick={calcularPrevisao}
                             disabled={loadingPrevisao}
-                            className="bg-[var(--color-red)] hover:bg-[var(--color-red-hover)] text-white font-bold py-2 px-6 rounded-lg"
+                            className="bg-[var(--color-orange)] hover:bg-[var(--color-orange-hover)] text-white font-bold py-2 px-6 rounded-lg"
                           >
                             {loadingPrevisao ? (
                               <FontAwesomeIcon
