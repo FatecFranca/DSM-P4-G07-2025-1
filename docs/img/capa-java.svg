@@ -7,7 +7,7 @@
       }
 
       .cls-2 {
-        font-family: Roboto, Poppins-SemiBold, Poppins;
+        font-family: Poppins-SemiBold, Poppins;
         font-size: 172px;
         font-weight: 600;
       }
