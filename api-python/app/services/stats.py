@@ -66,23 +66,23 @@ def media_por_intervalo(dados: List[dict], inicio: date, fim: date) -> Dict:
 
 
 def calcular_probabilidade(valor: int, dados: list):
-    valores_validos = [v for v in dados if isinstance(v, (int, float)) and 30 <= v <= 200]
+    valores_validos = [v for v in dados if isinstance(v, (int, float)) and 20 <= v <= 200]
 
     if not valores_validos:
         return {
-            "erro": "Não há dados suficientes dentro da faixa fisiológica (30 a 200 BPM) para análise."
+            "erro": "Não há dados suficientes dentro da faixa fisiológica (20 a 200 BPM) para análise."
         }
 
     media = np.mean(valores_validos)
     desvio = np.std(valores_validos)
 
-    if valor < 30 or valor > 250:
+    if valor < 20 or valor > 250:
         return {
             "valor_informado": valor,
             "media_registrada": round(media, 2),
             "desvio_padrao": round(desvio, 2),
             "titulo": "Valor fora da faixa ❌",
-            "avaliacao": "O valor informado está fora da faixa fisiológica plausível para cães e gatos (30 a 200 BPM)."
+            "avaliacao": "O valor informado está fora da faixa fisiológica plausível para cães e gatos (20 a 200 BPM)."
         }
 
     z = abs((valor - media) / desvio)
@@ -100,14 +100,14 @@ def calcular_probabilidade(valor: int, dados: list):
         titulo = "Batimento um pouco fora do comum ⚠️"
         interpretacao = (
             f"O valor de {valor} BPM é um pouco diferente da média recente. "
-            f"A chance de ocorrer é de aproximadamente {round(prob, 2)}%. Não necessariamente é preocupante, mas vale observar."
+            f"A chance de ocorrer é de aproximadamente {round(prob, 2)}%. Não é necessário se preocupar, mas observe o comportamento do seu pet."
         )
     elif z < 3:
         classificacao = "Incomum"
         titulo = "Batimento incomum ❗"
         interpretacao = (
-            f"O valor de {valor} BPM é estatisticamente incomum com base nos últimos 5 dias. "
-            f"A chance de isso ocorrer naturalmente é de apenas {round(prob, 2)}%. Pode representar agitação, estresse ou outra condição fisiológica fora do padrão."
+            f"O valor de {valor} BPM é estatisticamente incomum com base nos últimos dias. "
+            f"A chance de isso ocorrer naturalmente é de apenas {round(prob, 2)}%. Isso pode indicar agitação, estresse, exaustão ou até uma condição fisiológica crítica, como frequência cardíaca muito alta ou muito baixa. Observe o comportamento do seu pet e, se os sinais persistirem, tente acalmá-lo e procure um veterinário o quanto antes."
         )
     else:
         classificacao = "Raro ou fora do padrão"
