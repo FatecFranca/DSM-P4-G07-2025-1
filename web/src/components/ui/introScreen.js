@@ -45,8 +45,8 @@ export function IntroScreen({ animalId }) {
     }
 
     return (
-        <div className="relative w-full h-screen md:overflow-hidden overflow-y-auto px-6 py-8"> {/* Scroll apenas em mobile */}
-            {/* Logo */}
+        <div className="relative w-full h-screen overflow-hidden px-6 py-8">
+            {/* Logo - Centralizado no mobile, à direita no desktop */}
             <div className="absolute top-0 w-full flex justify-center md:justify-end p-4 md:pr-10 z-10">
                 <Image
                     src="/logo-petdex.svg"
@@ -58,33 +58,36 @@ export function IntroScreen({ animalId }) {
             </div>
 
             {/* Elementos decorativos */}
-            <div className="absolute top-0 left-0 p-2 opacity-20 z-0">
+            {/* Gato */}
+            <div className="absolute top-0 left-0 p-2 opacity-20 z-0 w-[120px] md:w-[280px]">
                 <Image
                     src="/gato-dex.svg"
                     alt="Gato"
                     width={180}
                     height={180}
-                    className="w-[120px] md:w-[280px]"
+                    className="w-full h-auto"
                 />
             </div>
 
-            <div className="absolute top-1/2 right-0 -translate-y-1/2 opacity-20 z-0 pr-2">
+            {/* Cachorro - Posicionamento ajustado para mobile */}
+            <div className="absolute top-[21%] md:top-1/2 -right-2 -translate-y-1/2 opacity-20 z-0 pr-2 w-[160px] md:w-[340px]">
                 <Image
                     src="/cao-dex.svg"
                     alt="Cachorro"
                     width={240}
                     height={240}
-                    className="w-[160px] md:w-[340px]"
+                    className="w-full h-auto"
                 />
             </div>
 
-            <div className="absolute bottom-0 left-0 p-2 opacity-20 z-0">
+            {/* Pata */}
+            <div className="absolute bottom-0 left-0 p-2 opacity-20 z-0 w-[120px] md:w-[260px]">
                 <Image
                     src="/pata-dex.svg"
                     alt="Pata"
                     width={200}
                     height={200}
-                    className="w-[120px] md:w-[260px]"
+                    className="w-full h-auto"
                 />
             </div>
 
@@ -112,7 +115,7 @@ export function IntroScreen({ animalId }) {
                             width={100}
                             height={100}
                             alt="Uno"
-                            className="w-[100px] md:w-[140px] rounded-full flex-shrink-0 border-4 border-[var(--color-orange)] shadow-md"
+                            className="w-[100px] md:w-[140px] rounded-full flex-shrink-0 border-4 border-[var(--color-orange)] shadow-md object-cover"
                         />
                         <div className="text-left pt-2">
                             <div className="flex items-center mb-2">
@@ -141,7 +144,6 @@ export function IntroScreen({ animalId }) {
                                         icon={faSpinner}
                                         className="animate-spin text-[var(--color-orange)] text-xl flex-shrink-0"
                                     />
-
                                 )}
                             </div>
                             <p className="text-black text-sm md:text-base mb-3 font-medium">
@@ -150,7 +152,6 @@ export function IntroScreen({ animalId }) {
                                         icon={faSpinner}
                                         className="animate-spin text-[var(--color-orange)] text-xl flex-shrink-0"
                                     />
-
                                 )}
                             </p>
 
