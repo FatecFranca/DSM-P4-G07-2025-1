@@ -274,7 +274,7 @@ export default function SaudePage() {
                 </div>
               </div>
 
-              <div className="lg:flex lg:justify-center lg:w-full lg:max-w-5xl mt-6">
+              <div className="lg:flex lg:justify-center lg:w-full lg:max-w-5xl mt-6 mb-20 md:mb-0">
                 <div className="w-full lg:max-w-3xl">
                   <h3 className="text-[var(--color-red)] font-bold text-base text-center mb-4">
                     Regressão e Correlação dos dados de movimento com a frequência cardíaca
