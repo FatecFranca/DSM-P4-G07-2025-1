@@ -198,11 +198,17 @@ export async function getRegressaoCorrelacao() {
 const calcularPrevisao = async () => {
   try {
     setLoadingPrevisao(true);
-    const response = await fetch(
-      `https://api-petdex-estatistica.onrender.com/batimentos/predizer?acelerometroX=${acelerometroX}&acelerometroY=${acelerometroY}&acelerometroZ=${acelerometroZ}`
+    const response = await axios.get(
+      'https://api-petdex-estatistica.onrender.com/batimentos/predizer',
+      {
+        params: {
+          acelerometroX: acelerometroX,
+          acelerometroY: acelerometroY,
+          acelerometroZ: acelerometroZ
+        }
+      }
     );
-    const data = await response.json();
-    setFrequenciaPrevista(data.frequencia_prevista);
+    setFrequenciaPrevista(response.data.frequencia_prevista);
   } catch (error) {
     console.error("Erro ao calcular previsão:", error);
   } finally {
