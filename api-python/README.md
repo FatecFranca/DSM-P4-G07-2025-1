@@ -33,11 +33,11 @@ Esta API **não coleta dados diretamente da coleira**. Seu papel é **consumir o
 
 A API Python segue uma estrutura simples, porém bem organizada:
 
-* \`\` — Define os endpoints da API.
-* \`\` — Responsável por toda a lógica de análise estatística e projeções.
-* \`\` — Cliente que faz requisições assíncronas para a API Java.
-* `e` — Para empacotamento e execução em containers.
-* \`\` — Dependências do projeto.
+* `app/main.py` — Define os endpoints da API.
+* `app/services/stats.py` — Responsável por toda a lógica de análise estatística, projeções e regressões.
+* `app/clients/java_api.py` — Cliente que faz requisições assíncronas para a API Java.
+* `Dockerfile`e `docker-compose.yml` — Para empacotamento e execução em containers.
+* `requirements.txt` — Lista de dependências do projeto.
 
 ---
 
