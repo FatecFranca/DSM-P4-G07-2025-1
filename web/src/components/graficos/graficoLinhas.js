@@ -185,11 +185,10 @@ export function GraficoLinhas() {
       </div>
 
       <div className="w-full h-full px-4 py-4">
-  <div className="relative w-full h-full">
-    <Line data={data} options={options} />
-  </div>
-</div>
-
+        <div className="relative w-full h-full">
+          <Line data={data} options={options} />
+        </div>
+      </div>
     </div>
   );
 }
