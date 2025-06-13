@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     card: {
         position: 'absolute',
         display: 'flex',
-        top: 20,
+        top: 45,
         left: 10,
         right: 10,
         backgroundColor: '#EDEDED',

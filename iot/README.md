@@ -6,6 +6,14 @@
 
 Bem-vindo! Este é o nosso projeto de Internet das Coisas (IoT), desenvolvido com o objetivo de criar um dispositivo inteligente que possa ser acoplado a qualquer coleira de animal — especialmente cães 🐶 e gatos 😺 — para monitorar continuamente dados de saúde e localização do pet, de forma semelhante às smartbands e smartwatches ⌚ utilizados por humanos.
 
+<p align="center">
+  <img src="../docs/img/petdex-coleira-1.jpg" alt="Coleira PetDex" width="100%" />
+</p>
+
+<p align="center">
+  <img src="../docs/img/petdex-coleira-2.jpg" alt="Coleira PetDex - 2" width="49%" />
+  <img src="../docs/img/petdex-coleira-3.jpg" alt="Coleira PetDex - 3" width="49%" />
+</p>
 ## 🚩 Problema Identificado
 
 Atualmente, existe uma carência de soluções acessíveis e contínuas para monitoramento de saúde em animais domésticos, especialmente aqueles que possuem doenças crônicas ou estão em tratamento. Além disso, muitos tutores enfrentam dificuldades ao perder seus pets e não conseguirem localizá-los facilmente.
@@ -29,6 +37,12 @@ Todos os dados coletados são enviados automaticamente para um banco de dados vi
 - **MPU6050**: Sensor de giroscópio e acelerômetro, responsável por captar a movimentação do animal.
 - **NEO-6M**: Módulo GPS para rastreamento em tempo real.
 - **LED RGB**: Indicadores visuais de status da coleira.
+
+
+<p align="center">
+  <img src="./Conexoes IoT.jpg" alt="Conexões do IoT" width="100%" />
+</p>
+
 
 ## 🔧 Funcionamento dos LED indicador
 

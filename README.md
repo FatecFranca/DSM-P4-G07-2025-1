@@ -24,6 +24,16 @@ Repositório do **Grupo 07** do Projeto Interdisciplinar do **4º semestre** do 
 
 O **PetDex** é uma solução completa para o monitoramento da saúde e segurança de pets. Desenvolvemos uma **coleira inteligente** equipada com sensores que coletam dados vitais, como **batimentos cardíacos**, e permitem a **localização do animal via GPS**.
 
+<p align="center">
+  <img src="./docs/img/petdex-coleira-1.jpg" alt="Coleira PetDex" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./docs/img/petdex-coleira-2.jpg" alt="Coleira PetDex - 2" width="49%" />
+  <img src="./docs/img/petdex-coleira-3.jpg" alt="Coleira PetDex - 3" width="49%" />
+</p>
+
+
 As informações são enviadas para um sistema integrado, acessível através de uma **plataforma web** e um **aplicativo móvel**, onde o dono pode acompanhar a saúde e a localização do seu pet em tempo real. O projeto também inclui uma API de análise de dados que fornece estatísticas, correlações e até previsões sobre a frequência cardíaca do animal com base em seus movimentos.
 
 Para a validação do projeto, foi criado um protótipo 3D e realizamos testes de coleta de dados reais com um cachorro chamado Uno.

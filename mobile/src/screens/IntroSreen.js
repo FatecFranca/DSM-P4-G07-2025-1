@@ -26,7 +26,7 @@ export default function IntroScreen({ onNavigate, animalId }) {
             }
         };
         fetchData();
-    }, []);
+    }, [animalId]);
 
     function calcularIdade(dataNascimentoString) {
         if (!dataNascimentoString) return null;
@@ -42,7 +42,6 @@ export default function IntroScreen({ onNavigate, animalId }) {
 
     return (
         <View style={styles.container}>
-            {/* Imagens decorativas no topo */}
             <Image
                 source={require('../../assets/imagens/gato-dex.png')}
                 style={styles.gato}
@@ -54,7 +53,6 @@ export default function IntroScreen({ onNavigate, animalId }) {
                 resizeMode="contain"
             />
 
-            {/* Logo */}
             <Image
                 source={require('../../assets/imagens/logo-petdex.png')}
                 style={styles.logo}
@@ -68,35 +66,38 @@ export default function IntroScreen({ onNavigate, animalId }) {
                 seu pet, incluindo localização, frequência cardíaca e outras informações vitais.
             </Text>
 
-            <View style={styles.card}>
-                <Image
-                    source={require('../../assets/imagens/uno.png')}
-                    style={styles.avatar}
-                    resizeMode="cover"
-                />
-                <View style={styles.info}>
-                    <View style={styles.row}>
-                        <Text style={styles.name}>
-                            {animalInfo?.nome || <ActivityIndicator size="small" color="#F39200" />}
-                        </Text>
-                        {animalInfo?.sexo === 'M' ? (
-                            <FontAwesome5 name="mars" size={20} color="#0092FF" />
-                        ) : animalInfo?.sexo === 'F' ? (
-                            <FontAwesome5 name="venus" size={20} color="#FF77A5" />
-                        ) : (
-                            <ActivityIndicator size="small" color="#F39200" />
-                        )}
-                    </View>
-                    <Text style={styles.raca}>{animalInfo?.racaNome || 'Carregando...'}</Text>
-                    <View style={styles.row}>
-                        <Text style={styles.detail}>
-                            {animalInfo?.dataNascimento ? `${calcularIdade(animalInfo.dataNascimento)} anos` : '-'}
-                        </Text>
-                        <Text style={styles.detail}>{animalInfo?.peso ? `${animalInfo.peso} kg` : '-'}</Text>
-                        <Text style={styles.detail}>Porte Grande</Text>
+            {!animalInfo ? (
+                <View style={[styles.card, styles.cardLoading]}>
+                    <ActivityIndicator size="large" color="#F39200" />
+                    <Text style={styles.loadingText}>Carregando dados do pet...</Text>
+                </View>
+            ) : (
+                <View style={styles.card}>
+                    <Image
+                        source={require('../../assets/imagens/uno.png')}
+                        style={styles.avatar}
+                        resizeMode="cover"
+                    />
+                    <View style={styles.info}>
+                        <View style={styles.row}>
+                            <Text style={styles.name}>{animalInfo.nome}</Text>
+                            {animalInfo.sexo === 'M' ? (
+                                <FontAwesome5 name="mars" size={20} color="#0092FF" />
+                            ) : (
+                                <FontAwesome5 name="venus" size={20} color="#FF77A5" />
+                            )}
+                        </View>
+                        <Text style={styles.raca}>{animalInfo.racaNome}</Text>
+                        <View style={styles.row}>
+                            <Text style={styles.detail}>
+                                {animalInfo.dataNascimento ? `${calcularIdade(animalInfo.dataNascimento)} anos` : '-'}
+                            </Text>
+                            <Text style={styles.detail}>{animalInfo.peso ? `${animalInfo.peso} kg` : '-'}</Text>
+                            <Text style={styles.detail}>Porte Grande</Text>
+                        </View>
                     </View>
                 </View>
-            </View>
+            )}
 
             <Text style={styles.contexto}>
                 Para esta demonstração, vamos acompanhar o nosso companheiro de testes: Uno, um pet muito
@@ -107,7 +108,6 @@ export default function IntroScreen({ onNavigate, animalId }) {
                 <Text style={styles.buttonText}>Continuar</Text>
             </TouchableOpacity>
 
-            {/* Pata decorativa */}
             <Image
                 source={require('../../assets/imagens/pata-dex.png')}
                 style={styles.pata}
@@ -120,7 +120,7 @@ export default function IntroScreen({ onNavigate, animalId }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 40,
+        paddingTop: 60,
         paddingHorizontal: 20,
         backgroundColor: '#ffffff',
         alignItems: 'center',
@@ -153,6 +153,17 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         width: '100%',
         alignItems: 'center',
+        minHeight: 108,
+    },
+    cardLoading: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+    },
+    loadingText: {
+        marginTop: 10,
+        fontFamily: 'Poppins_400Regular',
+        color: '#444',
     },
     avatar: {
         width: 80,

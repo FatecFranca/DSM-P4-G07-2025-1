@@ -58,7 +58,7 @@ export default function App() {
     return (
         <MenuProvider>
             <View style={styles.container} onLayout={onLayoutRootView}>
-                <StatusBar barStyle="dark-content" />
+                <StatusBar barStyle="dark-content" style="dark" backgroundColor="transparent" translucent={true} />
                 {
                     ['localizacao', 'home', 'saude'].includes(activeScreen) && (
                         <View style={styles.overlayContainer} pointerEvents="box-none">
