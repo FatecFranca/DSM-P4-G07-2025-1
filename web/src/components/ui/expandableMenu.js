@@ -22,7 +22,7 @@ export function ExpandableMenu({ animalId = "defaultId", backgroundColor = "whit
   const { expanded, setExpanded, animalInfo, setAnimalInfo, batimento, setBatimento } = useMenu();
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  useEffect(() => {""
     const fetchData = async () => {
       try {
         setLoading(true);

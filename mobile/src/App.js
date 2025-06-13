@@ -8,9 +8,11 @@ import {
     Poppins_700Bold
 } from '@expo-google-fonts/poppins';
 import * as SplashScreen from 'expo-splash-screen';
-
 import HomeScreen from './screens/HomeScreen';
 import HealthScreen from './screens/HealthScreen';
+import LocationScreen from './screens/LocationScreen';
+import WelcomeScreen from './screens/WelcomeScreen';
+import IntroScreen from './screens/IntroSreen';
 import ExpandableMenu from './components/ExpandableMenu/ExpandableMenuSaude.js';
 import NavigationBar from './components/NavigationBar/index.js';
 
@@ -25,7 +27,7 @@ export default function App() {
         Poppins_700Bold,
     });
 
-    const [activeScreen, setActiveScreen] = useState('home');
+    const [activeScreen, setActiveScreen] = useState('welcome');
 
     const onLayoutRootView = useCallback(async () => {
         if (fontsLoaded) {
@@ -39,11 +41,17 @@ export default function App() {
 
     const renderScreen = () => {
         switch (activeScreen) {
-            case 'saude':
-                return <HealthScreen animalId={animalId} />;
             case 'home':
+                return <HomeScreen activeScreen={activeScreen} onNavigate={setActiveScreen} />;
+            case 'saude':
+                return <HealthScreen activeScreen={activeScreen} onNavigate={setActiveScreen} />;
+            case 'localizacao':
+                return <LocationScreen activeScreen={activeScreen} onNavigate={setActiveScreen} />;
+            case 'intro':
+                return <IntroScreen onNavigate={setActiveScreen} />;
+            case 'welcome':
             default:
-                return <HomeScreen animalId={animalId} />;
+                return <WelcomeScreen onNavigate={setActiveScreen} />;
         }
     };
 
@@ -57,7 +65,6 @@ export default function App() {
                 </View>
 
                 <View style={styles.overlayContainer} pointerEvents="box-none">
-
                     <ExpandableMenu animalId={animalId} />
                     <NavigationBar activeScreen={activeScreen} onNavigate={setActiveScreen} />
                 </View>
