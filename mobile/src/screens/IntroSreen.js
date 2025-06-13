@@ -12,9 +12,8 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { getAnimalInfo } from '../services/api';
 
 const { height } = Dimensions.get('window');
-const animalId = '68194120636f719fcd5ee5fd';
 
-export default function IntroScreen({ onNavigate }) {
+export default function IntroScreen({ onNavigate, animalId }) {
     const [animalInfo, setAnimalInfo] = useState(null);
 
     useEffect(() => {
@@ -81,9 +80,9 @@ export default function IntroScreen({ onNavigate }) {
                             {animalInfo?.nome || <ActivityIndicator size="small" color="#F39200" />}
                         </Text>
                         {animalInfo?.sexo === 'M' ? (
-                            <FontAwesome5 name="mars" size={18} color="#0092FF" />
+                            <FontAwesome5 name="mars" size={20} color="#0092FF" />
                         ) : animalInfo?.sexo === 'F' ? (
-                            <FontAwesome5 name="venus" size={18} color="#FF77A5" />
+                            <FontAwesome5 name="venus" size={20} color="#FF77A5" />
                         ) : (
                             <ActivityIndicator size="small" color="#F39200" />
                         )}
@@ -134,8 +133,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 30,
-        fontWeight: 'bold',
-        color: '#9D9D9C',
+        color: '#F39200',
         textAlign: 'center',
         marginBottom: 10,
         fontFamily: 'Poppins_700Bold',
@@ -169,14 +167,14 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     row: {
+        display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
         gap: 8,
-        marginBottom: 4,
+        marginBottom: 0,
     },
     name: {
         fontSize: 28,
-        fontWeight: 'bold',
         color: '#000',
         marginRight: 2,
         fontFamily: 'Poppins_700Bold',
@@ -185,6 +183,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#000',
         fontFamily: 'Poppins_400Regular',
+        marginTop: -8
     },
     detail: {
         fontSize: 12,
@@ -197,7 +196,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 20,
         paddingHorizontal: 10,
-        color: '#9D9D9C',
+        color: '#444',
         fontFamily: 'Poppins_400Regular',
     },
     button: {

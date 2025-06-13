@@ -42,13 +42,13 @@ export default function App() {
     const renderScreen = () => {
         switch (activeScreen) {
             case 'home':
-                return <HomeScreen activeScreen={activeScreen} onNavigate={setActiveScreen} />;
+                return <HomeScreen activeScreen={activeScreen} onNavigate={setActiveScreen} animalId={animalId} />;
             case 'saude':
-                return <HealthScreen activeScreen={activeScreen} onNavigate={setActiveScreen} />;
+                return <HealthScreen activeScreen={activeScreen} onNavigate={setActiveScreen} animalId={animalId} />;
             case 'localizacao':
-                return <LocationScreen activeScreen={activeScreen} onNavigate={setActiveScreen} />;
+                return <LocationScreen activeScreen={activeScreen} onNavigate={setActiveScreen} animalId={animalId} />;
             case 'intro':
-                return <IntroScreen onNavigate={setActiveScreen} />;
+                return <IntroScreen onNavigate={setActiveScreen} animalId={animalId} />;
             case 'welcome':
             default:
                 return <WelcomeScreen onNavigate={setActiveScreen} />;
@@ -59,15 +59,18 @@ export default function App() {
         <MenuProvider>
             <View style={styles.container} onLayout={onLayoutRootView}>
                 <StatusBar barStyle="dark-content" />
-
+                {
+                    ['localizacao', 'home', 'saude'].includes(activeScreen) && (
+                        <View style={styles.overlayContainer} pointerEvents="box-none">
+                            <ExpandableMenu animalId={animalId} />
+                            <NavigationBar activeScreen={activeScreen} onNavigate={setActiveScreen} />
+                        </View>
+                    )
+                }
                 <View style={styles.screenContainer}>
                     {renderScreen()}
                 </View>
 
-                <View style={styles.overlayContainer} pointerEvents="box-none">
-                    <ExpandableMenu animalId={animalId} />
-                    <NavigationBar activeScreen={activeScreen} onNavigate={setActiveScreen} />
-                </View>
             </View>
         </MenuProvider>
     );
@@ -83,6 +86,6 @@ const styles = StyleSheet.create({
     },
     overlayContainer: {
         ...StyleSheet.absoluteFillObject,
-        zIndex: 1, 
+        zIndex: 1,
     },
 });

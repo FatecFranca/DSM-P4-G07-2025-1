@@ -41,7 +41,7 @@ export default function HealthScreen({ animalId }) {
                 const [estatisticas, medias, regressao] = await Promise.all([
                     getEstatisticasCompletas(),
                     getMediaUltimos5Dias(),
-                    getRegressao() // Adicionar chamada da API de regressão
+                    getRegressao() 
                 ]);
                 if (estatisticas) setHealthData(estatisticas);
                 setMediasUltimos5Dias(medias);
@@ -117,7 +117,6 @@ export default function HealthScreen({ animalId }) {
         }
     };
 
-    // Nova função para calcular a predição de batimento
     const handleCalcularPredicao = async () => {
         if (!acelerometro.x || !acelerometro.y || !acelerometro.z) {
             alert('Por favor, preencha os três valores de aceleração (X, Y e Z).');

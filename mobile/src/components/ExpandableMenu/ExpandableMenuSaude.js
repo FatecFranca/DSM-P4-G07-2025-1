@@ -1,5 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated, Image } from 'react-native';
+import {
+    View,
+    Text,
+    StyleSheet,
+    TouchableOpacity,
+    Animated,
+    Image,
+    ActivityIndicator,
+} from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import {
     faChevronUp,
@@ -22,6 +30,7 @@ export default function ExpandableMenuSaude({ animalId }) {
     const [expanded, setExpanded] = useState(false);
     const [batimento, setBatimento] = useState(null);
     const [animalInfo, setAnimalInfo] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
     const animatedHeight = useRef(new Animated.Value(180)).current;
 
     const toggleExpand = () => {
@@ -60,11 +69,16 @@ export default function ExpandableMenuSaude({ animalId }) {
                 setAnimalInfo(info);
             } catch (error) {
                 console.error('Erro ao buscar dados:', error);
+            } finally {
+                setIsLoading(false);
             }
         };
 
         if (animalId) {
+            setIsLoading(true);
             fetchData();
+        } else {
+            setIsLoading(false);
         }
     }, [animalId]);
 
@@ -81,69 +95,73 @@ export default function ExpandableMenuSaude({ animalId }) {
                 <Logo style={styles.logo} />
             </View>
 
-            <View style={styles.content}>
-                <View style={styles.rowTop}>
-                    <Image
-                        source={require('../../../assets/imagens/uno.png')}
-                        style={styles.avatar}
-                    />
-                    <View style={styles.infoBlock}>
-                        <View style={styles.nameAndBpm}>
-                            <View style={styles.nameRow}>
-                                <Text style={styles.name}>{animalInfo?.nome}</Text>
-                                <FontAwesomeIcon
-                                    icon={animalInfo?.sexo === 'M' ? faMars : faVenus}
-                                    size={16}
-                                    color={animalInfo?.sexo === 'M' ? '#007AFF' : '#FF2D55'}
-                                    style={styles.genderIcon}
-                                />
+            {isLoading ? (
+                <ActivityIndicator size="large" color="#F39200" style={{ marginTop: 50 }} />
+            ) : (
+                <View style={styles.content}>
+                    <View style={styles.rowTop}>
+                        <Image
+                            source={require('../../../assets/imagens/uno.png')}
+                            style={styles.avatar}
+                        />
+                        <View style={styles.infoBlock}>
+                            <View style={styles.nameAndBpm}>
+                                <View style={styles.nameRow}>
+                                    <Text style={styles.name}>{animalInfo?.nome}</Text>
+                                    <FontAwesomeIcon
+                                        icon={animalInfo?.sexo === 'M' ? faMars : faVenus}
+                                        size={16}
+                                        color={animalInfo?.sexo === 'M' ? '#007AFF' : '#FF2D55'}
+                                        style={styles.genderIcon}
+                                    />
+                                </View>
+                                <View style={styles.bpmRow}>
+                                    <Text style={styles.bpmText}>{batimento}</Text>
+                                    <FontAwesomeIcon
+                                        icon={faHeartPulse}
+                                        size={20}
+                                        color="#FF0000"
+                                        style={{ marginLeft: 4 }}
+                                    />
+                                    <Text style={styles.bpmLabel}>BPM</Text>
+                                </View>
                             </View>
-                            <View style={styles.bpmRow}>
-                                <Text style={styles.bpmText}>{batimento}</Text>
+
+                            <View style={styles.batteryRow}>
                                 <FontAwesomeIcon
-                                    icon={faHeartPulse}
+                                    icon={getBatteryIcon()}
                                     size={20}
-                                    color="#FF0000"
-                                    style={{ marginLeft: 4 }}
+                                    color={getBatteryColor()}
+                                    style={{ transform: [{ rotate: '-90deg' }] }}
                                 />
-                                <Text style={styles.bpmLabel}>BPM</Text>
+                                <Text style={styles.batteryLabel}>{battery}%</Text>
                             </View>
                         </View>
-
-                        <View style={styles.batteryRow}>
-                            <FontAwesomeIcon
-                                icon={getBatteryIcon()}
-                                size={20}
-                                color={getBatteryColor()}
-                                style={{ transform: [{ rotate: '-90deg' }] }}
-                            />
-                            <Text style={styles.batteryLabel}>{battery}%</Text>
-                        </View>
                     </View>
-                </View>
 
-                <View style={styles.statusCenter}>
-                    <Text style={styles.statusLabel}>
-                        Status da PetDex: {isConnected ? 'Conectada' : 'Desconectada'}{' '}
-                    </Text>
-                    <FontAwesomeIcon
-                        icon={faCircle}
-                        size={10}
-                        color={isConnected ? '#04CF04' : '#FF0000'}
-                        style={{ marginLeft: 6 }}
-                    />
-                </View>
-
-                {expanded && <View style={styles.separator} />}
-
-                {expanded && (
-                    <View style={styles.chartContainer}>
-                        <View style={styles.chartWrapper}>
-                            <GraficoLinha />
-                        </View>
+                    <View style={styles.statusCenter}>
+                        <Text style={styles.statusLabel}>
+                            Status da PetDex: {isConnected ? 'Conectada' : 'Desconectada'}{' '}
+                        </Text>
+                        <FontAwesomeIcon
+                            icon={faCircle}
+                            size={10}
+                            color={isConnected ? '#04CF04' : '#FF0000'}
+                            style={{ marginLeft: 6 }}
+                        />
                     </View>
-                )}
-            </View>
+
+                    {expanded && <View style={styles.separator} />}
+
+                    {expanded && (
+                        <View style={styles.chartContainer}>
+                            <View style={styles.chartWrapper}>
+                                <GraficoLinha />
+                            </View>
+                        </View>
+                    )}
+                </View>
+            )}
         </Animated.View>
     );
 }
@@ -273,10 +291,10 @@ const styles = StyleSheet.create({
         borderRadius: 2,
     },
     chartContainer: {
-        marginTop: -10, // ← Sobe o gráfico
+        marginTop: -10,
     },
     chartWrapper: {
-        width: '95%', // ← Reduz largura do gráfico
+        width: '95%',
         alignSelf: 'center',
     },
 });
