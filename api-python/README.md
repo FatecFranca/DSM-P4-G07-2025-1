@@ -2,86 +2,140 @@
   <img src="../docs/img/capa-python.svg" alt="Capa do Projeto" width="100%" />
 </p>
 
-# PetDex - API de Análise de Dados
 
-Bem-vindo à API de Análise de Dados do PetDex. Esta API é o cérebro analítico por trás da nossa plataforma, responsável por processar dados de saúde dos pets para fornecer insights estatísticos valiosos.
+# 🧮 API em Python — Análises Estatísticas da PetDex
 
-Construída em Python, ela oferece um conjunto de endpoints de alta performance para realizar cálculos complexos, desde estatísticas básicas até modelos preditivos. Uma característica fundamental desta API é sua **integração direta com a API principal (desenvolvida em Java)**, garantindo que todas as análises sejam executadas com os dados mais recentes de movimentação e saúde do animal.
+Esta é a API desenvolvida com **Python** e **FastAPI**, responsável por **processar, analisar e interpretar os dados coletados pela coleira inteligente**, fornecendo insights sobre batimentos cardíacos, movimentos e padrões de comportamento dos pets.
 
 ---
 
-## 📊 Funcionalidades Principais
+## ⚙️ Tecnologias Utilizadas
 
-A API oferece uma gama de análises estatísticas essenciais para o monitoramento da saúde do pet:
+* **Python 3.11**
+* **FastAPI** (Framework web moderno e assíncrono)
+* **Pandas** (Análise de dados)
+* **NumPy** (Cálculos estatísticos)
+* **SciPy** (Distribuição normal, correlação)
+* **Scikit-learn** (Regressão linear)
+* **httpx** (Cliente HTTP assíncrono)
+* **Uvicorn** (Servidor ASGI)
+* **Render** (Hospedagem da API)
 
-* **Estatísticas Descritivas:**
-    * Calcula a **média**, **mediana** e **moda** dos dados de batimento cardíaco, fornecendo um resumo claro da saúde cardiovascular do pet.
+---
 
-* **Análise de Correlação e Regressão:**
-    * Executa análises de **regressão linear** e **correlação** para entender a relação entre os níveis de atividade (movimento) e o batimento cardíaco do animal. Isso ajuda a identificar padrões e a saúde geral do pet.
+## 🧠 Objetivo da API
 
-* **Cálculos de Probabilidade:**
-    * Realiza projeções de **probabilidade** para estimar as chances de os batimentos cardíacos do animal estarem dentro ou fora de uma faixa considerada saudável em períodos futuros.
+Esta API **não coleta dados diretamente da coleira**. Seu papel é **consumir os dados já armazenados na API Java** e executar cálculos estatísticos, regressões, análises de probabilidade e projeções futuras para apoiar o monitoramento da saúde animal.
+
+---
+
+## 📊 Arquitetura
+
+A API Python segue uma estrutura simples, porém bem organizada:
+
+* `app/main.py` — Define os endpoints da API.
+* `app/services/stats.py` — Responsável por toda a lógica de análise estatística, projeções e regressões.
+* `app/clients/java_api.py` — Cliente que faz requisições assíncronas para a API Java.
+* `Dockerfile`e `docker-compose.yml` — Para empacotamento e execução em containers.
+* `requirements.txt` — Lista de dependências do projeto.
 
 ---
 
 ## 📡 Endpoints
 
-A API está hospedada na plataforma Render e pode ser acessada através do link:
+A API está hospedada na plataforma Render:
 
-🔗 [https://api-petdex-estatistica.onrender.com](https://api-petdex-estatistica.onrender.com)
+🔗 [https://https://api-petdex-estatistica.onrender.com](https://api-petdex-estatistica.onrender.com/docs)
 
-A documentação interativa da API, feita com Swagger (OpenAPI), está disponível em:
+Alguns dos principais endpoints disponíveis:
 
-📘 [https://api-petdex-estatistica.onrender.com/docs](https://api-petdex-estatistica.onrender.com/docs)
-
----
-
-## 🛠️ Tecnologias e Bibliotecas
-
-Para garantir performance, precisão e escalabilidade, utilizamos um conjunto de bibliotecas Python de ponta, conforme listado em nosso `requirements.txt`:
-
-* **Framework da API:**
-    * **FastAPI:** Para a construção de uma API moderna, rápida e assíncrona.
-    * **Uvicorn:** Como o servidor ASGI para executar a aplicação FastAPI.
-
-* **Comunicação e Validação de Dados:**
-    * **HTTPX:** Para realizar chamadas assíncronas eficientes à API Java, garantindo que os dados estejam sempre atualizados.
-    * **Pydantic:** Para validação robusta de dados e gerenciamento de configurações.
-    * **python-multipart:** Para o processamento de formulários.
-
-* **Análise de Dados e Computação Científica:**
-    * **Pandas:** Para manipulação e estruturação de dados de forma eficiente.
-    * **NumPy:** A base para computação numérica, usada em praticamente todos os cálculos.
-    * **SciPy:** Para cálculos estatísticos avançados, como moda e outras funções científicas.
-    * **Scikit-learn:** Para a implementação dos modelos de regressão e outras tarefas de machine learning.
-
-* **Banco de Dados:**
-    * **SQLAlchemy:** Utilizada para a interação com o banco de dados e modelagem de dados, se necessário.
+| Rota                                                          | Descrição                                                            |
+| ------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `/batimentos`                                                 | Retorna todos os batimentos cardíacos coletados                      |
+| `/batimentos/estatisticas`                                    | Estatísticas gerais: média, mediana, moda, desvio padrão, assimetria |
+| `/batimentos/media-por-data?inicio=YYYY-MM-DD&fim=YYYY-MM-DD` | Média de batimentos em um intervalo específico                       |
+| `/batimentos/media-ultimos-5-dias`                            | Média diária dos últimos 5 dias com dados                            |
+| `/batimentos/media-ultimas-5-horas-registradas`               | Média horária das 5 últimas horas com registros                      |
+| `/batimentos/probabilidade?valor=XX`                          | Probabilidade estatística de ocorrer determinado batimento           |
+| `/batimentos/regressao`                                       | Executa regressão linear entre batimentos e movimentos               |
+| `/health`                                                     | Verifica se a API está online                                        |
 
 ---
 
-## 🚀 Como Começar
+## 📊 Recursos Estatísticos
 
-Para executar esta API em seu ambiente local, siga os passos abaixo.
+A API calcula:
 
-1.  **Clone o repositório:**
+* **Média, moda e mediana**
+* **Desvio padrão**
+* **Assimetria dos dados**
+* **Probabilidade acumulada (Distribuição Normal)**
+* **Classificação do batimento: normal, fora do padrão, alerta**
+* **Correlação entre variáveis do acelerômetro/giroscópio e batimentos**
+* **Regressão Linear para prever futuros batimentos**
+* **Projeção dos batimentos para as próximas 5 horas**
 
+---
 
-2.  **Crie e ative um ambiente virtual:**
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # No Windows, use `venv\Scripts\activate`
-    ```
+## 🔗 Comunicação entre APIs
 
-3.  **Instale as dependências:**
-    ```bash
-    pip install -r requirements.txt
-    ```
+A **API Python se conecta diretamente à API Java** usando o módulo `httpx`. Ela faz requisições paginadas para obter todos os dados de:
 
-4.  **Execute a API:**
-    ```bash
-    uvicorn main:app --reload
-    ```
+* **Batimentos cardíacos**: `GET /batimentos/animal/{id}`
+* **Movimentos**: `GET /movimentos/animal/{id}`
 
-A API estará disponível em `http://127.0.0.1:8000`. Você pode acessar a documentação interativa (gerada automaticamente pelo FastAPI) em `http://127.0.0.1:8000/docs`.
+Esses dados são transformados em `DataFrame`, processados, agrupados por data e cruzados para análises mais profundas.
+
+---
+
+## 📉 Exemplo de Análise de Regressão
+
+```json
+{
+  "coeficientes": {
+    "acelerometroX": 11.356,
+    "acelerometroY": -16.507,
+    "acelerometroZ": 5.498,
+    "giroscopioX": 0.001,
+    "giroscopioY": 0.001,
+    "giroscopioZ": 0
+  },
+  "correlacoes": {
+    "acelerometroX": 0.287,
+    "acelerometroY": -0.445,
+    "acelerometroZ": 0.252,
+    "giroscopioX": 0.141,
+    "giroscopioY": 0.008,
+    "giroscopioZ": 0.034
+  },
+  "r2": 0.314,
+  "media_erro_quadratico": 356.84,
+  "projecao_5_horas": {
+    "2025-06-09T22:35:00-03:00": 66.9,
+    "2025-06-09T23:35:00-03:00": 66.9
+  }
+}
+```
+
+---
+
+## 📁 Como Executar Localmente
+
+```bash
+git clone https://github.com/seuusuario/api-python-petdex.git
+cd api-python-petdex
+python -m venv .venv
+source .venv/bin/activate  # ou .venv\Scripts\activate no Windows
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+---
+
+## ✅ Status
+
+🟢 Em produção — a API está em funcionamento e integrada com a PetDex.
+
+---
+
+Se você quiser contribuir com melhorias ou usar parte da lógica estatística, fique à vontade para clonar o repositório ✨.

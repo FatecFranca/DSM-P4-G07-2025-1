@@ -27,6 +27,14 @@ export default function MapComponent() {
     );
   }
 
+  // Definindo o ícone personalizado APÓS verificar que a API está carregada
+  const customIcon = {
+    url: '/uno-mapa.svg',
+    scaledSize: new window.google.maps.Size(40, 40),
+    origin: new window.google.maps.Point(0, 0),
+    anchor: new window.google.maps.Point(20, 40)
+  };
+
   return (
     <GoogleMap
       mapContainerStyle={containerStyle}
@@ -34,7 +42,10 @@ export default function MapComponent() {
       zoom={15}
       options={{ disableDefaultUI: true }}
     >
-      <Marker position={location} />
+      <Marker 
+        position={location}
+        icon={customIcon}
+      />
     </GoogleMap>
   );
 }

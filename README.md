@@ -15,7 +15,7 @@ Repositório do **Grupo 07** do Projeto Interdisciplinar do **4º semestre** do 
 
 ## 🔗 Acesso ao Projeto
 
-* **💻 Aplicação Web:** [https://petdex-puce.vercel.app/home](https://petdex-puce.vercel.app/home)
+* **💻 Aplicação Web:** [https://petdex-puce.vercel.app](https://petdex-puce.vercel.app/welcome)
 * **🐍 Documentação da API de Análise (Python):** [https://api-petdex-estatistica.onrender.com/docs](https://api-petdex-estatistica.onrender.com/docs)
 * **☕ Documentação da API Principal (Java):** [https://dsm-p4-g07-2025-7.onrender.com/swagger](https://dsm-p4-g07-2025-7.onrender.com/swagger)
 

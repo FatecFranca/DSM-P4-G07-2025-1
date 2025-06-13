@@ -40,3 +40,15 @@ html, body {
   overflow: hidden;
 }
 
+@layer utilities {
+  .scale-mobile {
+    @apply transform;
+    transform-origin: top center;
+  }
+  @media (max-width: 767px) {
+    .scale-mobile {
+      transform: scale(0.85);
+    }
+  }
+}
+
