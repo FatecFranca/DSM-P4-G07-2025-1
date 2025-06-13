@@ -6,6 +6,8 @@ import { getMediaUltimas5Horas } from '../services/apiEstatistica';
 const GraficoLinha = () => {
     const [dadosGrafico, setDadosGrafico] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [minY, setMinY] = useState(0);
+    const [maxY, setMaxY] = useState(100);
 
     useEffect(() => {
         const carregarDados = async () => {
@@ -16,6 +18,7 @@ const GraficoLinha = () => {
                 if (!mediaPorHora || typeof mediaPorHora !== 'object') {
                     console.warn("Dados inválidos:", resposta);
                     setDadosGrafico([]);
+                    setLoading(false);
                     return;
                 }
 
@@ -30,6 +33,15 @@ const GraficoLinha = () => {
                         y: valor
                     };
                 });
+
+                if (dadosFormatados.length > 0) {
+                    const valoresY = dadosFormatados.map(dado => dado.y);
+                    const min = Math.min(...valoresY);
+                    const max = Math.max(...valoresY);
+
+                    setMinY(min - 10);
+                    setMaxY(max + 10);
+                }
 
                 setDadosGrafico(dadosFormatados);
             } catch (error) {
@@ -66,6 +78,7 @@ const GraficoLinha = () => {
                 theme={VictoryTheme.material}
                 height={200}
                 padding={{ top: 20, bottom: 70, left: 50, right: 60 }}
+                domain={{ y: [minY, maxY] }}
             >
                 <VictoryAxis
                     style={{
@@ -80,7 +93,7 @@ const GraficoLinha = () => {
                 />
                 <VictoryAxis
                     dependentAxis
-                    tickFormat={(x) => `${x} BPM`}
+                    tickFormat={(x) => `${Math.round(x)} BPM`}
                     style={{
                         tickLabels: { fontSize: 10, fill: '#FF0000' },
                         grid: { stroke: '#ccc' }
