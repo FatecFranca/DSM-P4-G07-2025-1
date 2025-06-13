@@ -5,7 +5,6 @@ import {
     faHouseChimney,
     faMapMarkerAlt,
     faHeartPulse,
-    faCog,
 } from '@fortawesome/free-solid-svg-icons';
 import NavItem from '../NavItem/NavItem';
 
@@ -14,6 +13,7 @@ export default function NavigationBar({ activeScreen, onNavigate }) {
         if (activeScreen === screen) {
             if (screen === 'home') return '#F39200';
             if (screen === 'saude') return '#FF0000';
+            if (screen === 'localizacao') return '#09A709';
         }
         return '#000000';
     };

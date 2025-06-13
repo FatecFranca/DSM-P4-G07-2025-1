@@ -9,6 +9,7 @@ import {
 import * as SplashScreen from 'expo-splash-screen';
 import HomeScreen from './screens/HomeScreen';
 import HealthScreen from './screens/HealthScreen';
+import LocationScreen from './screens/LocationScreen';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -37,6 +38,8 @@ export default function App() {
     switch (activeScreen) {
       case 'saude':
         return <HealthScreen activeScreen={activeScreen} onNavigate={setActiveScreen} />;
+      case 'localizacao':
+        return <LocationScreen activeScreen={activeScreen} onNavigate={setActiveScreen} />;
       case 'home':
       default:
         return <HomeScreen activeScreen={activeScreen} onNavigate={setActiveScreen} />;
