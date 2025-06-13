@@ -8,8 +8,8 @@ import {
     getEstatisticasCompletas,
     getMediaPorData,
     getProbabilidadePorValor,
-    getRegressao, // Importar nova função
-    getPredicaoBatimento // Importar nova função
+    getRegressao,
+    getPredicaoBatimento
 } from '../services/apiEstatistica';
 import GraficoBarras from '../components/GraficoBarras';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -224,7 +224,7 @@ export default function HealthScreen({ animalId }) {
                             <View style={styles.section}>
                                 <Text style={styles.analysisTitle}>Probabilidade de Batimento</Text>
                                 <Text style={styles.description}>
-                                    Digite um valor e descubra a chance de o seu pet apresentar esse batimento cardíaco, com base no histórico real.
+                                    Digite um valor e descubra a chance do seu pet apresentar esse batimento cardíaco com base no histórico real.
                                 </Text>
                                 <TextInput
                                     style={styles.dateInput}
@@ -250,10 +250,13 @@ export default function HealthScreen({ animalId }) {
                                                 <Text style={styles.statLabel}>Não foi possível calcular. Tente outro valor.</Text>
                                             ) : (
                                                 <>
-                                                    <Text style={styles.dataTitle}>Probabilidade</Text>
-                                                    <Text style={styles.probabilityPercent}>
+                                                    <Text style={styles.dataTitleBold}>Probabilidade</Text>
+                                                    {
+                                                        probabilidade.probabilidade_percentual > 0 &&
+                                                        <Text style={styles.probabilityPercent}>
                                                         {probabilidade.probabilidade_percentual?.toFixed(2)}%
                                                     </Text>
+                                                    }
 
                                                     <Text style={styles.probabilityTitle}>{probabilidade.titulo}</Text>
 
@@ -274,7 +277,8 @@ export default function HealthScreen({ animalId }) {
                             {/* NOVA SEÇÃO DE REGRESSÃO E CORRELAÇÃO */}
                             {regressaoData &&
                                 <View style={styles.section}>
-                                    <Text style={styles.analysisTitle}>Regressão e Correlação dos dados de movimento com a frequência cardíaca</Text>
+                                    <Text style={styles.analysisTitle}>Regressão e Correlação</Text>
+                                    <Text style={styles.regressaoDescriptionText}>Análise da relação entre os dados de movimento e a frequência cardíaca do pet</Text>
 
                                     <View style={styles.card}>
                                         <Text style={styles.dataTitle}>Coeficientes de Regressão</Text>
@@ -326,10 +330,10 @@ export default function HealthScreen({ animalId }) {
                                         <Text style={styles.dataTitle}>Erro Quadrático</Text>
                                         <Text style={styles.statValue}>{regressaoData.media_erro_quadratico?.toFixed(3)}</Text>
                                     </View>
-                                    
+
                                     {/* MENSAGEM ADICIONADA AQUI */}
                                     <Text style={styles.description}>
-                                        Através da análise da correlação entre os dados de movimento é possível perceber que a frequência é influênciada apenas pelos valores de aceleração nos três eixos (X, Y e Z)
+                                        Com base na análise de correlação, observou-se que a frequência cardíaca é afetada exclusivamente pelos valores de aceleração nos eixos X, Y e Z.
                                     </Text>
 
                                     <View style={styles.card}>
@@ -339,8 +343,7 @@ export default function HealthScreen({ animalId }) {
 
                                     <View style={styles.card}>
                                         <Text style={styles.dataTitle}>Fazer previsão de batimento</Text>
-                                        <Text style={styles.description}>Informe os valores de aceleração abaixo</Text>
-
+                                        <Text style={styles.previsaoBatimentoDescriptionText}>Informe os valores de aceleração em atm</Text>
                                         <View style={styles.predictionInputRow}>
                                             <TextInput
                                                 style={styles.predictionInput}
@@ -423,9 +426,11 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginRight: 16,
         marginLeft: 16,
-        marginTop: 10, // Adicionado para dar um espaço acima
+        marginTop: 10,
     },
-    section: { marginBottom: 20 },
+    section: { 
+        marginBottom: 20 
+    },
     card: {
         backgroundColor: '#FFF',
         borderRadius: 12,
@@ -445,7 +450,7 @@ const styles = StyleSheet.create({
     dateInput: {
         backgroundColor: '#EEE',
         borderRadius: 25,
-        paddingVertical: 8,
+        paddingVertical: 10,
         paddingHorizontal: 16,
         textAlign: 'center',
         marginVertical: 10,
@@ -458,7 +463,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#F39200',
         borderRadius: 25,
         paddingVertical: 9,
-        paddingHorizontal: 20,
+        paddingHorizontal: 26,
         alignSelf: 'center',
         marginTop: 5,
         elevation: 2,
@@ -518,7 +523,7 @@ const styles = StyleSheet.create({
         color: '#000',
     },
     analysisTitle: {
-        fontSize: 20,
+        fontSize: 22,
         fontFamily: 'Poppins_700Bold',
         color: '#FF0000',
         marginVertical: 5,
@@ -527,23 +532,30 @@ const styles = StyleSheet.create({
         marginRight: 20,
         marginLeft: 20
     },
-    dataTitle: {
-        fontSize: 18,
+    dataTitleBold: {
+        fontSize: 20,
         fontFamily: 'Poppins_700Bold',
+        color: '#FF0000',
+        marginVertical: 5,
+        textAlign: 'center',
+    },
+    dataTitle: {
+        fontSize: 20,
+        fontFamily: 'Poppins_600SemiBold',
         color: '#FF0000',
         marginVertical: 5,
         textAlign: 'center',
     },
     probabilityPercent: {
         fontFamily: 'Poppins_600SemiBold',
-        fontSize: 22,
+        fontSize: 20,
         color: '#000',
         textAlign: 'center',
         marginVertical: 5,
     },
     probabilityTitle: {
         fontSize: 20,
-        fontFamily: 'Poppins_700Bold',
+        fontFamily: 'Poppins_600SemiBold',
         color: '#FF0000',
         textAlign: 'center',
         marginBottom: 10,
@@ -564,7 +576,8 @@ const styles = StyleSheet.create({
         marginRight: 8,
         marginLeft: 8
     },
-    // Novos estilos para a seção de regressão
+
+
     regressaoLabel: {
         fontSize: 14,
         fontFamily: 'Poppins_400Regular',
@@ -586,7 +599,7 @@ const styles = StyleSheet.create({
         marginVertical: 15,
     },
     predictionInput: {
-        backgroundColor: 'transparent',
+        backgroundColor: '#eee',
         borderRadius: 10,
         paddingVertical: 10,
         paddingHorizontal: 20,
@@ -595,4 +608,19 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins_500Medium',
         width: '30%',
     },
+    regressaoDescriptionText: {
+        fontFamily: 'Poppins_400Regular',
+        textSize: 10,
+        marginTop: -8,
+        textAlign: 'center',
+        marginRight: 20,
+        marginLeft: 20
+    },
+    previsaoBatimentoDescriptionText: {
+        fontFamily: 'Poppins_400Regular',
+        textSize: 10,
+        textAlign: 'center',
+        marginRight: 20,
+        marginLeft: 20
+    }
 });
