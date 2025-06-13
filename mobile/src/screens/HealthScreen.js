@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View, Text, TextInput, ScrollView, ActivityIndicator,
-    StyleSheet, KeyboardAvoidingView, Platform
+    StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity
 } from 'react-native';
 import {
     getMediaUltimos5Dias,
@@ -24,7 +24,6 @@ export default function HealthScreen({ animalId }) {
     const [loading, setLoading] = useState(true);
     const [loadingMediaData, setLoadingMediaData] = useState(false);
     const [loadingProbabilidade, setLoadingProbabilidade] = useState(false);
-    const debounceTimer = useRef(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -65,51 +64,46 @@ export default function HealthScreen({ animalId }) {
             setSelectedDate(`${year}-${month}-${day}`);
         } else {
             setSelectedDate('');
+            setMediaPorData(null);
         }
     };
 
     useEffect(() => {
         const buscarMedia = async () => {
-            if (!selectedDate) {
+            if (selectedDate) {
+                setLoadingMediaData(true);
                 setMediaPorData(null);
-                return;
-            }
-            setLoadingMediaData(true);
-            try {
-                const resultado = await getMediaPorData(selectedDate);
-                setMediaPorData(resultado);
-            } catch (error) {
-                console.error('Erro ao buscar média por data:', error);
-                setMediaPorData(null);
-            } finally {
-                setLoadingMediaData(false);
+                try {
+                    const resultado = await getMediaPorData(selectedDate);
+                    setMediaPorData(resultado);
+                } catch (error) {
+                    console.error('Erro ao buscar média por data:', error);
+                    setMediaPorData({ error: true });
+                } finally {
+                    setLoadingMediaData(false);
+                }
             }
         };
         buscarMedia();
     }, [selectedDate]);
 
-    useEffect(() => {
-        if (debounceTimer.current) clearTimeout(debounceTimer.current);
-
+    const handleCalcularProbabilidade = async () => {
         if (!valorDigitado) {
-            setProbabilidade(null);
+            alert('Por favor, digite um valor para calcular a probabilidade.');
             return;
         }
-
-        debounceTimer.current = setTimeout(async () => {
-            setLoadingProbabilidade(true);
-            try {
-                const resultado = await getProbabilidadePorValor(valorDigitado);
-                setProbabilidade(resultado);
-            } catch (error) {
-                console.error('Erro ao buscar probabilidade:', error);
-                setProbabilidade(null);
-            } finally {
-                setLoadingProbabilidade(false);
-            }
-        }, 800);
-    }, [valorDigitado]);
-
+        setLoadingProbabilidade(true);
+        setProbabilidade(null);
+        try {
+            const resultado = await getProbabilidadePorValor(valorDigitado);
+            setProbabilidade(resultado);
+        } catch (error) {
+            console.error('Erro ao buscar probabilidade:', error);
+            setProbabilidade({ error: true });
+        } finally {
+            setLoadingProbabilidade(false);
+        }
+    };
 
     return (
         <KeyboardAvoidingView
@@ -166,7 +160,7 @@ export default function HealthScreen({ animalId }) {
                             )}
 
                             <View style={styles.section}>
-                                <Text style={styles.analysisTitle}>Média de batimento Cardíaco por data</Text>
+                                <Text style={styles.analysisTitle}>Média de batimento cardíaco por data</Text>
                                 <Text style={styles.dataTitle}>Insira uma data:</Text>
                                 <TextInput
                                     style={styles.dateInput}
@@ -176,58 +170,72 @@ export default function HealthScreen({ animalId }) {
                                     keyboardType="numeric"
                                     maxLength={10}
                                 />
+                                
                                 {loadingMediaData ? (
-                                    <ActivityIndicator color="#F39200" />
+                                    <ActivityIndicator color="#F39200" style={{ marginTop: 10 }}/>
                                 ) : (
-                                    <View style={styles.card}>
-                                        {selectedDate === '' ? (
-                                            <Text style={styles.statLabel}>Digite uma data válida</Text>
-                                        ) : mediaPorData === null ? (
-                                            <Text style={styles.statLabel}>Sem dados de batimento para a data selecionada</Text>
-                                        ) : (
-                                            <>
-                                                <Text style={styles.statLabel}>A média do dia é igual a:</Text>
-                                                <Text style={styles.largeValue}>{mediaPorData?.toFixed(2)}</Text>
-                                            </>
-                                        )}
-                                    </View>
+                                    selectedDate && mediaPorData !== null && (
+                                        <View style={styles.card}>
+                                            {mediaPorData.error ? (
+                                                <Text style={styles.statLabel}>Sem dados de batimento para a data selecionada</Text>
+                                            ) : (
+                                                <>
+                                                    <Text style={styles.statLabel}>A média do dia é igual a:</Text>
+                                                    <Text style={styles.largeValue}>{mediaPorData.toFixed(2)}</Text>
+                                                </>
+                                            )}
+                                        </View>
+                                    )
                                 )}
                             </View>
 
                             <View style={styles.section}>
-                                <Text style={styles.title}>Probabilidade de Batimento</Text>
+                                <Text style={styles.analysisTitle}>Probabilidade de Batimento</Text>
                                 <Text style={styles.description}>
                                     Digite um valor e descubra a chance de o seu pet apresentar esse batimento cardíaco, com base no histórico real.
                                 </Text>
                                 <TextInput
                                     style={styles.dateInput}
-                                    placeholder="Insira o valor"
+                                    placeholder="Insira o valor do batimento"
                                     keyboardType="numeric"
                                     value={valorDigitado}
                                     onChangeText={setValorDigitado}
                                 />
-                                {valorDigitado !== '' && (
-                                    <>
-                                        <Text style={styles.dataTitle}>Você digitou:</Text>
-                                        <Text style={styles.statValue}>{valorDigitado} BPM</Text>
-                                    </>
-                                )}
+                                <TouchableOpacity
+                                    style={[styles.button, (!valorDigitado || loadingProbabilidade) && styles.buttonDisabled]}
+                                    onPress={handleCalcularProbabilidade}
+                                    disabled={!valorDigitado || loadingProbabilidade}
+                                >
+                                    <Text style={styles.buttonText}>Calcular Probabilidade</Text>
+                                </TouchableOpacity>
+
                                 {loadingProbabilidade ? (
-                                    <ActivityIndicator color="#F39200" />
+                                    <ActivityIndicator color="#F39200" style={{ marginTop: 10 }}/>
                                 ) : (
-                                    <View style={styles.probabilityCard}>
-                                        {probabilidade ? (
-                                            <>
-                                                <Text style={styles.probabilityTitle}>{probabilidade.titulo}</Text>
-                                                <Text style={styles.probabilityDescription}>
-                                                    A chance do seu pet apresentar {probabilidade.valor_informado} BPM é de {probabilidade.probabilidade_percentual?.toFixed(2)}%.
-                                                </Text>
-                                                <Text style={styles.probabilityEvaluation}>{probabilidade.avaliacao}</Text>
-                                            </>
-                                        ) : (
-                                            <Text style={styles.statLabel}>Digite um valor para calcular</Text>
-                                        )}
-                                    </View>
+                                    probabilidade && (
+                                        <View style={styles.probabilityCard}>
+                                            {probabilidade.error ? (
+                                                <Text style={styles.statLabel}>Não foi possível calcular. Tente outro valor.</Text>
+                                            ) : (
+                                                <>
+                                                    <Text style={styles.dataTitle}>Probabilidade</Text>
+                                                    <Text style={styles.probabilityPercent}>
+                                                        {probabilidade.probabilidade_percentual?.toFixed(2)}%
+                                                    </Text>
+
+                                                    <Text style={styles.probabilityTitle}>{probabilidade.titulo}</Text>
+                                                    
+                                                    {probabilidade.probabilidade_percentual > 0 &&
+                                                        <Text style={styles.probabilityDescription}>
+                                                            A chance do seu pet apresentar {probabilidade.valor_informado} BPM é de {probabilidade.probabilidade_percentual?.toFixed(2)}%.
+                                                        </Text>
+                                                    }
+
+                                                    <Text style={styles.probabilityEvaluation}>{probabilidade.avaliacao}</Text>
+                                                </>
+                                            )}
+                                        </View>
+                                    )
                                 )}
                             </View>
                         </>
@@ -259,6 +267,8 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         color: '#000',
         fontSize: 14,
+        marginRight: 16,
+        marginLeft: 16
     },
     section: { marginBottom: 20 },
     card: {
@@ -275,18 +285,37 @@ const styles = StyleSheet.create({
         padding: 16,
         marginVertical: 10,
         elevation: 2,
+        alignItems: 'center',
     },
     dateInput: {
         backgroundColor: '#EEE',
-        borderRadius: 50,
-        paddingVertical: 5,
+        borderRadius: 25,
+        paddingVertical: 8,
         paddingHorizontal: 16,
         textAlign: 'center',
         marginVertical: 10,
-        fontSize: 16,
+        fontSize: 14,
         fontFamily: 'Poppins_400Regular',
         alignSelf: 'center',
-        width: '50%',
+        width: '60%',
+    },
+    button: {
+        backgroundColor: '#F39200',
+        borderRadius: 25,
+        paddingVertical: 9,
+        paddingHorizontal: 20,
+        alignSelf: 'center',
+        marginTop: 5,
+        elevation: 2,
+    },
+    buttonDisabled: {
+        backgroundColor: '#CCCCCC',
+    },
+    buttonText: {
+        color: '#FFFFFF',
+        fontFamily: 'Poppins_600SemiBold',
+        fontSize: 14,
+        textAlign: 'center',
     },
     statValue: {
         fontSize: 18,
@@ -334,29 +363,38 @@ const styles = StyleSheet.create({
         color: '#000',
     },
     analysisTitle: {
-        fontSize: 16,
-        fontFamily: 'Poppins_600SemiBold',
+        fontSize: 20,
+        fontFamily: 'Poppins_700Bold',
         color: '#FF0000',
         marginVertical: 5,
         marginTop: 40,
         textAlign: 'center',
+        marginRight: 20,
+        marginLeft: 20
     },
     dataTitle: {
-        fontSize: 16,
-        fontFamily: 'Poppins_600SemiBold',
+        fontSize: 18,
+        fontFamily: 'Poppins_700Bold',
         color: '#FF0000',
         marginVertical: 5,
         textAlign: 'center',
     },
+    probabilityPercent: {
+        fontFamily: 'Poppins_600SemiBold',
+        fontSize: 22,
+        color: '#000',
+        textAlign: 'center',
+        marginVertical: 5,
+    },
     probabilityTitle: {
-        fontSize: 18,
+        fontSize: 20,
         fontFamily: 'Poppins_700Bold',
         color: '#FF0000',
         textAlign: 'center',
         marginBottom: 10,
     },
     probabilityDescription: {
-        fontSize: 14,
+        fontSize: 16,
         fontFamily: 'Poppins_400Regular',
         textAlign: 'center',
         color: '#000',
@@ -367,6 +405,8 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins_400Regular',
         color: '#000',
         marginTop: 10,
-        textAlign: 'center',
+        textAlign: 'justify',
+        marginRight: 8,
+        marginLeft: 8
     },
 });
