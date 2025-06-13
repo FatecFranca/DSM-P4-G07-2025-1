@@ -3,7 +3,6 @@ import { View, StyleSheet } from 'react-native';
 import MapaAnimal from '../components/AnimalMap/AnimalMap';
 import CardLocation from '../components/CardLocation/CardLocation';
 
-
 export default function LocationScreen({ activeScreen, onNavigate, animalId}) {
     return (
         <View style={styles.container}>
