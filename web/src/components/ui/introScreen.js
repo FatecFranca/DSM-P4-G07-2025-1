@@ -45,7 +45,7 @@ export function IntroScreen({ animalId }) {
     }
 
     return (
-        <div className="relative w-full h-screen overflow-hidden px-6 py-8">
+        <div className="relative w-full h-screen md:overflow-hidden overflow-y-auto px-6 py-8"> {/* Scroll apenas em mobile */}
             {/* Logo */}
             <div className="absolute top-0 w-full flex justify-center md:justify-end p-4 md:pr-10 z-10">
                 <Image
