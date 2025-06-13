@@ -45,7 +45,7 @@ A API Python segue uma estrutura simples, porém bem organizada:
 
 A API está hospedada na plataforma Render:
 
-🔗 [https://api-estatisticas-petdex.onrender.com](https://api-estatisticas-petdex.onrender.com)
+🔗 [https://https://api-petdex-estatistica.onrender.com](https://api-petdex-estatistica.onrender.com/docs)
 
 Alguns dos principais endpoints disponíveis:
 
