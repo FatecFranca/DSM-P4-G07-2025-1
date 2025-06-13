@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { ExpandableMenu } from "@/components/ui/expandableMenu";
 import { NavigationBar } from "@/components/nav/navigationBar";
-import { animalId, getMediaUltimos5Dias, getEstatisticasCompletas, getMediaPorData, getProbabilidadePorValor, getRegressaoCorrelacao } from "@/utils/api";
+import { animalId, getMediaUltimos5Dias, getEstatisticasCompletas, getMediaPorData, getProbabilidadePorValor, getRegressaoCorrelacao, calcularPrevisao } from "@/utils/api";
 import { GraficoBarras } from "@/components/graficos/graficoBarras";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
@@ -31,7 +31,6 @@ export default function SaudePage() {
   const [regressaoData, setRegressaoData] = useState(null);
   const [loadingRegressao, setLoadingRegressao] = useState(false);
 
-  // Estados para a previsão de batimento
   const [acelerometroX, setAcelerometroX] = useState("");
   const [acelerometroY, setAcelerometroY] = useState("");
   const [acelerometroZ, setAcelerometroZ] = useState("");
@@ -102,21 +101,6 @@ export default function SaudePage() {
     fetchProbabilidade();
   }, [valorDigitado]);
 
-  const calcularPrevisao = async () => {
-    try {
-      setLoadingPrevisao(true);
-      const response = await fetch(
-        `https://api-petdex-estatistica.onrender.com/batimentos/predizer?acelerometroX=${acelerometroX}&acelerometroY=${acelerometroY}&acelerometroZ=${acelerometroZ}`
-      );
-      const data = await response.json();
-      setFrequenciaPrevista(data.frequencia_prevista);
-    } catch (error) {
-      console.error("Erro ao calcular previsão:", error);
-    } finally {
-      setLoadingPrevisao(false);
-    }
-  };
-
   return (
     <div className="relative flex flex-col bg-[var(--color-background)] min-h-screen h-screen">
       <main className="flex-grow overflow-y-auto p-6 pb-70">
@@ -132,7 +116,6 @@ export default function SaudePage() {
           </div>
         ) : (
           <>
-            {/* Cabeçalho - Centralizado em todas as telas */}
             <div className="text-center mb-8">
               <h1 className="text-2xl font-bold text-[var(--color-red)] mb-2">
                 Painel de Saúde
@@ -143,11 +126,8 @@ export default function SaudePage() {
               </p>
             </div>
 
-            {/* Container principal - Centralizado na web */}
             <div className="lg:flex lg:flex-col lg:items-center">
-              {/* Primeira linha - Gráfico e Estatísticas */}
               <div className="lg:flex lg:justify-center lg:w-full lg:max-w-5xl lg:gap-6 lg:mb-6">
-                {/* Gráfico - Centralizado na web */}
                 <div className="lg:w-1/2 mb-6 lg:mb-0 lg:flex lg:flex-col lg:items-center">
                   <h2 className="text-sm md:text-base font-bold mb-1 text-center text-[var(--color-red)] whitespace-nowrap">
                     Média de batimentos dos últimos cinco dias:
@@ -157,7 +137,6 @@ export default function SaudePage() {
                   </div>
                 </div>
 
-                {/* Estatísticas - Centralizado na web */}
                 <div className="lg:w-1/2 lg:flex lg:flex-col lg:items-center">
                   <h2 className="text-sm md:text-base font-bold mb-2 text-center text-[var(--color-red)] whitespace-nowrap">
                     Análise Estatística da Frequência Cardíaca
@@ -188,9 +167,7 @@ export default function SaudePage() {
                 </div>
               </div>
 
-              {/* Segunda linha - Média por data e Probabilidade */}
               <div className="lg:flex lg:justify-center lg:w-full lg:max-w-5xl lg:gap-6">
-                {/* Média por data - Centralizado na web */}
                 <div className="lg:w-1/2 mb-6 lg:mb-0 lg:flex lg:flex-col lg:items-center">
                   <div className="max-w-xs mx-auto lg:mx-0">
                     <h3 className="text-[var(--color-red)] font-bold text-base text-center mb-2">
@@ -227,7 +204,6 @@ export default function SaudePage() {
                   </div>
                 </div>
 
-                {/* Probabilidade - Centralizado na web */}
                 <div className="lg:w-1/2 lg:flex lg:flex-col lg:items-center">
                   <div className="max-w-xs mx-auto lg:mx-0">
                     <h3 className="text-[var(--color-red)] font-bold text-base text-center mb-1">
@@ -298,13 +274,12 @@ export default function SaudePage() {
                 </div>
               </div>
 
-              {/* Terceira linha - Regressão e Correlação */}
               <div className="lg:flex lg:justify-center lg:w-full lg:max-w-5xl mt-6">
                 <div className="w-full lg:max-w-3xl">
                   <h3 className="text-[var(--color-red)] font-bold text-base text-center mb-4">
                     Regressão e Correlação dos dados de movimento com a frequência cardíaca
                   </h3>
-                  
+
                   {loadingRegressao ? (
                     <div className="flex justify-center">
                       <FontAwesomeIcon
@@ -314,9 +289,7 @@ export default function SaudePage() {
                     </div>
                   ) : regressaoData ? (
                     <div className="bg-[var(--color-white-matte)] rounded-lg p-4 shadow-md">
-                      {/* Coeficientes e Correlações */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        {/* Coeficientes */}
                         <div className="bg-gray-50 p-3 rounded">
                           <h4 className="text-[var(--color-red)] font-bold text-sm mb-2 text-center">Coeficientes de Regressão</h4>
                           <div className="grid grid-cols-3 gap-2">
@@ -334,8 +307,7 @@ export default function SaudePage() {
                             </div>
                           </div>
                         </div>
-                        
-                        {/* Correlações */}
+
                         <div className="bg-gray-50 p-3 rounded">
                           <h4 className="text-[var(--color-red)] font-bold text-sm mb-2 text-center">Correlações</h4>
                           <div className="grid grid-cols-3 gap-2">
@@ -354,8 +326,7 @@ export default function SaudePage() {
                           </div>
                         </div>
                       </div>
-                      
-                      {/* Métricas Gerais */}
+
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
                         <div className="bg-gray-50 p-3 rounded text-center">
                           <p className="text-[var(--color-red)] font-bold text-xs">Coeficiente Geral</p>
@@ -365,18 +336,17 @@ export default function SaudePage() {
                           <p className="text-[var(--color-red)] font-bold text-xs">Coeficiente R²</p>
                           <p className="text-black font-bold text-lg">{regressaoData.r2.toFixed(3)}</p>
                         </div>
-                        <div className="bg-gray-50 p-3 rounded text-center">
+                        <div className="bg-gray-50 p-3 rounded text-center col-span-2 md:col-span-1">
                           <p className="text-[var(--color-red)] font-bold text-xs">Erro Quadrático</p>
                           <p className="text-black font-bold text-lg">{regressaoData.media_erro_quadratico.toFixed(3)}</p>
                         </div>
                       </div>
-                      
-                      {/* Descrição e Função de Regressão */}
+
                       <div className="mt-4">
                         <p className="text-black text-sm mb-2 text-center px-4">
                           Através da análise da correlação entre os dados de movimento é possível perceber que a frequência é influênciada apenas pelos valores de aceleração nos três eixos (X, Y e Z)
                         </p>
-                        <div className="p-3 bg-gray-100 rounded">
+                        <div className="p-3 bg-gray-50 rounded">
                           <h4 className="text-[var(--color-red)] font-bold text-sm mb-1 text-center">Função de Regressão</h4>
                           <p className="text-black text-xs font-mono break-words text-center">
                             {regressaoData.funcao_regressao}
@@ -384,15 +354,14 @@ export default function SaudePage() {
                         </div>
                       </div>
 
-                      {/* Nova seção de Previsão de Batimento */}
-                      <div className="mt-6 bg-[var(--color-white-matte)] rounded-lg p-4 shadow-md">
+                      <div className="mt-6 bg-gray-50 rounded-lg p-4">
                         <h4 className="text-[var(--color-red)] font-bold text-base text-center mb-3">
                           Fazer previsão de batimento
                         </h4>
                         <p className="text-black text-sm text-center mb-4">
-                          Informe os valores de aceleração abaixo  
+                          Informe os valores de aceleração abaixo
                         </p>
-                        
+
                         <div className="flex justify-center space-x-4 mb-4">
                           <input
                             type="number"
@@ -419,7 +388,16 @@ export default function SaudePage() {
 
                         <div className="flex justify-center">
                           <button
-                            onClick={calcularPrevisao}
+                            onClick={async () => {
+                              try {
+                                setLoadingPrevisao(true);
+                                setFrequenciaPrevista(await calcularPrevisao(acelerometroX, acelerometroY, acelerometroZ));
+                              } catch (error) {
+                                console.error(error);
+                              } finally {
+                                setLoadingPrevisao(false);
+                              }
+                            }}
                             disabled={loadingPrevisao}
                             className="bg-[var(--color-orange)] hover:bg-[var(--color-orange-hover)] text-white font-bold py-2 px-6 rounded-lg"
                           >
@@ -438,10 +416,7 @@ export default function SaudePage() {
                           <div className="mt-4 text-center">
                             <p className="text-[var(--color-red)] font-bold text-sm">Resultado do batimento:</p>
                             <p className="text-black font-bold text-xl">
-                              {frequenciaPrevista.toFixed(2)}
-                            </p>
-                            <p className="text-black text-xs mt-2">
-                              Função utilizada: {regressaoData.funcao_regressao}
+                              {frequenciaPrevista.toFixed(2)} BPM
                             </p>
                           </div>
                         )}

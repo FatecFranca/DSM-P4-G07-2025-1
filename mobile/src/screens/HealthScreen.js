@@ -7,7 +7,9 @@ import {
     getMediaUltimos5Dias,
     getEstatisticasCompletas,
     getMediaPorData,
-    getProbabilidadePorValor
+    getProbabilidadePorValor,
+    getRegressao, // Importar nova função
+    getPredicaoBatimento // Importar nova função
 } from '../services/apiEstatistica';
 import GraficoBarras from '../components/GraficoBarras';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -25,16 +27,26 @@ export default function HealthScreen({ animalId }) {
     const [loadingMediaData, setLoadingMediaData] = useState(false);
     const [loadingProbabilidade, setLoadingProbabilidade] = useState(false);
 
+    // Novos estados para regressão e predição
+    const [regressaoData, setRegressaoData] = useState(null);
+    const [loadingPredicao, setLoadingPredicao] = useState(false);
+    const [predicao, setPredicao] = useState(null);
+    const [acelerometro, setAcelerometro] = useState({ x: '', y: '', z: '' });
+
+
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const [estatisticas, medias] = await Promise.all([
+                const [estatisticas, medias, regressao] = await Promise.all([
                     getEstatisticasCompletas(),
-                    getMediaUltimos5Dias()
+                    getMediaUltimos5Dias(),
+                    getRegressao() // Adicionar chamada da API de regressão
                 ]);
                 if (estatisticas) setHealthData(estatisticas);
                 setMediasUltimos5Dias(medias);
+                if (regressao) setRegressaoData(regressao);
+
             } catch (err) {
                 console.error('Erro ao buscar estatísticas iniciais:', err);
             } finally {
@@ -105,6 +117,26 @@ export default function HealthScreen({ animalId }) {
         }
     };
 
+    // Nova função para calcular a predição de batimento
+    const handleCalcularPredicao = async () => {
+        if (!acelerometro.x || !acelerometro.y || !acelerometro.z) {
+            alert('Por favor, preencha os três valores de aceleração (X, Y e Z).');
+            return;
+        }
+        setLoadingPredicao(true);
+        setPredicao(null);
+        try {
+            const resultado = await getPredicaoBatimento(acelerometro.x, acelerometro.y, acelerometro.z);
+            setPredicao(resultado);
+        } catch (error) {
+            console.error('Erro ao buscar predição:', error);
+            setPredicao({ error: true });
+        } finally {
+            setLoadingPredicao(false);
+        }
+    };
+
+
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
@@ -170,9 +202,9 @@ export default function HealthScreen({ animalId }) {
                                     keyboardType="numeric"
                                     maxLength={10}
                                 />
-                                
+
                                 {loadingMediaData ? (
-                                    <ActivityIndicator color="#F39200" style={{ marginTop: 10 }}/>
+                                    <ActivityIndicator color="#F39200" style={{ marginTop: 10 }} />
                                 ) : (
                                     selectedDate && mediaPorData !== null && (
                                         <View style={styles.card}>
@@ -210,7 +242,7 @@ export default function HealthScreen({ animalId }) {
                                 </TouchableOpacity>
 
                                 {loadingProbabilidade ? (
-                                    <ActivityIndicator color="#F39200" style={{ marginTop: 10 }}/>
+                                    <ActivityIndicator color="#F39200" style={{ marginTop: 10 }} />
                                 ) : (
                                     probabilidade && (
                                         <View style={styles.probabilityCard}>
@@ -224,7 +256,7 @@ export default function HealthScreen({ animalId }) {
                                                     </Text>
 
                                                     <Text style={styles.probabilityTitle}>{probabilidade.titulo}</Text>
-                                                    
+
                                                     {probabilidade.probabilidade_percentual > 0 &&
                                                         <Text style={styles.probabilityDescription}>
                                                             A chance do seu pet apresentar {probabilidade.valor_informado} BPM é de {probabilidade.probabilidade_percentual?.toFixed(2)}%.
@@ -238,6 +270,128 @@ export default function HealthScreen({ animalId }) {
                                     )
                                 )}
                             </View>
+
+                            {/* NOVA SEÇÃO DE REGRESSÃO E CORRELAÇÃO */}
+                            {regressaoData &&
+                                <View style={styles.section}>
+                                    <Text style={styles.analysisTitle}>Regressão e Correlação dos dados de movimento com a frequência cardíaca</Text>
+
+                                    <View style={styles.card}>
+                                        <Text style={styles.dataTitle}>Coeficientes de Regressão</Text>
+                                        <View style={styles.statsRow}>
+                                            <View style={styles.statItem}>
+                                                <Text style={styles.regressaoLabel}>Eixo X</Text>
+                                                <Text style={styles.statValue}>{regressaoData.coeficientes?.acelerometroX.toFixed(3)}</Text>
+                                            </View>
+                                            <View style={styles.statItem}>
+                                                <Text style={styles.regressaoLabel}>Eixo Y</Text>
+                                                <Text style={styles.statValue}>{regressaoData.coeficientes?.acelerometroY.toFixed(3)}</Text>
+                                            </View>
+                                            <View style={styles.statItem}>
+                                                <Text style={styles.regressaoLabel}>Eixo Z</Text>
+                                                <Text style={styles.statValue}>{regressaoData.coeficientes?.acelerometroZ.toFixed(3)}</Text>
+                                            </View>
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.card}>
+                                        <Text style={styles.dataTitle}>Correlações</Text>
+                                        <View style={styles.statsRow}>
+                                            <View style={styles.statItem}>
+                                                <Text style={styles.regressaoLabel}>Eixo X</Text>
+                                                <Text style={styles.statValue}>{regressaoData.correlacoes?.acelerometroX.toFixed(3)}</Text>
+                                            </View>
+                                            <View style={styles.statItem}>
+                                                <Text style={styles.regressaoLabel}>Eixo Y</Text>
+                                                <Text style={styles.statValue}>{regressaoData.correlacoes?.acelerometroY.toFixed(3)}</Text>
+                                            </View>
+                                            <View style={styles.statItem}>
+                                                <Text style={styles.regressaoLabel}>Eixo Z</Text>
+                                                <Text style={styles.statValue}>{regressaoData.correlacoes?.acelerometroZ.toFixed(3)}</Text>
+                                            </View>
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.statsRow}>
+                                        <View style={[styles.card, { flex: 1, marginRight: 10 }]}>
+                                            <Text style={styles.dataTitle}>Coeficiente Geral</Text>
+                                            <Text style={styles.statValue}>{regressaoData.coeficiente_geral?.toFixed(3)}</Text>
+                                        </View>
+                                        <View style={[styles.card, { flex: 1 }]}>
+                                            <Text style={styles.dataTitle}>Coeficiente R²</Text>
+                                            <Text style={styles.statValue}>{regressaoData.r2?.toFixed(3)}</Text>
+                                        </View>
+                                    </View>
+                                    <View style={[styles.card, { flex: 1 }]}>
+                                        <Text style={styles.dataTitle}>Erro Quadrático</Text>
+                                        <Text style={styles.statValue}>{regressaoData.media_erro_quadratico?.toFixed(3)}</Text>
+                                    </View>
+                                    
+                                    {/* MENSAGEM ADICIONADA AQUI */}
+                                    <Text style={styles.description}>
+                                        Através da análise da correlação entre os dados de movimento é possível perceber que a frequência é influênciada apenas pelos valores de aceleração nos três eixos (X, Y e Z)
+                                    </Text>
+
+                                    <View style={styles.card}>
+                                        <Text style={styles.dataTitle}>Função de Regressão</Text>
+                                        <Text style={styles.formulaText}>{regressaoData.funcao_regressao}</Text>
+                                    </View>
+
+                                    <View style={styles.card}>
+                                        <Text style={styles.dataTitle}>Fazer previsão de batimento</Text>
+                                        <Text style={styles.description}>Informe os valores de aceleração abaixo</Text>
+
+                                        <View style={styles.predictionInputRow}>
+                                            <TextInput
+                                                style={styles.predictionInput}
+                                                placeholder="X"
+                                                keyboardType="numeric"
+                                                value={acelerometro.x}
+                                                onChangeText={(text) => setAcelerometro(prev => ({ ...prev, x: text }))}
+                                            />
+                                            <TextInput
+                                                style={styles.predictionInput}
+                                                placeholder="Y"
+                                                keyboardType="numeric"
+                                                value={acelerometro.y}
+                                                onChangeText={(text) => setAcelerometro(prev => ({ ...prev, y: text }))}
+                                            />
+                                            <TextInput
+                                                style={styles.predictionInput}
+                                                placeholder="Z"
+                                                keyboardType="numeric"
+                                                value={acelerometro.z}
+                                                onChangeText={(text) => setAcelerometro(prev => ({ ...prev, z: text }))}
+                                            />
+                                        </View>
+
+                                        <TouchableOpacity
+                                            style={[styles.button, loadingPredicao && styles.buttonDisabled]}
+                                            onPress={handleCalcularPredicao}
+                                            disabled={loadingPredicao}
+                                        >
+                                            <Text style={styles.buttonText}>Calcular batimento</Text>
+                                        </TouchableOpacity>
+
+                                        {loadingPredicao ? (
+                                            <ActivityIndicator color="#F39200" style={{ marginTop: 15 }} />
+                                        ) : (
+                                            predicao && (
+                                                <View style={{ marginTop: 15 }}>
+                                                    {predicao.error ? (
+                                                        <Text style={styles.statLabel}>Erro ao calcular</Text>
+                                                    ) : (
+                                                        <>
+                                                            <Text style={styles.statLabel}>Batimento previsto:</Text>
+                                                            <Text style={styles.largeValue}>{predicao.frequencia_prevista?.toFixed(2)} BPM</Text>
+                                                        </>
+                                                    )}
+                                                </View>
+                                            )
+                                        )}
+                                    </View>
+                                </View>
+                            }
                         </>
                     )}
                 </ScrollView>
@@ -268,7 +422,8 @@ const styles = StyleSheet.create({
         color: '#000',
         fontSize: 14,
         marginRight: 16,
-        marginLeft: 16
+        marginLeft: 16,
+        marginTop: 10, // Adicionado para dar um espaço acima
     },
     section: { marginBottom: 20 },
     card: {
@@ -408,5 +563,36 @@ const styles = StyleSheet.create({
         textAlign: 'justify',
         marginRight: 8,
         marginLeft: 8
+    },
+    // Novos estilos para a seção de regressão
+    regressaoLabel: {
+        fontSize: 14,
+        fontFamily: 'Poppins_400Regular',
+        color: '#666',
+        marginBottom: 2,
+    },
+    formulaText: {
+        fontSize: 14,
+        fontFamily: 'monospace',
+        color: '#333',
+        textAlign: 'center',
+        marginHorizontal: 10,
+        lineHeight: 20,
+    },
+    predictionInputRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '100%',
+        marginVertical: 15,
+    },
+    predictionInput: {
+        backgroundColor: 'transparent',
+        borderRadius: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        textAlign: 'center',
+        fontSize: 16,
+        fontFamily: 'Poppins_500Medium',
+        width: '30%',
     },
 });
