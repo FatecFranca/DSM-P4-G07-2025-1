@@ -120,7 +120,7 @@ export function IntroScreen({ animalId }) {
                                     {animalInfo?.nome ? animalInfo.nome : (
                                         <FontAwesomeIcon
                                             icon={faSpinner}
-                                            className="text-blue-500 text-xl flex-shrink-0"
+                                            className="animate-spin text-[var(--color-orange)] text-xl flex-shrink-0"
                                         />
                                     )}
                                 </h2>
@@ -139,16 +139,18 @@ export function IntroScreen({ animalId }) {
                                 ) : (
                                     <FontAwesomeIcon
                                         icon={faSpinner}
-                                        className="text-blue-500 text-xl flex-shrink-0"
+                                        className="animate-spin text-[var(--color-orange)] text-xl flex-shrink-0"
                                     />
+
                                 )}
                             </div>
                             <p className="text-black text-sm md:text-base mb-3 font-medium">
                                 {animalInfo?.racaNome ? animalInfo.racaNome : (
                                     <FontAwesomeIcon
                                         icon={faSpinner}
-                                        className="text-blue-500 text-xl flex-shrink-0"
+                                        className="animate-spin text-[var(--color-orange)] text-xl flex-shrink-0"
                                     />
+
                                 )}
                             </p>
 
@@ -157,15 +159,24 @@ export function IntroScreen({ animalId }) {
                                 <span className="flex-shrink-0">
                                     {animalInfo?.dataNascimento
                                         ? `${calcularIdade(animalInfo.dataNascimento)} anos`
-                                        : <FontAwesomeIcon icon={faSpinner} className="text-blue-500 text-lg flex-shrink-0" />}
+                                        : <FontAwesomeIcon
+                                            icon={faSpinner}
+                                            className="animate-spin text-[var(--color-orange)] text-xl flex-shrink-0"
+                                        />
+                                    }
                                 </span>
 
                                 <span className="flex-shrink-0">
-                                    {animalInfo?.peso 
-                                        ? `${animalInfo.peso} kg`
-                                        : <FontAwesomeIcon icon={faSpinner} className="text-blue-500 text-lg flex-shrink-0" />}
+                                    {
+                                        animalInfo?.peso
+                                            ? `${animalInfo.peso} kg`
+                                            : <FontAwesomeIcon
+                                                icon={faSpinner}
+                                                className="animate-spin text-[var(--color-orange)] text-xl flex-shrink-0"
+                                            />
+                                    }
                                 </span>
-                                
+
                                 <span className="flex-shrink-0">Porte Grande</span>
                             </div>
                         </div>

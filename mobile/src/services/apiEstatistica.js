@@ -70,3 +70,27 @@ export async function getMediaUltimas5Horas() {
         return { media_por_hora: {}, media: 0 };
     }
 }
+
+
+export async function getRegressao() {
+    try {
+        const response = await apiEstatistica.get('/batimentos/regressao');
+        console.log("[DEBUG] Dados de regressão:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error('[API] Erro ao buscar dados de regressão:', error);
+        throw error;
+    }
+}
+
+export async function getPredicaoBatimento(acelerometroX, acelerometroY, acelerometroZ) {
+    try {
+        const params = new URLSearchParams({ acelerometroX, acelerometroY, acelerometroZ });
+        const response = await apiEstatistica.get(`/batimentos/predizer?${params.toString()}`);
+        console.log("[DEBUG] Dados de predição:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error('[API] Erro ao buscar predição de batimento:', error);
+        throw error;
+    }
+}

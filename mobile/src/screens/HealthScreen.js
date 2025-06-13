@@ -1,22 +1,21 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View, Text, TextInput, ScrollView, ActivityIndicator,
-    StyleSheet, KeyboardAvoidingView, Platform
+    StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity
 } from 'react-native';
-import ExpandableMenu from '../components/ExpandableMenu/ExpandableMenuSaude';
-import NavigationBar from '../components/NavigationBar';
 import {
-    animalId,
     getMediaUltimos5Dias,
     getEstatisticasCompletas,
     getMediaPorData,
-    getProbabilidadePorValor
+    getProbabilidadePorValor,
+    getRegressao, // Importar nova função
+    getPredicaoBatimento // Importar nova função
 } from '../services/apiEstatistica';
 import GraficoBarras from '../components/GraficoBarras';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faHeartbeat } from '@fortawesome/free-solid-svg-icons';
 
-export default function HealthScreen({ activeScreen, onNavigate }) {
+export default function HealthScreen({ animalId }) {
     const [healthData, setHealthData] = useState(null);
     const [mediasUltimos5Dias, setMediasUltimos5Dias] = useState([]);
     const [selectedDate, setSelectedDate] = useState('');
@@ -27,18 +26,27 @@ export default function HealthScreen({ activeScreen, onNavigate }) {
     const [loading, setLoading] = useState(true);
     const [loadingMediaData, setLoadingMediaData] = useState(false);
     const [loadingProbabilidade, setLoadingProbabilidade] = useState(false);
-    const debounceTimer = useRef(null);
+
+    // Novos estados para regressão e predição
+    const [regressaoData, setRegressaoData] = useState(null);
+    const [loadingPredicao, setLoadingPredicao] = useState(false);
+    const [predicao, setPredicao] = useState(null);
+    const [acelerometro, setAcelerometro] = useState({ x: '', y: '', z: '' });
+
 
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const [estatisticas, medias] = await Promise.all([
+                const [estatisticas, medias, regressao] = await Promise.all([
                     getEstatisticasCompletas(),
-                    getMediaUltimos5Dias()
+                    getMediaUltimos5Dias(),
+                    getRegressao() // Adicionar chamada da API de regressão
                 ]);
                 if (estatisticas) setHealthData(estatisticas);
                 setMediasUltimos5Dias(medias);
+                if (regressao) setRegressaoData(regressao);
+
             } catch (err) {
                 console.error('Erro ao buscar estatísticas iniciais:', err);
             } finally {
@@ -68,50 +76,66 @@ export default function HealthScreen({ activeScreen, onNavigate }) {
             setSelectedDate(`${year}-${month}-${day}`);
         } else {
             setSelectedDate('');
+            setMediaPorData(null);
         }
     };
 
     useEffect(() => {
         const buscarMedia = async () => {
-            if (!selectedDate) {
+            if (selectedDate) {
+                setLoadingMediaData(true);
                 setMediaPorData(null);
-                return;
-            }
-            setLoadingMediaData(true);
-            try {
-                const resultado = await getMediaPorData(selectedDate);
-                setMediaPorData(resultado);
-            } catch (error) {
-                console.error('Erro ao buscar média por data:', error);
-                setMediaPorData(null);
-            } finally {
-                setLoadingMediaData(false);
+                try {
+                    const resultado = await getMediaPorData(selectedDate);
+                    setMediaPorData(resultado);
+                } catch (error) {
+                    console.error('Erro ao buscar média por data:', error);
+                    setMediaPorData({ error: true });
+                } finally {
+                    setLoadingMediaData(false);
+                }
             }
         };
         buscarMedia();
     }, [selectedDate]);
 
-    useEffect(() => {
-        if (debounceTimer.current) clearTimeout(debounceTimer.current);
-
+    const handleCalcularProbabilidade = async () => {
         if (!valorDigitado) {
-            setProbabilidade(null);
+            alert('Por favor, digite um valor para calcular a probabilidade.');
             return;
         }
+        setLoadingProbabilidade(true);
+        setProbabilidade(null);
+        try {
+            const resultado = await getProbabilidadePorValor(valorDigitado);
+            setProbabilidade(resultado);
+        } catch (error) {
+            console.error('Erro ao buscar probabilidade:', error);
+            setProbabilidade({ error: true });
+        } finally {
+            setLoadingProbabilidade(false);
+        }
+    };
 
-        debounceTimer.current = setTimeout(async () => {
-            setLoadingProbabilidade(true);
-            try {
-                const resultado = await getProbabilidadePorValor(valorDigitado);
-                setProbabilidade(resultado);
-            } catch (error) {
-                console.error('Erro ao buscar probabilidade:', error);
-                setProbabilidade(null);
-            } finally {
-                setLoadingProbabilidade(false);
-            }
-        }, 800); // 800ms de debounce
-    }, [valorDigitado]);
+    // Nova função para calcular a predição de batimento
+    const handleCalcularPredicao = async () => {
+        if (!acelerometro.x || !acelerometro.y || !acelerometro.z) {
+            alert('Por favor, preencha os três valores de aceleração (X, Y e Z).');
+            return;
+        }
+        setLoadingPredicao(true);
+        setPredicao(null);
+        try {
+            const resultado = await getPredicaoBatimento(acelerometro.x, acelerometro.y, acelerometro.z);
+            setPredicao(resultado);
+        } catch (error) {
+            console.error('Erro ao buscar predição:', error);
+            setPredicao({ error: true });
+        } finally {
+            setLoadingPredicao(false);
+        }
+    };
+
 
     return (
         <KeyboardAvoidingView
@@ -168,7 +192,7 @@ export default function HealthScreen({ activeScreen, onNavigate }) {
                             )}
 
                             <View style={styles.section}>
-                                <Text style={styles.analysisTitle}>Média de batimento Cardíaco por data</Text>
+                                <Text style={styles.analysisTitle}>Média de batimento cardíaco por data</Text>
                                 <Text style={styles.dataTitle}>Insira uma data:</Text>
                                 <TextInput
                                     style={styles.dateInput}
@@ -178,65 +202,199 @@ export default function HealthScreen({ activeScreen, onNavigate }) {
                                     keyboardType="numeric"
                                     maxLength={10}
                                 />
+
                                 {loadingMediaData ? (
-                                    <ActivityIndicator color="#F39200" />
+                                    <ActivityIndicator color="#F39200" style={{ marginTop: 10 }} />
                                 ) : (
-                                    <View style={styles.card}>
-                                        {selectedDate === '' ? (
-                                            <Text style={styles.statLabel}>Digite uma data válida</Text>
-                                        ) : mediaPorData === null ? (
-                                            <Text style={styles.statLabel}>Sem dados de batimento para a data selecionada</Text>
-                                        ) : (
-                                            <>
-                                                <Text style={styles.statLabel}>A média do dia é igual a:</Text>
-                                                <Text style={styles.largeValue}>{mediaPorData?.toFixed(2)}</Text>
-                                            </>
-                                        )}
-                                    </View>
+                                    selectedDate && mediaPorData !== null && (
+                                        <View style={styles.card}>
+                                            {mediaPorData.error ? (
+                                                <Text style={styles.statLabel}>Sem dados de batimento para a data selecionada</Text>
+                                            ) : (
+                                                <>
+                                                    <Text style={styles.statLabel}>A média do dia é igual a:</Text>
+                                                    <Text style={styles.largeValue}>{mediaPorData.toFixed(2)}</Text>
+                                                </>
+                                            )}
+                                        </View>
+                                    )
                                 )}
                             </View>
 
                             <View style={styles.section}>
-                                <Text style={styles.title}>Probabilidade de Batimento</Text>
+                                <Text style={styles.analysisTitle}>Probabilidade de Batimento</Text>
                                 <Text style={styles.description}>
                                     Digite um valor e descubra a chance de o seu pet apresentar esse batimento cardíaco, com base no histórico real.
                                 </Text>
                                 <TextInput
                                     style={styles.dateInput}
-                                    placeholder="Insira o valor"
+                                    placeholder="Insira o valor do batimento"
                                     keyboardType="numeric"
                                     value={valorDigitado}
                                     onChangeText={setValorDigitado}
                                 />
-                                {valorDigitado !== '' && (
-                                    <>
-                                        <Text style={styles.dataTitle}>Você digitou:</Text>
-                                        <Text style={styles.statValue}>{valorDigitado} BPM</Text>
-                                    </>
-                                )}
+                                <TouchableOpacity
+                                    style={[styles.button, (!valorDigitado || loadingProbabilidade) && styles.buttonDisabled]}
+                                    onPress={handleCalcularProbabilidade}
+                                    disabled={!valorDigitado || loadingProbabilidade}
+                                >
+                                    <Text style={styles.buttonText}>Calcular Probabilidade</Text>
+                                </TouchableOpacity>
+
                                 {loadingProbabilidade ? (
-                                    <ActivityIndicator color="#F39200" />
+                                    <ActivityIndicator color="#F39200" style={{ marginTop: 10 }} />
                                 ) : (
-                                    <View style={styles.probabilityCard}>
-                                        {probabilidade ? (
-                                            <>
-                                                <Text style={styles.probabilityTitle}>{probabilidade.titulo}</Text>
-                                                <Text style={styles.probabilityDescription}>
-                                                    A chance do seu pet apresentar {probabilidade.valor_informado} BPM é de {probabilidade.probabilidade_percentual?.toFixed(2)}%.
-                                                </Text>
-                                                <Text style={styles.probabilityEvaluation}>{probabilidade.avaliacao}</Text>
-                                            </>
-                                        ) : (
-                                            <Text style={styles.statLabel}>Digite um valor para calcular</Text>
-                                        )}
-                                    </View>
+                                    probabilidade && (
+                                        <View style={styles.probabilityCard}>
+                                            {probabilidade.error ? (
+                                                <Text style={styles.statLabel}>Não foi possível calcular. Tente outro valor.</Text>
+                                            ) : (
+                                                <>
+                                                    <Text style={styles.dataTitle}>Probabilidade</Text>
+                                                    <Text style={styles.probabilityPercent}>
+                                                        {probabilidade.probabilidade_percentual?.toFixed(2)}%
+                                                    </Text>
+
+                                                    <Text style={styles.probabilityTitle}>{probabilidade.titulo}</Text>
+
+                                                    {probabilidade.probabilidade_percentual > 0 &&
+                                                        <Text style={styles.probabilityDescription}>
+                                                            A chance do seu pet apresentar {probabilidade.valor_informado} BPM é de {probabilidade.probabilidade_percentual?.toFixed(2)}%.
+                                                        </Text>
+                                                    }
+
+                                                    <Text style={styles.probabilityEvaluation}>{probabilidade.avaliacao}</Text>
+                                                </>
+                                            )}
+                                        </View>
+                                    )
                                 )}
                             </View>
+
+                            {/* NOVA SEÇÃO DE REGRESSÃO E CORRELAÇÃO */}
+                            {regressaoData &&
+                                <View style={styles.section}>
+                                    <Text style={styles.analysisTitle}>Regressão e Correlação dos dados de movimento com a frequência cardíaca</Text>
+
+                                    <View style={styles.card}>
+                                        <Text style={styles.dataTitle}>Coeficientes de Regressão</Text>
+                                        <View style={styles.statsRow}>
+                                            <View style={styles.statItem}>
+                                                <Text style={styles.regressaoLabel}>Eixo X</Text>
+                                                <Text style={styles.statValue}>{regressaoData.coeficientes?.acelerometroX.toFixed(3)}</Text>
+                                            </View>
+                                            <View style={styles.statItem}>
+                                                <Text style={styles.regressaoLabel}>Eixo Y</Text>
+                                                <Text style={styles.statValue}>{regressaoData.coeficientes?.acelerometroY.toFixed(3)}</Text>
+                                            </View>
+                                            <View style={styles.statItem}>
+                                                <Text style={styles.regressaoLabel}>Eixo Z</Text>
+                                                <Text style={styles.statValue}>{regressaoData.coeficientes?.acelerometroZ.toFixed(3)}</Text>
+                                            </View>
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.card}>
+                                        <Text style={styles.dataTitle}>Correlações</Text>
+                                        <View style={styles.statsRow}>
+                                            <View style={styles.statItem}>
+                                                <Text style={styles.regressaoLabel}>Eixo X</Text>
+                                                <Text style={styles.statValue}>{regressaoData.correlacoes?.acelerometroX.toFixed(3)}</Text>
+                                            </View>
+                                            <View style={styles.statItem}>
+                                                <Text style={styles.regressaoLabel}>Eixo Y</Text>
+                                                <Text style={styles.statValue}>{regressaoData.correlacoes?.acelerometroY.toFixed(3)}</Text>
+                                            </View>
+                                            <View style={styles.statItem}>
+                                                <Text style={styles.regressaoLabel}>Eixo Z</Text>
+                                                <Text style={styles.statValue}>{regressaoData.correlacoes?.acelerometroZ.toFixed(3)}</Text>
+                                            </View>
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.statsRow}>
+                                        <View style={[styles.card, { flex: 1, marginRight: 10 }]}>
+                                            <Text style={styles.dataTitle}>Coeficiente Geral</Text>
+                                            <Text style={styles.statValue}>{regressaoData.coeficiente_geral?.toFixed(3)}</Text>
+                                        </View>
+                                        <View style={[styles.card, { flex: 1 }]}>
+                                            <Text style={styles.dataTitle}>Coeficiente R²</Text>
+                                            <Text style={styles.statValue}>{regressaoData.r2?.toFixed(3)}</Text>
+                                        </View>
+                                    </View>
+                                    <View style={[styles.card, { flex: 1 }]}>
+                                        <Text style={styles.dataTitle}>Erro Quadrático</Text>
+                                        <Text style={styles.statValue}>{regressaoData.media_erro_quadratico?.toFixed(3)}</Text>
+                                    </View>
+                                    
+                                    {/* MENSAGEM ADICIONADA AQUI */}
+                                    <Text style={styles.description}>
+                                        Através da análise da correlação entre os dados de movimento é possível perceber que a frequência é influênciada apenas pelos valores de aceleração nos três eixos (X, Y e Z)
+                                    </Text>
+
+                                    <View style={styles.card}>
+                                        <Text style={styles.dataTitle}>Função de Regressão</Text>
+                                        <Text style={styles.formulaText}>{regressaoData.funcao_regressao}</Text>
+                                    </View>
+
+                                    <View style={styles.card}>
+                                        <Text style={styles.dataTitle}>Fazer previsão de batimento</Text>
+                                        <Text style={styles.description}>Informe os valores de aceleração abaixo</Text>
+
+                                        <View style={styles.predictionInputRow}>
+                                            <TextInput
+                                                style={styles.predictionInput}
+                                                placeholder="X"
+                                                keyboardType="numeric"
+                                                value={acelerometro.x}
+                                                onChangeText={(text) => setAcelerometro(prev => ({ ...prev, x: text }))}
+                                            />
+                                            <TextInput
+                                                style={styles.predictionInput}
+                                                placeholder="Y"
+                                                keyboardType="numeric"
+                                                value={acelerometro.y}
+                                                onChangeText={(text) => setAcelerometro(prev => ({ ...prev, y: text }))}
+                                            />
+                                            <TextInput
+                                                style={styles.predictionInput}
+                                                placeholder="Z"
+                                                keyboardType="numeric"
+                                                value={acelerometro.z}
+                                                onChangeText={(text) => setAcelerometro(prev => ({ ...prev, z: text }))}
+                                            />
+                                        </View>
+
+                                        <TouchableOpacity
+                                            style={[styles.button, loadingPredicao && styles.buttonDisabled]}
+                                            onPress={handleCalcularPredicao}
+                                            disabled={loadingPredicao}
+                                        >
+                                            <Text style={styles.buttonText}>Calcular batimento</Text>
+                                        </TouchableOpacity>
+
+                                        {loadingPredicao ? (
+                                            <ActivityIndicator color="#F39200" style={{ marginTop: 15 }} />
+                                        ) : (
+                                            predicao && (
+                                                <View style={{ marginTop: 15 }}>
+                                                    {predicao.error ? (
+                                                        <Text style={styles.statLabel}>Erro ao calcular</Text>
+                                                    ) : (
+                                                        <>
+                                                            <Text style={styles.statLabel}>Batimento previsto:</Text>
+                                                            <Text style={styles.largeValue}>{predicao.frequencia_prevista?.toFixed(2)} BPM</Text>
+                                                        </>
+                                                    )}
+                                                </View>
+                                            )
+                                        )}
+                                    </View>
+                                </View>
+                            }
                         </>
                     )}
                 </ScrollView>
-                <ExpandableMenu animalId={animalId} />
-                <NavigationBar activeScreen={activeScreen} onNavigate={onNavigate} />
             </View>
         </KeyboardAvoidingView>
     );
@@ -247,7 +405,7 @@ const styles = StyleSheet.create({
     heartIcon: {
         position: 'absolute', top: 50, right: 20, opacity: 0.1, zIndex: -1,
     },
-    scroll: { paddingHorizontal: 20, paddingBottom: 180 },
+    scroll: { paddingHorizontal: 20 },
     scrollContent: { paddingTop: 40, paddingBottom: 250 },
     title: {
         fontSize: 24,
@@ -263,6 +421,9 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         color: '#000',
         fontSize: 14,
+        marginRight: 16,
+        marginLeft: 16,
+        marginTop: 10, // Adicionado para dar um espaço acima
     },
     section: { marginBottom: 20 },
     card: {
@@ -279,18 +440,37 @@ const styles = StyleSheet.create({
         padding: 16,
         marginVertical: 10,
         elevation: 2,
+        alignItems: 'center',
     },
     dateInput: {
         backgroundColor: '#EEE',
-        borderRadius: 50,
-        paddingVertical: 5,
+        borderRadius: 25,
+        paddingVertical: 8,
         paddingHorizontal: 16,
         textAlign: 'center',
         marginVertical: 10,
-        fontSize: 16,
+        fontSize: 14,
         fontFamily: 'Poppins_400Regular',
         alignSelf: 'center',
-        width: '50%',
+        width: '60%',
+    },
+    button: {
+        backgroundColor: '#F39200',
+        borderRadius: 25,
+        paddingVertical: 9,
+        paddingHorizontal: 20,
+        alignSelf: 'center',
+        marginTop: 5,
+        elevation: 2,
+    },
+    buttonDisabled: {
+        backgroundColor: '#CCCCCC',
+    },
+    buttonText: {
+        color: '#FFFFFF',
+        fontFamily: 'Poppins_600SemiBold',
+        fontSize: 14,
+        textAlign: 'center',
     },
     statValue: {
         fontSize: 18,
@@ -338,29 +518,38 @@ const styles = StyleSheet.create({
         color: '#000',
     },
     analysisTitle: {
-        fontSize: 16,
-        fontFamily: 'Poppins_600SemiBold',
+        fontSize: 20,
+        fontFamily: 'Poppins_700Bold',
         color: '#FF0000',
         marginVertical: 5,
         marginTop: 40,
         textAlign: 'center',
+        marginRight: 20,
+        marginLeft: 20
     },
     dataTitle: {
-        fontSize: 16,
-        fontFamily: 'Poppins_600SemiBold',
+        fontSize: 18,
+        fontFamily: 'Poppins_700Bold',
         color: '#FF0000',
         marginVertical: 5,
         textAlign: 'center',
     },
+    probabilityPercent: {
+        fontFamily: 'Poppins_600SemiBold',
+        fontSize: 22,
+        color: '#000',
+        textAlign: 'center',
+        marginVertical: 5,
+    },
     probabilityTitle: {
-        fontSize: 18,
+        fontSize: 20,
         fontFamily: 'Poppins_700Bold',
         color: '#FF0000',
         textAlign: 'center',
         marginBottom: 10,
     },
     probabilityDescription: {
-        fontSize: 14,
+        fontSize: 16,
         fontFamily: 'Poppins_400Regular',
         textAlign: 'center',
         color: '#000',
@@ -371,6 +560,39 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins_400Regular',
         color: '#000',
         marginTop: 10,
+        textAlign: 'justify',
+        marginRight: 8,
+        marginLeft: 8
+    },
+    // Novos estilos para a seção de regressão
+    regressaoLabel: {
+        fontSize: 14,
+        fontFamily: 'Poppins_400Regular',
+        color: '#666',
+        marginBottom: 2,
+    },
+    formulaText: {
+        fontSize: 14,
+        fontFamily: 'monospace',
+        color: '#333',
         textAlign: 'center',
+        marginHorizontal: 10,
+        lineHeight: 20,
+    },
+    predictionInputRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '100%',
+        marginVertical: 15,
+    },
+    predictionInput: {
+        backgroundColor: 'transparent',
+        borderRadius: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        textAlign: 'center',
+        fontSize: 16,
+        fontFamily: 'Poppins_500Medium',
+        width: '30%',
     },
 });

@@ -15,6 +15,11 @@ export default function GraficoBarras({ data }) {
             y: valor,
             label: `${Math.round(valor)}`
         }));
+    
+    const valoresY = data.map(dado => dado.valor);
+    const maxValor = Math.max(...valoresY);
+    const maxY = Math.round(maxValor + 10);
+    const minY = 10;
 
     return (
         <View style={{ alignItems: 'center', marginTop: 10 }}>
@@ -32,6 +37,7 @@ export default function GraficoBarras({ data }) {
                 domainPadding={{ x: 30 }}
                 height={250}
                 padding={{ top: 40, bottom: 50, left: 50, right: 50 }}
+                domain={{ y: [minY, maxY] }}
             >
                 <VictoryAxis 
                     style={{
@@ -60,7 +66,7 @@ export default function GraficoBarras({ data }) {
                     labels={({ datum }) => datum.label}
                     labelComponent={
                         <VictoryLabel 
-                            dy={-15}
+                            dy={15}
                             verticalAnchor="middle"
                         />
                     }

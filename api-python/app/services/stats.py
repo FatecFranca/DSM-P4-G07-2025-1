@@ -66,23 +66,23 @@ def media_por_intervalo(dados: List[dict], inicio: date, fim: date) -> Dict:
 
 
 def calcular_probabilidade(valor: int, dados: list):
-    valores_validos = [v for v in dados if isinstance(v, (int, float)) and 30 <= v <= 200]
+    valores_validos = [v for v in dados if isinstance(v, (int, float)) and 20 <= v <= 200]
 
     if not valores_validos:
         return {
-            "erro": "Não há dados suficientes dentro da faixa fisiológica (30 a 200 BPM) para análise."
+            "erro": "Não há dados suficientes dentro da faixa fisiológica (20 a 200 BPM) para análise."
         }
 
     media = np.mean(valores_validos)
     desvio = np.std(valores_validos)
 
-    if valor < 30 or valor > 250:
+    if valor < 20 or valor > 250:
         return {
             "valor_informado": valor,
             "media_registrada": round(media, 2),
             "desvio_padrao": round(desvio, 2),
             "titulo": "Valor fora da faixa ❌",
-            "avaliacao": "O valor informado está fora da faixa fisiológica plausível para cães e gatos (30 a 200 BPM)."
+            "avaliacao": "O valor informado está fora da faixa fisiológica plausível para cães e gatos (20 a 200 BPM)."
         }
 
     z = abs((valor - media) / desvio)
@@ -100,14 +100,14 @@ def calcular_probabilidade(valor: int, dados: list):
         titulo = "Batimento um pouco fora do comum ⚠️"
         interpretacao = (
             f"O valor de {valor} BPM é um pouco diferente da média recente. "
-            f"A chance de ocorrer é de aproximadamente {round(prob, 2)}%. Não necessariamente é preocupante, mas vale observar."
+            f"A chance de ocorrer é de aproximadamente {round(prob, 2)}%. Não é necessário se preocupar, mas observe o comportamento do seu pet."
         )
     elif z < 3:
         classificacao = "Incomum"
         titulo = "Batimento incomum ❗"
         interpretacao = (
-            f"O valor de {valor} BPM é estatisticamente incomum com base nos últimos 5 dias. "
-            f"A chance de isso ocorrer naturalmente é de apenas {round(prob, 2)}%. Pode representar agitação, estresse ou outra condição fisiológica fora do padrão."
+            f"O valor de {valor} BPM é estatisticamente incomum com base nos últimos dias. "
+            f"A chance de isso ocorrer naturalmente é de apenas {round(prob, 2)}%. Isso pode indicar agitação, estresse, exaustão ou até uma condição fisiológica crítica, como frequência cardíaca muito alta ou muito baixa. Observe o comportamento do seu pet e, se os sinais persistirem, tente acalmá-lo e procure um veterinário o quanto antes."
         )
     else:
         classificacao = "Raro ou fora do padrão"
@@ -184,54 +184,100 @@ def media_ultimas_5_horas_registradas(dados: List[dict]) -> dict:
         "media_por_hora": medias_formatadas
     }
 
+from typing import List, Dict
+from datetime import timedelta
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+from scipy.stats import pearsonr
+
+from typing import List, Dict
+from datetime import timedelta
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+from scipy.stats import pearsonr
+
+from typing import List, Dict
+from datetime import timedelta
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+from scipy.stats import pearsonr
+
+from typing import List, Dict
+from datetime import timedelta
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+from scipy.stats import pearsonr
+
+from typing import List, Dict
+from datetime import timedelta
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+from scipy.stats import pearsonr
+
 def executar_regressao(batimentos: List[dict], movimentos: List[dict]) -> Dict:
     # Converte para DataFrame
     df_bat = pd.DataFrame(batimentos)
     df_mov = pd.DataFrame(movimentos)
 
-    # Converte a coluna de data para datetime e arredonda para minuto
-    df_bat['data'] = pd.to_datetime(df_bat['data']).dt.floor('min')
-    df_mov['data'] = pd.to_datetime(df_mov['data']).dt.floor('min')
+    # Converte a coluna de data para datetime (mantendo segundos)
+    df_bat['data'] = pd.to_datetime(df_bat['data'])
+    df_mov['data'] = pd.to_datetime(df_mov['data'])
 
-    # Agrupa por minuto e faz a média
+    # Agrupa por timestamp exato (sem arredondar)
     df_bat_grouped = df_bat.groupby('data').agg({'frequenciaMedia': 'mean'}).reset_index()
     df_mov_grouped = df_mov.groupby('data').mean(numeric_only=True).reset_index()
 
     # Junta os dados pela coluna de data
-    df = pd.merge(df_bat_grouped, df_mov_grouped, on='data')
+    df = pd.merge(df_bat_grouped, df_mov_grouped, on='data', how='inner')
 
-    # Remove colunas não numéricas
+    # Remove registros com batimentos ausentes
     df = df.dropna(subset=['frequenciaMedia'])
 
-    # Variáveis independentes (X) e dependente (y)
-    X = df[['acelerometroX', 'acelerometroY', 'acelerometroZ',
-            'giroscopioX', 'giroscopioY', 'giroscopioZ']]
+    # Apenas acelerômetros
+    acelerometros = ['acelerometroX', 'acelerometroY', 'acelerometroZ']
+    X = df[acelerometros]
     y = df['frequenciaMedia']
 
-    # Correlações de Pearson
+    # Correlações de Pearson (somente acelerômetros)
     correlacoes = {col: round(pearsonr(X[col], y)[0], 3) for col in X.columns}
 
-    # Treina modelo de regressão linear
+    # Treina modelo de regressão
     modelo = LinearRegression()
     modelo.fit(X, y)
 
-    # Coeficientes
-    coeficientes = dict(zip(X.columns, modelo.coef_.round(3)))
+    # Coeficientes e intercepto
+    coef_dict = dict(zip(X.columns, modelo.coef_.round(3)))
+    coef_geral = round(modelo.intercept_, 3)
 
-    # Predição dos próximos 5 minutos (baseado na média dos movimentos)
+    # Monta a função de regressão como string
+    termos = [f"({coef:.3f} * {var})" for var, coef in coef_dict.items()]
+    funcao_regressao = f"frequenciaMedia = {coef_geral} + " + " + ".join(termos)
+
+    # Predição dos próximos 5 segundos (baseado na média dos últimos 10 registros)
     media_movimentos = X.tail(10).mean().values.reshape(1, -1)
-    predicoes = [modelo.predict(media_movimentos)[0]]
-    for i in range(4):
-        predicoes.append(modelo.predict(media_movimentos)[0])
+    predicoes = [modelo.predict(media_movimentos)[0] for _ in range(5)]
 
-    horas_futuras = [(df['data'].max() + timedelta(hours=i+1)).isoformat() for i in range(5)]
-
-    projecao = dict(zip(horas_futuras, np.round(predicoes, 2)))
+    segundos_futuros = [(df['data'].max() + timedelta(seconds=i+1)).isoformat() for i in range(5)]
+    projecao = dict(zip(segundos_futuros, np.round(predicoes, 2)))
 
     return {
-        "coeficientes": coeficientes,
+        "coeficiente_geral": coef_geral,
+        "coeficientes": coef_dict,
         "correlacoes": correlacoes,
         "r2": round(modelo.score(X, y), 3),
         "media_erro_quadratico": round(mean_squared_error(y, modelo.predict(X)), 2),
-        "projecao_5_horas": projecao
+        "projecao_5_segundos": projecao,
+        "funcao_regressao": funcao_regressao
     }
+
+
