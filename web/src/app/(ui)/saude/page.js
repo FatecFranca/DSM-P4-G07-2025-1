@@ -214,17 +214,19 @@ export default function SaudePage() {
                       Digite um valor e descubra a chance de o seu pet apresentar esse batimento cardíaco, com base no histórico real.
                     </p>
 
-                    <div className="flex justify-center">
+                   <div className="flex justify-center">
                       <input
                         type="number"
                         placeholder="Insira o valor"
                         value={valorTemporario}
                         onChange={(e) => setValorTemporario(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter') {
                             setValorDigitado(valorTemporario);
                           }
                         }}
+                        inputMode="numeric"
+                        enterKeyHint="go"
                         className="bg-[var(--color-gray-light)] rounded-3xl px-3 py-2 text-base font-medium border border-gray-300 w-42 text-center"
                       />
                     </div>
