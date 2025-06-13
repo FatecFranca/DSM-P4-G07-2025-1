@@ -141,7 +141,7 @@ export default function SaudePage() {
                   <h2 className="text-sm md:text-base font-bold mb-2 text-center text-[var(--color-red)] whitespace-nowrap">
                     Análise Estatística da Frequência Cardíaca
                   </h2>
-                  <div className="bg-[var(--color-white-matte)] rounded-lg p-4 shadow-md max-w-md mx-auto lg:mx-0">
+                  <div className="bg-[var(--color-white-matte)] rounded-lg p-4 shadow-md max-w-md mx-auto lg:mx-0 mb-4">
                     <div className="flex flex-col items-center text-center">
                       <div className="flex justify-between w-full mb-1 px-4">
                         <span className="text-[var(--color-red)] font-bold text-lg w-1/3">Média:</span>
@@ -214,7 +214,7 @@ export default function SaudePage() {
                       Digite um valor e descubra a chance de o seu pet apresentar esse batimento cardíaco, com base no histórico real.
                     </p>
 
-                   <div className="flex justify-center">
+                   <div className="flex flex-col items-center mb-4">
                       <input
                         type="number"
                         placeholder="Insira o valor"
@@ -227,9 +227,15 @@ export default function SaudePage() {
                         }}
                         inputMode="numeric"
                         enterKeyHint="go"
-                        className="bg-[var(--color-gray-light)] rounded-3xl px-3 py-2 text-base font-medium border border-gray-300 w-42 text-center"
+                        className="bg-[var(--color-gray-light)] rounded-3xl px-3 py-2 text-base font-medium border border-gray-300 w-42 text-center mb-2"
                       />
-                    </div>
+                      <button
+                        onClick={() => setValorDigitado(valorTemporario)}
+                        className="bg-[var(--color-orange)] text-white rounded-3xl px-3 py-2 text-base font-medium w-42 text-center hover:bg-[var(--color-orange-hover)] transition-colors"
+                      >
+                        Calcular
+                      </button>
+                   </div>
 
                     {valorDigitado && (
                       <div className="text-center mb-6">
