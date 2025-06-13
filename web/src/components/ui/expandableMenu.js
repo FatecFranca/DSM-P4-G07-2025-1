@@ -28,7 +28,7 @@ export function ExpandableMenu({
   const [loading, setloading] = useState(false);
   const [batimentoError, setBatimentoError] = useState(null);
 
-  useEffect(() => {
+  useEffect(() => {""
     const fetchData = async () => {
       try {
         setloading(true);

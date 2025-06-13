@@ -1,3 +1,5 @@
+// App.js
+
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import {
@@ -10,6 +12,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import HomeScreen from './screens/HomeScreen';
 import HealthScreen from './screens/HealthScreen';
 import LocationScreen from './screens/LocationScreen';
+import WelcomeScreen from './screens/WelcomeScreen';
+import IntroScreen from './screens/IntroSreen';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -19,7 +23,7 @@ export default function App() {
   });
 
   const [appIsReady, setAppIsReady] = useState(false);
-  const [activeScreen, setActiveScreen] = useState('home');
+  const [activeScreen, setActiveScreen] = useState('welcome');
 
   useEffect(() => {
     async function prepare() {
@@ -36,13 +40,17 @@ export default function App() {
 
   const renderScreen = () => {
     switch (activeScreen) {
+      case 'home':
+        return <HomeScreen activeScreen={activeScreen} onNavigate={setActiveScreen} />;
       case 'saude':
         return <HealthScreen activeScreen={activeScreen} onNavigate={setActiveScreen} />;
       case 'localizacao':
         return <LocationScreen activeScreen={activeScreen} onNavigate={setActiveScreen} />;
-      case 'home':
+      case 'intro':
+        return <IntroScreen onNavigate={setActiveScreen} />;
+      case 'welcome':
       default:
-        return <HomeScreen activeScreen={activeScreen} onNavigate={setActiveScreen} />;
+        return <WelcomeScreen onNavigate={setActiveScreen} />;
     }
   };
 

@@ -5,7 +5,7 @@ import WelcomeCard from '../components/WelcomeCard/WelcomeCard';
 export default function WelcomeScreen({ onNavigate }) {
     return (
         <View style={styles.screen}>
-            <WelcomeCard onStart={() => onNavigate('home')} />
+            <WelcomeCard onStart={() => onNavigate('intro')} />
         </View>
     );
 }
