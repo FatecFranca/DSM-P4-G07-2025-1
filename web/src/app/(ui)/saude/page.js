@@ -371,28 +371,28 @@ export default function SaudePage() {
                         </p>
 
                         <div className="flex justify-center space-x-4 mb-4">
-                          <input
-                            type="number"
-                            placeholder="X"
-                            value={acelerometroX}
-                            onChange={(e) => setAcelerometroX(e.target.value)}
-                            className="bg-[var(--color-gray-light)] rounded-lg px-3 py-2 text-base font-medium border border-gray-300 w-16 text-center"
-                          />
-                          <input
-                            type="number"
-                            placeholder="Y"
-                            value={acelerometroY}
-                            onChange={(e) => setAcelerometroY(e.target.value)}
-                            className="bg-[var(--color-gray-light)] rounded-lg px-3 py-2 text-base font-medium border border-gray-300 w-16 text-center"
-                          />
-                          <input
-                            type="number"
-                            placeholder="Z"
-                            value={acelerometroZ}
-                            onChange={(e) => setAcelerometroZ(e.target.value)}
-                            className="bg-[var(--color-gray-light)] rounded-lg px-3 py-2 text-base font-medium border border-gray-300 w-16 text-center"
-                          />
-                        </div>
+  <input
+    type="number"
+    placeholder="X"
+    value={acelerometroX}
+    onChange={(e) => setAcelerometroX(e.target.value)}
+    className="bg-[var(--color-gray-light)] rounded-3xl px-3 py-2 text-base font-medium border border-gray-300 w-16 text-center appearance-none [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden"
+  />
+  <input
+    type="number"
+    placeholder="Y"
+    value={acelerometroY}
+    onChange={(e) => setAcelerometroY(e.target.value)}
+    className="bg-[var(--color-gray-light)] rounded-3xl px-3 py-2 text-base font-medium border border-gray-300 w-16 text-center appearance-none [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden"
+  />
+  <input
+    type="number"
+    placeholder="Z"
+    value={acelerometroZ}
+    onChange={(e) => setAcelerometroZ(e.target.value)}
+    className="bg-[var(--color-gray-light)] rounded-3xl px-3 py-2 text-base font-medium border border-gray-300 w-16 text-center appearance-none [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden"
+  />
+</div>
 
                         <div className="flex justify-center">
                           <button
@@ -407,7 +407,7 @@ export default function SaudePage() {
                               }
                             }}
                             disabled={loadingPrevisao}
-                            className="bg-[var(--color-orange)] hover:bg-[var(--color-orange-hover)] text-white font-bold py-2 px-6 rounded-lg"
+                            className="bg-[var(--color-orange)] hover:bg-[var(--color-orange-hover)] text-white font-bold py-2 px-6 rounded-3xl"
                           >
                             {loadingPrevisao ? (
                               <FontAwesomeIcon
