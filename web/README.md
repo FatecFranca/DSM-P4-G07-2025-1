@@ -44,6 +44,21 @@ Para entregar uma experiência rica e interativa, utilizamos um conjunto de bibl
 
 Para executar este projeto localmente, siga os passos abaixo:
 
+### **1. Pré-requisitos**
+
+Antes de começar, você precisará de uma chave de API do Google Maps para que a funcionalidade de localização funcione corretamente no emulador.
+
+1.  **Obtenha uma Chave de API:** Acesse o [Google Cloud Console](https://console.cloud.google.com/google/maps-apis/overview) e crie ou selecione um projeto. Ative a **Maps SDK for Android** e/ou **Maps SDK for iOS** e gere uma chave de API.
+
+2.  **Configure a Variável de Ambiente:**
+    -   Na raiz do projeto, crie um arquivo chamado `.env`.
+    -   Dentro deste arquivo, adicione a seguinte linha, substituindo `SUA_CHAVE_AQUI` pela chave que você gerou:
+        ```
+        NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=SUA_CHAVE_AQUI
+        ```
+### **2. Instalação e Execução**
+
+
 1.  **Clone o repositório:**
 2.  **Acesse o diretório do projeto:**
     ```bash

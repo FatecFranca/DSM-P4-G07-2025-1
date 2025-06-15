@@ -14,6 +14,7 @@ Bem-vindo! Este é o nosso projeto de Internet das Coisas (IoT), desenvolvido co
   <img src="../docs/img/petdex-coleira-2.jpg" alt="Coleira PetDex - 2" width="49%" />
   <img src="../docs/img/petdex-coleira-3.jpg" alt="Coleira PetDex - 3" width="49%" />
 </p>
+
 ## 🚩 Problema Identificado
 
 Atualmente, existe uma carência de soluções acessíveis e contínuas para monitoramento de saúde em animais domésticos, especialmente aqueles que possuem doenças crônicas ou estão em tratamento. Além disso, muitos tutores enfrentam dificuldades ao perder seus pets e não conseguirem localizá-los facilmente.
