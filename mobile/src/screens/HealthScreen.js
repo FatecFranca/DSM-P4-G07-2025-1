@@ -226,8 +226,7 @@ export default function HealthScreen({ animalId }) {
                             {regressaoData &&
                                 <View style={styles.section}>
                                     <Text style={styles.analysisTitle}>Regressão e Correlação</Text>
-                                    <Text style={styles.regressaoDescriptionText}>Análise da relação entre os dados de aceleração e a frequência cardíaca do pet</Text>
-                                    <Text style={styles.description}>Com base na análise de correlação, observou-se que a frequência cardíaca é afetada exclusivamente pelos valores de aceleração nos eixos X, Y e Z, tendo sido descartado o uso dos valores do giroscópio.</Text>
+                                    <Text style={styles.regressaoDescriptionText}>Análise da relação entre os dados de aceleração (em ATM) e a frequência cardíaca do pet (em BPM)</Text>
                                     <View style={styles.card}>
                                         <Text style={styles.dataTitle}>Coeficientes de Regressão</Text>
                                         <Text style={styles.regressaoLabel}>Dados de Aceleração</Text>
