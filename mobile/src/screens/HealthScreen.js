@@ -37,10 +37,10 @@ export default function HealthScreen({ animalId }) {
                     getRegressao()
                 ]);
                 if (estatisticas) setHealthData(estatisticas);
+                console.log("Estatisticas: ", estatisticas)
                 setMediasUltimos5Dias(medias);
                 if (regressao) setRegressaoData(regressao);
             } catch (err) {
-                console.error('Erro ao buscar estatísticas iniciais:', err);
             } finally {
                 setLoading(false);
             }
@@ -73,7 +73,6 @@ export default function HealthScreen({ animalId }) {
                     setMediaPorData({ noData: true });
                 }
             } catch (error) {
-                console.error('Erro ao buscar média por data:', error);
                 setMediaPorData({ error: true });
             } finally {
                 setLoadingMediaData(false);
@@ -89,7 +88,6 @@ export default function HealthScreen({ animalId }) {
             const resultado = await getProbabilidadePorValor(valorDigitado);
             setProbabilidade(resultado);
         } catch (error) {
-            console.error('Erro ao buscar probabilidade:', error);
             setProbabilidade({ error: true });
         } finally {
             setLoadingProbabilidade(false);
@@ -104,7 +102,6 @@ export default function HealthScreen({ animalId }) {
             const resultado = await getPredicaoBatimento(acelerometro.x, acelerometro.y, acelerometro.z);
             setPredicao(resultado);
         } catch (error) {
-            console.error('Erro ao buscar predição:', error);
             setPredicao({ error: true });
         } finally {
             setLoadingPredicao(false);
@@ -145,6 +142,10 @@ export default function HealthScreen({ animalId }) {
                                             <View style={styles.statItem}>
                                                 <Text style={styles.statLabel}>Assimetria</Text>
                                                 <Text style={styles.statValue}>{healthData.assimetria?.toFixed(2) || '--'}</Text>
+                                            </View>
+                                            <View style={styles.statItem}>
+                                                <Text style={styles.statLabel}>Curtose</Text>
+                                                <Text style={styles.statValue}>{healthData.curtose?.toFixed(2) || '--'}</Text>
                                             </View>
                                         </View>
                                     </View>
@@ -225,9 +226,11 @@ export default function HealthScreen({ animalId }) {
                             {regressaoData &&
                                 <View style={styles.section}>
                                     <Text style={styles.analysisTitle}>Regressão e Correlação</Text>
-                                    <Text style={styles.regressaoDescriptionText}>Análise da relação entre os dados de movimento e a frequência cardíaca do pet</Text>
+                                    <Text style={styles.regressaoDescriptionText}>Análise da relação entre os dados de aceleração e a frequência cardíaca do pet</Text>
+                                    <Text style={styles.description}>Com base na análise de correlação, observou-se que a frequência cardíaca é afetada exclusivamente pelos valores de aceleração nos eixos X, Y e Z, tendo sido descartado o uso dos valores do giroscópio.</Text>
                                     <View style={styles.card}>
                                         <Text style={styles.dataTitle}>Coeficientes de Regressão</Text>
+                                        <Text style={styles.regressaoLabel}>Dados de Aceleração</Text>
                                         <View style={styles.statsRow}>
                                             <View style={styles.statItem}><Text style={styles.regressaoLabel}>Eixo X</Text><Text style={styles.statValue}>{regressaoData.coeficientes?.acelerometroX.toFixed(3)}</Text></View>
                                             <View style={styles.statItem}><Text style={styles.regressaoLabel}>Eixo Y</Text><Text style={styles.statValue}>{regressaoData.coeficientes?.acelerometroY.toFixed(3)}</Text></View>
@@ -236,6 +239,7 @@ export default function HealthScreen({ animalId }) {
                                     </View>
                                     <View style={styles.card}>
                                         <Text style={styles.dataTitle}>Correlações</Text>
+                                        <Text style={styles.regressaoLabel}>Dados de Aceleração</Text>
                                         <View style={styles.statsRow}>
                                             <View style={styles.statItem}><Text style={styles.regressaoLabel}>Eixo X</Text><Text style={styles.statValue}>{regressaoData.correlacoes?.acelerometroX.toFixed(3)}</Text></View>
                                             <View style={styles.statItem}><Text style={styles.regressaoLabel}>Eixo Y</Text><Text style={styles.statValue}>{regressaoData.correlacoes?.acelerometroY.toFixed(3)}</Text></View>
@@ -247,7 +251,6 @@ export default function HealthScreen({ animalId }) {
                                         <View style={[styles.card, { flex: 1, alignContent: 'center', justifyContent: 'center', display: 'flex' }]}><Text style={styles.dataTitle}>Coeficiente R²</Text><Text style={styles.statValue}>{regressaoData.r2?.toFixed(3)}</Text></View>
                                     </View>
                                     <View style={[styles.card, { flex: 1 }]}><Text style={styles.dataTitle}>Erro Quadrático</Text><Text style={styles.statValue}>{regressaoData.media_erro_quadratico?.toFixed(3)}</Text></View>
-                                    <Text style={styles.description}>Com base na análise de correlação, observou-se que a frequência cardíaca é afetada exclusivamente pelos valores de aceleração nos eixos X, Y e Z.</Text>
                                     <View style={styles.card}>
                                         <Text style={styles.dataTitle}>Função de Regressão</Text>
                                         <Text style={styles.formulaText}>{regressaoData.funcao_regressao}</Text>
@@ -292,7 +295,7 @@ const styles = StyleSheet.create({
     scroll: { paddingHorizontal: 20 },
     scrollContent: { paddingTop: 40, paddingBottom: 250 },
     title: { fontSize: 24, fontFamily: 'Poppins_700Bold', color: '#FF0000', textAlign: 'center', marginBottom: 5, marginTop: 25 },
-    description: { fontFamily: 'Poppins_400Regular', textAlign: 'center', marginBottom: 10, color: '#000', fontSize: 14, marginRight: 16, marginLeft: 16, marginTop: 10 },
+    description: { fontFamily: 'Poppins_400Regular', textAlign: 'center', marginBottom: 10, color: '#333', fontSize: 12, marginRight: 16, marginLeft: 16, marginTop: 10 },
     section: { marginBottom: 20 },
     card: { backgroundColor: '#FFF', borderRadius: 12, padding: 16, marginVertical: 10, elevation: 2, alignItems: 'center' },
     probabilityCard: { backgroundColor: '#FFF', borderRadius: 12, padding: 16, marginVertical: 10, elevation: 2, alignItems: 'center' },
@@ -325,11 +328,11 @@ const styles = StyleSheet.create({
     buttonText: { color: '#FFFFFF', fontFamily: 'Poppins_600SemiBold', fontSize: 14, textAlign: 'center' },
     statValue: { fontSize: 18, fontFamily: 'Poppins_700Bold', color: '#000', textAlign: 'center' },
     statsRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12, width: '100%' },
-    statItem: { flex: 1, alignItems: 'center' },
+    statItem: { flex: 1, alignItems: 'center', display: 'flex', justifyContent: 'center' },
     statLabel: { fontSize: 18, fontFamily: 'Poppins_600SemiBold', color: '#FF0000', marginBottom: 4, textAlign: 'center' },
     batimentoNaoEncontradoLabel: { fontSize: 16, fontFamily: 'Poppins_400Regular', color: '#000', marginBottom: 4, textAlign: 'center', paddingHorizontal: 40 },
     largeValue: { fontSize: 24, fontFamily: 'Poppins_700Bold', color: '#000', textAlign: 'center', marginVertical: 5 },
-    secondaryStats: { flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: '#EEE', paddingTop: 12, width: '100%' },
+    secondaryStats: { flexDirection: 'row', justifyContent: 'space-around', borderTopWidth: 1, borderTopColor: '#EEE', paddingTop: 12, width: '100%' },
     secondaryStat: { fontSize: 16, fontFamily: 'Poppins_600SemiBold', color: '#FF0000', display: 'flex', flexDirection: 'column' },
     secondaryStatValue: { fontSize: 14, fontFamily: 'Poppins_400Regular', color: '#000' },
     analysisTitle: { fontSize: 22, fontFamily: 'Poppins_700Bold', color: '#FF0000', marginVertical: 5, marginTop: 40, textAlign: 'center', marginRight: 20, marginLeft: 20 },

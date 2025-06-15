@@ -31,6 +31,7 @@ export async function getEstatisticasCompletas() {
             moda: response.data.moda ?? 0,
             desvioPadrao: response.data.desvio_padrao ?? 0,
             assimetria: response.data.assimetria ?? 0,
+            curtose: response.data.curtose ?? 0,
         };
     } catch (error) {
         console.error('Erro ao buscar estatísticas completas:', error);

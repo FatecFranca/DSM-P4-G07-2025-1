@@ -221,7 +221,7 @@ def executar_regressao(batimentos: List[dict], movimentos: List[dict]) -> Dict:
     coef_dict = dict(zip(acelerometros, modelo.coef_.round(3)))
     coef_geral = round(modelo.intercept_, 3)
     funcao_regressao = f"frequenciaMedia = {coef_geral} + " + " + ".join(
-        [f"({coef:.3f} * pad({var}))" for var, coef in coef_dict.items()]
+        [f"({coef:.3f} * {var})" for var, coef in coef_dict.items()]
     )
 
     media_movimentos_pad = X_scaled[-10:].mean(axis=0).reshape(1, -1)
@@ -244,7 +244,6 @@ def executar_regressao(batimentos: List[dict], movimentos: List[dict]) -> Dict:
         "media_erro_quadratico": round(mean_squared_error(y, modelo.predict(X_scaled)), 2),
         "projecao_5_segundos": projecao,
         "funcao_regressao": funcao_regressao,
-        "padronizacao": scaler_info
     }
 
 
