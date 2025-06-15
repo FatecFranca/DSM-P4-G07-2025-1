@@ -130,7 +130,7 @@ export default function SaudePage() {
               <div className="lg:flex lg:justify-center lg:w-full lg:max-w-5xl lg:gap-6 lg:mb-6">
                 <div className="lg:w-1/2 mb-6 lg:mb-0 lg:flex lg:flex-col lg:items-center">
                   <h2 className="text-sm md:text-base font-bold mb-1 text-center text-[var(--color-red)] whitespace-nowrap">
-                    Média de batimentos dos últimos cinco dias:
+                    Média de Batimentos dos Últimos Cinco Dias:
                   </h2>
                   <div className="lg:w-full lg:flex lg:justify-center">
                     <GraficoBarras data={mediasUltimos5Dias} />
@@ -144,23 +144,32 @@ export default function SaudePage() {
                   <div className="bg-[var(--color-white-matte)] rounded-lg p-4 shadow-md max-w-md mx-auto lg:mx-0 mb-4">
                     <div className="flex flex-col items-center text-center">
                       <div className="flex justify-between w-full mb-1 px-4">
-                        <span className="text-[var(--color-red)] font-bold text-lg w-1/3">Média:</span>
-                        <span className="text-[var(--color-red)] font-bold text-lg w-1/3">Moda:</span>
-                        <span className="text-[var(--color-red)] font-bold text-lg w-1/3">Mediana:</span>
+                        <span className="text-[var(--color-red)] font-bold text-base w-1/3">Média</span>
+                        <span className="text-[var(--color-red)] font-bold text-base w-1/3">Moda</span>
+                        <span className="text-[var(--color-red)] font-bold text-base w-1/3">Mediana</span>
                       </div>
                       <div className="flex justify-between w-full mb-4 px-4">
-                        <span className="text-black font-medium text-lg w-1/3">{healthData.media?.toFixed?.(1) || "--"}</span>
-                        <span className="text-black font-medium text-lg w-1/3">{healthData.moda?.toFixed?.(1) || "--"}</span>
-                        <span className="text-black font-medium text-lg w-1/3">{healthData.mediana?.toFixed?.(1) || "--"}</span>
+                        <span className="text-black font-medium text-base w-1/3">{healthData.media?.toFixed?.(1) || "--"}</span>
+                        <span className="text-black font-medium text-base w-1/3">{healthData.moda?.toFixed?.(1) || "--"}</span>
+                        <span className="text-black font-medium text-base w-1/3">{healthData.mediana?.toFixed?.(1) || "--"}</span>
+                      </div>
+
+                      <div className="flex justify-between w-full px-4 text-center items-center">
+                        <div className="flex flex-col items-center w-1/3">
+                          <span className="text-[var(--color-red)] font-bold text-base">Desvio Padrão</span>
+                        </div>
+                        <div className="flex flex-col items-center w-1/3">
+                          <span className="text-[var(--color-red)] font-bold text-base">Assimetria</span>
+                        </div>
+                        <div className="flex flex-col items-center w-1/3">
+                          <span className="text-[var(--color-red)] font-bold text-base">Curtose</span>
+                        </div>
                       </div>
 
                       <div className="flex justify-between w-full px-4">
-                        <span className="text-[var(--color-red)] font-bold text-base w-1/2">Desvio Padrão:</span>
-                        <span className="text-[var(--color-red)] font-bold text-base w-1/2">Assimetria:</span>
-                      </div>
-                      <div className="flex justify-between w-full px-4">
-                        <span className="text-black font-medium text-base w-1/2">{healthData.desvioPadrao?.toFixed?.(1) || "--"}</span>
-                        <span className="text-black font-medium text-base w-1/2">{healthData.assimetria?.toFixed?.(2) || "--"}</span>
+                        <span className="text-black font-medium text-base w-1/3">{healthData.desvioPadrao?.toFixed?.(1) || "--"}</span>
+                        <span className="text-black font-medium text-base w-1/3">{healthData.assimetria?.toFixed?.(2) || "--"}</span>
+                        <span className="text-black font-medium text-base w-1/3">{healthData.curtose?.toFixed?.(2) || "--"}</span>
                       </div>
                     </div>
                   </div>
@@ -171,7 +180,7 @@ export default function SaudePage() {
                 <div className="lg:w-1/2 mb-6 lg:mb-0 lg:flex lg:flex-col lg:items-center">
                   <div className="max-w-xs mx-auto lg:mx-0">
                     <h3 className="text-[var(--color-red)] font-bold text-base text-center mb-2">
-                      Média de batimento Cardíaco por data
+                      Média de Batimento Cardíaco por Data
                     </h3>
                     <p className="text-[var(--color-red)] text-sm text-center mb-2 font-bold">
                       Insira uma data:
@@ -210,11 +219,11 @@ export default function SaudePage() {
                       Probabilidade de Batimento
                     </h3>
 
-                    <p className="text-black font-semibold text-sm text-center mb-4 px-2">
-                      Digite um valor e descubra a chance de o seu pet apresentar esse batimento cardíaco, com base no histórico real.
+                    <p className="text-xs text-center mb-4 px-2">
+                      Digite um valor e descubra a chance de o seu pet apresentar esse batimento cardíaco.
                     </p>
 
-                   <div className="flex flex-col items-center mb-4">
+                    <div className="flex flex-col items-center mb-4">
                       <input
                         type="number"
                         placeholder="Insira o valor"
@@ -235,7 +244,7 @@ export default function SaudePage() {
                       >
                         Calcular
                       </button>
-                   </div>
+                    </div>
 
                     {valorDigitado && (
                       <div className="text-center mb-6">
@@ -282,11 +291,14 @@ export default function SaudePage() {
                 </div>
               </div>
 
-              <div className="lg:flex lg:justify-center lg:w-full lg:max-w-5xl mt-6 mb-20 md:mb-0">
+              <div className="lg:flex lg:justify-center lg:w-full lg:max-w-5xl mt-10 mb-20 md:mb-0">
                 <div className="w-full lg:max-w-3xl">
-                  <h3 className="text-[var(--color-red)] font-bold text-base text-center mb-4">
-                    Regressão e Correlação dos dados de movimento com a frequência cardíaca
+                  <h3 className="text-[var(--color-red)] font-bold text-xl text-center mb-4">
+                    Regressão e Correlação
                   </h3>
+                  <p className="text-xs text-center mt-[-10px] mb-4">
+                    Análise da relação entre os dados de aceleração em ATM (Atmosferas) e a frequência cardíaca do pet em BPM(Batimentos por minutos).
+                  </p>
 
                   {loadingRegressao ? (
                     <div className="flex justify-center">
@@ -300,6 +312,9 @@ export default function SaudePage() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div className="bg-gray-50 p-3 rounded">
                           <h4 className="text-[var(--color-red)] font-bold text-sm mb-2 text-center">Coeficientes de Regressão</h4>
+                          <p className="text-xs text-center mt-[-6px] mb-4">
+                            Dados de Aceleração
+                          </p>
                           <div className="grid grid-cols-3 gap-2">
                             <div className="text-center">
                               <p className="text-black font-medium text-xs">Eixo X</p>
@@ -318,6 +333,9 @@ export default function SaudePage() {
 
                         <div className="bg-gray-50 p-3 rounded">
                           <h4 className="text-[var(--color-red)] font-bold text-sm mb-2 text-center">Correlações</h4>
+                          <p className="text-xs text-center mt-[-6px] mb-4">
+                            Dados de Aceleração
+                          </p>
                           <div className="grid grid-cols-3 gap-2">
                             <div className="text-center">
                               <p className="text-black font-medium text-xs">Eixo X</p>
@@ -351,9 +369,6 @@ export default function SaudePage() {
                       </div>
 
                       <div className="mt-4">
-                        <p className="text-black text-sm mb-2 text-center px-4">
-                          Através da análise da correlação entre os dados de movimento é possível perceber que a frequência é influênciada apenas pelos valores de aceleração nos três eixos (X, Y e Z)
-                        </p>
                         <div className="p-3 bg-gray-50 rounded">
                           <h4 className="text-[var(--color-red)] font-bold text-sm mb-1 text-center">Função de Regressão</h4>
                           <p className="text-black text-xs font-mono break-words text-center">
@@ -364,35 +379,35 @@ export default function SaudePage() {
 
                       <div className="mt-6 bg-gray-50 rounded-lg p-4">
                         <h4 className="text-[var(--color-red)] font-bold text-base text-center mb-3">
-                          Fazer previsão de batimento
+                          Fazer Previsão de Batimento
                         </h4>
                         <p className="text-black text-sm text-center mb-4">
-                          Informe os valores de aceleração abaixo
+                          Informe os valores de aceleração em ATM
                         </p>
 
                         <div className="flex justify-center space-x-4 mb-4">
-  <input
-    type="number"
-    placeholder="X"
-    value={acelerometroX}
-    onChange={(e) => setAcelerometroX(e.target.value)}
-    className="bg-[var(--color-gray-light)] rounded-3xl px-3 py-2 text-base font-medium border border-gray-300 w-16 text-center appearance-none [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden"
-  />
-  <input
-    type="number"
-    placeholder="Y"
-    value={acelerometroY}
-    onChange={(e) => setAcelerometroY(e.target.value)}
-    className="bg-[var(--color-gray-light)] rounded-3xl px-3 py-2 text-base font-medium border border-gray-300 w-16 text-center appearance-none [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden"
-  />
-  <input
-    type="number"
-    placeholder="Z"
-    value={acelerometroZ}
-    onChange={(e) => setAcelerometroZ(e.target.value)}
-    className="bg-[var(--color-gray-light)] rounded-3xl px-3 py-2 text-base font-medium border border-gray-300 w-16 text-center appearance-none [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden"
-  />
-</div>
+                          <input
+                            type="number"
+                            placeholder="X"
+                            value={acelerometroX}
+                            onChange={(e) => setAcelerometroX(e.target.value)}
+                            className="bg-[var(--color-gray-light)] rounded-3xl px-3 py-2 text-base font-medium border border-gray-300 w-16 text-center appearance-none [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden"
+                          />
+                          <input
+                            type="number"
+                            placeholder="Y"
+                            value={acelerometroY}
+                            onChange={(e) => setAcelerometroY(e.target.value)}
+                            className="bg-[var(--color-gray-light)] rounded-3xl px-3 py-2 text-base font-medium border border-gray-300 w-16 text-center appearance-none [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden"
+                          />
+                          <input
+                            type="number"
+                            placeholder="Z"
+                            value={acelerometroZ}
+                            onChange={(e) => setAcelerometroZ(e.target.value)}
+                            className="bg-[var(--color-gray-light)] rounded-3xl px-3 py-2 text-base font-medium border border-gray-300 w-16 text-center appearance-none [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden"
+                          />
+                        </div>
 
                         <div className="flex justify-center">
                           <button

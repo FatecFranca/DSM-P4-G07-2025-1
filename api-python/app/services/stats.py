@@ -244,6 +244,7 @@ def executar_regressao(batimentos: List[dict], movimentos: List[dict]) -> Dict:
         "media_erro_quadratico": round(mean_squared_error(y, modelo.predict(X_scaled)), 2),
         "projecao_5_segundos": projecao,
         "funcao_regressao": funcao_regressao,
+        "padronizacao": scaler_info
     }
 
 

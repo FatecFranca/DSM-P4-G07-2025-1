@@ -10,12 +10,10 @@ app = FastAPI(
     version="1.0.0"
 )
 
-
 @app.get("/batimentos", tags=["Batimentos"])
 async def get_batimentos():
     dados = await java_api.buscar_todos_batimentos()
     return {"dados": dados}
-
 
 @app.get("/batimentos/estatisticas", tags=["Batimentos"])
 async def get_estatisticas():
@@ -27,21 +25,18 @@ async def get_estatisticas():
 
 @app.get("/batimentos/media-por-data", tags=["Batimentos"])
 async def media_batimentos_por_data(
-    inicio: date = Query(...,
-                         description="Data de início no formato YYYY-MM-DD"),
+    inicio: date = Query(..., description="Data de início no formato YYYY-MM-DD"),
     fim: date = Query(..., description="Data de fim no formato YYYY-MM-DD")
 ):
     dados = await java_api.buscar_todos_batimentos()
     resultado = stats.media_por_intervalo(dados, inicio, fim)
     return resultado
 
-
 @app.get("/batimentos/probabilidade", tags=["Batimentos"])
 async def probabilidade_batimento(valor: int = Query(..., gt=0)):
     dados = await java_api.buscar_todos_batimentos()
-    valores = [bat["frequenciaMedia"] for bat in dados if isinstance(
-        bat.get("frequenciaMedia"), (int, float))]
-
+    valores = [bat["frequenciaMedia"] for bat in dados if isinstance(bat.get("frequenciaMedia"), (int, float))]
+    
     if not valores:
         return {"erro": "Nenhum dado de batimentos disponível para análise."}
 
@@ -52,7 +47,6 @@ async def probabilidade_batimento(valor: int = Query(..., gt=0)):
 @app.get("/health", tags=["Status"])
 async def health_check():
     return {"status": "Ok"}
-
 
 @app.get("/batimentos/media-ultimos-5-dias", tags=["Batimentos"])
 async def media_batimentos_ultimos_5_dias():
@@ -84,7 +78,6 @@ async def analise_regressao_batimentos():
 
     resultado = stats.executar_regressao(batimentos, movimentos)
     return resultado
-
 
 @app.get("/batimentos/predizer", tags=["Batimentos"])
 async def predizer_batimento(
@@ -125,5 +118,4 @@ async def predizer_batimento(
     return {
         "frequencia_prevista": round(frequencia_prevista, 2),
         "funcao_usada": resultado["funcao_regressao"],
-        "entrada_padronizada": entrada_padronizada
     }

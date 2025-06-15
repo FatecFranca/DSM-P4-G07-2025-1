@@ -84,7 +84,7 @@ export async function getRegressao() {
     }
 }
 
-export async function getPredicaoBatimento(acelerometroX, acelerometroY, acelerometroZ) {
+export async function getPredicaoBatimento(acelerometroX = 0, acelerometroY = 0, acelerometroZ = 0) {
     try {
         const params = new URLSearchParams({ acelerometroX, acelerometroY, acelerometroZ });
         const response = await apiEstatistica.get(`/batimentos/predizer?${params.toString()}`);
