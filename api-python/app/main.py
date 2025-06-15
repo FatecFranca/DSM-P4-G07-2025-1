@@ -10,10 +10,12 @@ app = FastAPI(
     version="1.0.0"
 )
 
+
 @app.get("/batimentos", tags=["Batimentos"])
 async def get_batimentos():
     dados = await java_api.buscar_todos_batimentos()
     return {"dados": dados}
+
 
 @app.get("/batimentos/estatisticas", tags=["Batimentos"])
 async def get_estatisticas():
@@ -25,18 +27,21 @@ async def get_estatisticas():
 
 @app.get("/batimentos/media-por-data", tags=["Batimentos"])
 async def media_batimentos_por_data(
-    inicio: date = Query(..., description="Data de início no formato YYYY-MM-DD"),
+    inicio: date = Query(...,
+                         description="Data de início no formato YYYY-MM-DD"),
     fim: date = Query(..., description="Data de fim no formato YYYY-MM-DD")
 ):
     dados = await java_api.buscar_todos_batimentos()
     resultado = stats.media_por_intervalo(dados, inicio, fim)
     return resultado
 
+
 @app.get("/batimentos/probabilidade", tags=["Batimentos"])
 async def probabilidade_batimento(valor: int = Query(..., gt=0)):
     dados = await java_api.buscar_todos_batimentos()
-    valores = [bat["frequenciaMedia"] for bat in dados if isinstance(bat.get("frequenciaMedia"), (int, float))]
-    
+    valores = [bat["frequenciaMedia"] for bat in dados if isinstance(
+        bat.get("frequenciaMedia"), (int, float))]
+
     if not valores:
         return {"erro": "Nenhum dado de batimentos disponível para análise."}
 
@@ -47,6 +52,7 @@ async def probabilidade_batimento(valor: int = Query(..., gt=0)):
 @app.get("/health", tags=["Status"])
 async def health_check():
     return {"status": "Ok"}
+
 
 @app.get("/batimentos/media-ultimos-5-dias", tags=["Batimentos"])
 async def media_batimentos_ultimos_5_dias():
@@ -79,13 +85,13 @@ async def analise_regressao_batimentos():
     resultado = stats.executar_regressao(batimentos, movimentos)
     return resultado
 
+
 @app.get("/batimentos/predizer", tags=["Batimentos"])
 async def predizer_batimento(
     acelerometroX: float = Query(...),
     acelerometroY: float = Query(...),
     acelerometroZ: float = Query(...)
 ):
-    # Busca dados históricos para treinar o modelo
     batimentos = await java_api.buscar_todos_batimentos()
     movimentos = await java_api.buscar_todos_movimentos()
 
@@ -94,19 +100,30 @@ async def predizer_batimento(
 
     resultado = stats.executar_regressao(batimentos, movimentos)
 
-    # Extrai os coeficientes e intercepto
     coef = resultado["coeficientes"]
     intercepto = resultado["coeficiente_geral"]
+    padronizacao = resultado["padronizacao"]
 
-    # Aplica a função de regressão manualmente
+    # Aplica padronização manualmente
+    medias = padronizacao["media"]
+    desvios = padronizacao["desvio"]
+
+    # Padroniza entrada
+    entrada_padronizada = {
+        "acelerometroX": (acelerometroX - medias[0]) / desvios[0],
+        "acelerometroY": (acelerometroY - medias[1]) / desvios[1],
+        "acelerometroZ": (acelerometroZ - medias[2]) / desvios[2]
+    }
+
     frequencia_prevista = (
         intercepto
-        + coef["acelerometroX"] * acelerometroX
-        + coef["acelerometroY"] * acelerometroY
-        + coef["acelerometroZ"] * acelerometroZ
+        + coef["acelerometroX"] * entrada_padronizada["acelerometroX"]
+        + coef["acelerometroY"] * entrada_padronizada["acelerometroY"]
+        + coef["acelerometroZ"] * entrada_padronizada["acelerometroZ"]
     )
 
     return {
         "frequencia_prevista": round(frequencia_prevista, 2),
-        "funcao_usada": resultado["funcao_regressao"]
+        "funcao_usada": resultado["funcao_regressao"],
+        "entrada_padronizada": entrada_padronizada
     }
