@@ -130,6 +130,11 @@ cd DSM-P4-G07-2025-1/api-python
 python -m venv .venv
 source .venv/bin/activate  # ou .venv\Scripts\activate no Windows
 
+# Crie um arquivo .env e dentro dele coloque as duas variáveis abaixo
+API_BATIMENTOS_URL=https://petdex-api-d75e.onrender.com/batimentos/animal/68194120636f719fcd5ee5fd
+API_MOVIMENTOS_URL=https://petdex-api-d75e.onrender.com/movimentos/animal/68194120636f719fcd5ee5fd
+
+
 # Instale as dependências
 pip install -r requirements.txt
 

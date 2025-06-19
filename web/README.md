@@ -56,6 +56,11 @@ Antes de começar, você precisará de uma chave de API do Google Maps para que 
         ```
         NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=SUA_CHAVE_AQUI
         ```
+    - Além da chave de API do Google Maps é necessário adicionar duas variáveis de ambiente para a utilização das APIs do projeto. Copie e cole o arquivo abaixo no seu arquivo .env mantendo a chave do Maps.
+        ```
+        NEXT_PUBLIC_API_URL=https://petdex-api-d75e.onrender.com
+        NEXT_PUBLIC_API_ESTATISTICA_URL=https://petdex-api-estatistica.onrender.com
+        ```
 ### **2. Instalação e Execução**
 
 
