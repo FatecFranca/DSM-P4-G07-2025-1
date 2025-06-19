@@ -1,7 +1,12 @@
+import os
+from dotenv import load_dotenv
 import httpx
 
-API_URL = "https://dsm-p4-g07-2025-7.onrender.com/batimentos/animal/68194120636f719fcd5ee5fd"
-API_MOVIMENTOS_URL = "https://dsm-p4-g07-2025-7.onrender.com/movimentos/animal/68194120636f719fcd5ee5fd"
+# Carrega as variáveis do .env
+load_dotenv()
+
+API_URL = os.getenv("API_BATIMENTOS_URL")
+API_MOVIMENTOS_URL = os.getenv("API_MOVIMENTOS_URL")
 
 async def buscar_todos_batimentos():
     batimentos = []

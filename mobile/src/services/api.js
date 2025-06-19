@@ -2,7 +2,7 @@ import axios from "axios";
 export const animalId = "68194120636f719fcd5ee5fd";
 
 const api = axios.create({
-    baseURL: "https://dsm-p4-g07-2025-7.onrender.com",
+    baseURL: process.env.API_URL,
     timeout: 20000,
 });
 

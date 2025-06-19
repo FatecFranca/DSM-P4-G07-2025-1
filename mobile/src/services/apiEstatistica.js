@@ -2,7 +2,7 @@ import axios from 'axios';
 export const animalId = "68194120636f719fcd5ee5fd";
 
 const apiEstatistica = axios.create({
-    baseURL: 'https://api-petdex-estatistica.onrender.com',
+    baseURL: process.env.API_ESTATISTICA_URL,
     timeout: 20000,
 });
 

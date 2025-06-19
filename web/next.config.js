@@ -4,11 +4,11 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'https://dsm-p4-g07-2025-7.onrender.com/:path*'
+        destination: `${process.env.NEXT_PUBLIC_API_URL}/:path*`
       },
       {
         source: '/api-estatistica/:path*',
-        destination: 'https://api-petdex-estatistica.onrender.com/:path*'
+        destination: `${process.env.NEXT_PUBLIC_API_ESTATISTICA_URL}/:path*`
       }
     ]
   },
