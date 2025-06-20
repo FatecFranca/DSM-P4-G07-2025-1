@@ -16,6 +16,8 @@ Repositório do **Grupo 07** do Projeto Interdisciplinar do **4º semestre** do 
   </a>
 </p>
 
+[Clique aqui para assistir ao vídeo](https://www.youtube.com/watch?v=gWR23YgJ_aQ)
+
 ## 👨‍💻 Integrantes
 
 -   **Felipe Avelino Pedaes**
