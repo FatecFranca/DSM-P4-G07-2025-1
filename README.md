@@ -6,6 +6,8 @@
 
 Repositório do **Grupo 07** do Projeto Interdisciplinar do **4º semestre** do curso de **Desenvolvimento de Software Multiplataforma - DSM** (Turma 2025/1).
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/gWR23YgJ_aQ?si=ow3ju7kV9dZuIdEM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## 👨‍💻 Integrantes
 
 -   **Felipe Avelino Pedaes**
