@@ -6,7 +6,15 @@
 
 Repositório do **Grupo 07** do Projeto Interdisciplinar do **4º semestre** do curso de **Desenvolvimento de Software Multiplataforma - DSM** (Turma 2025/1).
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/gWR23YgJ_aQ?si=ow3ju7kV9dZuIdEM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+## Veja o vídeo do projeto!
+
+- Clique na imagem abaixo para assistir ao vídeo do nosso projeto!
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=gWR23YgJ_aQ">
+    <img src="https://img.youtube.com/vi/gWR23YgJ_aQ/0.jpg" alt="Assista ao vídeo no YouTube" width="560" />
+  </a>
+</p>
 
 ## 👨‍💻 Integrantes
 
@@ -23,7 +31,7 @@ Repositório do **Grupo 07** do Projeto Interdisciplinar do **4º semestre** do 
 
 ## 📖 Sobre o Projeto
 
-O **PetDex** é uma solução completa para o monitoramento da saúde e segurança de pets. Desenvolvemos uma **coleira inteligente** equipada com sensores que coletam dados vitais, como **batimentos cardíacos**, e  a **localização do animal via GPS**.
+O **PetDex** é uma solução completa para o monitoramento da saúde e segurança de pets. Desenvolvemos uma **coleira inteligente** equipada com sensores que coletam dados vitais, como **batimentos cardíacos**, e a **localização do animal via GPS**.
 
 <p align="center">
   <img src="./docs/img/petdex-coleira-1.jpg" alt="Coleira PetDex" width="100%" />
